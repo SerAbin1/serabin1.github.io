@@ -2,7 +2,8 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
+    background-color: #0c0d0d;
+    color: #fff;
 }
 
 .hero {
@@ -14,72 +15,15 @@ body {
 
 .hero h1 {
     margin: 0;
+    font-size: 2.5em;
+    text-shadow: 
+        0 0 3px #00B7EB,
+        0 0 6px #00FF87,
+        0 0 12px #00FF87;
 }
 
-.social-links {
-    color: #2e218a;
+/* --------- Blog styling --------- */
+#blog {
+    margin: 50px;
 }
 
-#resources {
-    text-align: center;
-}
-
-footer {
-    background-color: #333;
-    color: #fff;
-    text-align: center;
-    padding: 10px 0;
-    position: fixed;
-    width: 100%;
-    bottom: 0;
-}
-
-.resource-boxes {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-    margin-top: 20px;
-}
-
-.resource-box {
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    text-align: center;
-    transition: transform 0.3s, box-shadow 0.3s;
-    width: 300px;
-}
-
-.resource-box img {
-    border-bottom: 1px solid #ddd;
-    width: 100%;
-}
-
-.resource-box p {
-    padding: 15px;
-}
-
-.resource-box a {
-    color: #0073e6;
-    text-decoration: none;
-}
-
-.resource-box:hover {
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    transform: translateY(-5px);
-}
-
-@media (max-width: 768px) {
-    .resource-box {
-        width: 45%;
-    }
-}
-
-@media (max-width: 480px) {
-    .resource-box {
-        width: 100%;
-    }
-}

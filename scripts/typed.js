@@ -6,5 +6,5 @@ const typed = new Typed('#typed', {
     backDelay: 1000,
     loop: true,
     showCursor: true,
-    cursorChar: "|",
+    cursorChar: ".",
 });
