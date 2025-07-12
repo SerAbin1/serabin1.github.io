@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabaseClient';
+import ReactMarkdown from 'react-markdown';
 
 const BlogPost = () => {
   const { slug } = useParams();
@@ -42,8 +43,7 @@ const BlogPost = () => {
       <h2>{post.title}</h2>
       <p>Published: {new Date(post.created_at).toLocaleDateString()}</p>
       <div className="blog-content">
-        {/* Here we would render markdown content */}
-        <p>{post.content}</p>
+        <ReactMarkdown>{post.content}</ReactMarkdown>
       </div>
     </section>
   );
