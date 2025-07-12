@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Redirecting...</title>
+  <script type="text/javascript">
+    // Single Page Apps for GitHub Pages
+    // MIT License
+    // https://github.com/rafgraph/spa-github-pages
+    // This script takes the current URL and converts the path and query
+    // string into a hash, e.g. /about?id=1 becomes /#about?id=1
+    // Then the browser is redirected to the new URL with the hash fragment.
+    // The server then serves the /index.html or /404.html file, which will
+    // contain the SPA and load the new URL from the hash fragment, or
+    // redirect to the index.html if the 404.html is served.
+    var path = window.location.pathname;
+    var query = window.location.search;
+    var fragment = window.location.hash;
+    if (path !== '/' && !fragment) {
+      window.location.replace(window.location.protocol + '//' + window.location.hostname + (window.location.port ? ':' + window.location.port : '') + '/' + '#' + path + query);
+    }
+  </script>
+</head>
+<body>
+</body>
+</html>
