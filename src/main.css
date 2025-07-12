@@ -1,5 +1,88 @@
+/* Global Styles */
 body {
-  background-color: #1a1a1a;
-  color: #f0f0f0;
-  font-family: 'Fira Code', monospace;
+  margin: 0;
+  padding: 0;
+  background-color: #1a1a1a; /* Dark background */
+  color: #00ff00; /* Green text for terminal feel */
+  font-family: 'Fira Code', 'Cascadia Code', 'Consolas', 'monospace'; /* Monospace font stack */
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Basic Layout */
+.App {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1;
+  padding: 20px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+section {
+  margin-bottom: 60px;
+  padding: 20px;
+  border: 1px solid #00ff00; /* Green border for sections */
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.5); /* Green glow effect */
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #00ff00;
+  text-shadow: 0 0 5px rgba(0, 255, 0, 0.7);
+}
+
+a {
+  color: #00ffff; /* Cyan links */
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Projects Grid */
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.project-card {
+  background-color: #2a2a2a;
+  padding: 15px;
+  border: 1px solid #00ff00;
+  box-shadow: 0 0 8px rgba(0, 255, 0, 0.4);
+}
+
+.project-card img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin-bottom: 10px;
+}
+
+/* Skills Grid */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 15px;
+  text-align: center;
+}
+
+.skill-item {
+  background-color: #2a2a2a;
+  padding: 10px;
+  border: 1px solid #00ff00;
+  box-shadow: 0 0 6px rgba(0, 255, 0, 0.3);
+}
+
+.skill-item img {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 5px;
 }
