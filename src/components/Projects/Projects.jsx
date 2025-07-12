@@ -1,11 +1,23 @@
 import React from 'react';
+import Slider from 'react-slick';
 import { projects } from '../../data/projects';
 
 const Projects = () => {
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 3000,
+    arrows: true,
+  };
+
   return (
     <section id="projects">
       <h2>Projects</h2>
-      <div className="projects-grid">
+      <Slider {...settings}>
         {projects.map((project, index) => (
           <div key={index} className="project-card">
             <h3>{project.title}</h3>
@@ -14,7 +26,7 @@ const Projects = () => {
             {project.projectUrl && <a href={project.projectUrl} target="_blank" rel="noopener noreferrer">View Project</a>}
           </div>
         ))}
-      </div>
+      </Slider>
     </section>
   );
 };
