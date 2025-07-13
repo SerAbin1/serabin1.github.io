@@ -9,8 +9,8 @@
 <body>
     <div class="section intro-section">
         <div class="intro-content">
-            <h1>Hey, there</h1>
-            <h1>I'm Abin Biju.</h1>
+            <h1>print("Hello, World!")</h1>
+            <h1><span id="typed"></span></h1>
             <p>Backend developer and cybersecurity enthusiast. Do check out some of the stuff I've done and learned down below</p>
         </div>
     </div>
@@ -19,26 +19,62 @@
         <h2>Projects</h2>
         <div class="projects-carousel">
             <!-- Project Card 1 -->
-            <div class="project-card">
-                <h2>Project Title 1</h2>
-                <iframe src="https://borderlyvisa.in" frameborder="0"></iframe>
-                <p>Description of what I did in this project. (Placeholder)</p>
+            <div class="project-container">
+                <div class="project-card">
+                    <div class="project-card-inner">
+                        <div class="project-card-front">
+                            <h3>Business Management Platform</h3>
+                            <p>Engineered a full-stack business management platform, streamlining invoicing and analytics. I led backend development, building a Node.js/Express API for dynamic PDF generation and implementing secure JWT/RBAC authentication with Supabase RLS. Collaborated on the React.js frontend, delivering a comprehensive solution within a 2-month internship.</p>
+                        </div>
+                        <div class="project-card-back">
+                            <div class="tech-icons">
+                                <img src="public/icons/react.svg" alt="React Icon">
+                                <img src="public/icons/node.svg" alt="Node.js Icon">
+                                <img src="public/icons/python.svg" alt="Python Icon">
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <!-- Project Card 2 -->
-            <div class="project-card">
-                <h2>Project Title 2</h2>
-                <iframe src="https://borderlyvisa.in" frameborder="0"></iframe>
-                <p>Description of what I did in this project. (Placeholder)</p>
+            <div class="project-container">
+                <div class="project-card">
+                    <div class="project-card-inner">
+                        <div class="project-card-front">
+                            <h3>Project Title 2</h3>
+                            <p>A brief description of Project 2, highlighting its purpose and key features.</p>
+                        </div>
+                        <div class="project-card-back">
+                            <div class="tech-icons">
+                                <img src="public/icons/js.svg" alt="JavaScript Icon">
+                                <img src="public/icons/html5.svg" alt="HTML5 Icon">
+                                <img src="public/icons/css3.svg" alt="CSS3 Icon">
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <!-- Project Card 3 -->
-            <div class="project-card">
-                <h2>Project Title 3</h2>
-                <iframe src="https://borderlyvisa.in" frameborder="0"></iframe>
-                <p>Description of what I did in this project. (Placeholder)</p>
+            <div class="project-container">
+                <div class="project-card">
+                    <div class="project-card-inner">
+                        <div class="project-card-front">
+                            <h3>Project Title 3</h3>
+                            <p>A brief description of Project 3, highlighting its purpose and key features.</p>
+                        </div>
+                        <div class="project-card-back">
+                            <div class="tech-icons">
+                                <img src="public/icons/aws.svg" alt="AWS Icon">
+                                <img src="public/icons/docker.svg" alt="Docker Icon">
+                                <img src="public/icons/git.svg" alt="Git Icon">
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
+    <script src="./node_modules/typed.js/dist/typed.umd.js"></script>
     <script src="js/script.js"></script>
 </body>
 </html>
