@@ -78,6 +78,18 @@ h1, h2, h3 {
 .projects-section {
     background-color: #000000;
     flex-direction: column;
+    position: relative; /* Added for pseudo-element positioning */
+}
+
+.projects-section::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 5%;
+    height: 2px;
+    background-color: white;
 }
 
 .projects-section h2 {
@@ -110,8 +122,8 @@ h1, h2, h3 {
 
 .project-card {
     width: 100%;
-    max-width: 600px; /* Adjusted max-width for text content */
-    min-height: 300px; /* Minimum height for cards */
+    max-width: 450px; /* Decreased max-width */
+    min-height: 250px; /* Decreased minimum height */
     height: auto; /* Allow height to be determined by content */
     perspective: 1000px;
     background-color: transparent;
@@ -202,4 +214,78 @@ h1, h2, h3 {
     text-align: center;
     font-style: italic;
     font-family: 'Lora', serif;
+}
+
+.section-divider {
+    width: 5%;
+    height: 2px;
+    background-color: white;
+    margin: 0 auto;
+    margin-top: 50px; /* Adjust as needed for spacing */
+    margin-bottom: 50px; /* Adjust as needed for spacing */
+}
+
+.skills-section {
+    background-color: #000000;
+    flex-direction: column;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+}
+
+.skills-section h2 {
+    font-size: 3em;
+    margin-bottom: 40px;
+    color: #00BFFF;
+}
+
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Responsive columns */
+    gap: 1.5rem;
+    padding: 2rem;
+    max-width: 1200px;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.skill-tile {
+    background-color: #1a1a1a; /* Dark background for tiles */
+    border-radius: 15px; /* Rounded corners */
+    aspect-ratio: 1 / 1; /* Make it square */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    box-sizing: border-box;
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+.skill-tile:hover {
+    box-shadow: 0 0 20px rgba(0, 191, 255, 0.6); /* Subtle glow on hover */
+    transform: translateY(-5px); /* Slight lift effect */
+}
+
+.skill-tile img {
+    width: 70%; /* Adjust icon size within tile */
+    height: 70%;
+    object-fit: contain;
+}
+
+/* Responsive adjustments for grid columns */
+@media (min-width: 768px) {
+    .skills-grid {
+        grid-template-columns: repeat(5, 1fr); /* 5 columns on desktop */
+    }
+}
+
+@media (min-width: 1024px) {
+    .skills-grid {
+        grid-template-columns: repeat(6, 1fr); /* 6 columns on larger desktops */
+    }
 }
