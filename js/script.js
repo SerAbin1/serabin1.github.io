@@ -30,5 +30,17 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     })
   })
-})
+
+  // Dynamic scroll snapping for footer visibility
+  const html = document.documentElement;
+
+  window.addEventListener('scroll', () => {
+    // Check if the user has scrolled to the very bottom
+    if (window.innerHeight + window.scrollY >= html.scrollHeight) {
+      html.classList.add('no-snap');
+    } else {
+      html.classList.remove('no-snap');
+    }
+  });
+});
 
