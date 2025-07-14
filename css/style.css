@@ -12,6 +12,7 @@ body {
 
 body {
   overflow-y: scroll; /* Enable vertical scrolling for sections */
+  overflow-x: hidden; /* Hide horizontal scrollbar */
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
@@ -83,6 +84,7 @@ h3 {
   background-color: #000000;
   flex-direction: column;
   position: relative; /* Added for pseudo-element positioning */
+  box-sizing: border-box;
 }
 
 .projects-section::after {
@@ -345,6 +347,7 @@ footer {
   position: relative;
   bottom: 0;
   width: 100%;
+  box-sizing: border-box;
 }
 
 .social-icons a {
