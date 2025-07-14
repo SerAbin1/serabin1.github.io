@@ -371,6 +371,17 @@ footer {
   transform: scale(1.2);
 }
 
+@media (max-width: 480px) {
+  .social-icons img {
+    width: 24px;
+    height: 24px;
+  }
+
+  .social-icons .fa-brands {
+    font-size: 25px;
+  }
+}
+
 .no-snap {
   scroll-snap-type: none !important;
 }
