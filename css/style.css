@@ -107,7 +107,7 @@ h3 {
 .projects-carousel {
   display: flex;
   overflow-x: auto;
-  scroll-snap-type: x mandatory;
+  scroll-snap-type: x proximity;
   -webkit-overflow-scrolling: touch;
   width: 100%;
   max-width: 100%;
