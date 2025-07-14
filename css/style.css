@@ -73,6 +73,8 @@ h1, h2, h3 {
     font-size: 1.2em;
     max-width: 600px;
     line-height: 1.5;
+    padding: 0 20px;
+    box-sizing: border-box;
 }
 
 .projects-section {
@@ -234,6 +236,8 @@ h1, h2, h3 {
     align-items: center;
     scroll-snap-align: start;
     scroll-snap-stop: always;
+    padding: 0 20px;
+    box-sizing: border-box;
 }
 
 .skills-section h2 {
@@ -244,10 +248,10 @@ h1, h2, h3 {
 
 .skills-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Responsive columns */
-    gap: 1.5rem;
-    padding: 2rem;
-    max-width: 1200px;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); /* Responsive columns */
+    gap: 1rem;
+    padding: 1rem;
+    max-width: 1000px;
     width: 100%;
     justify-content: center;
     align-items: center;
@@ -255,12 +259,12 @@ h1, h2, h3 {
 
 .skill-tile {
     background-color: #1a1a1a; /* Dark background for tiles */
-    border-radius: 15px; /* Rounded corners */
+    border-radius: 10px; /* Rounded corners */
     aspect-ratio: 1 / 1; /* Make it square */
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 1rem;
+    padding: 0.5rem;
     box-sizing: border-box;
     transition: all 0.3s ease-in-out;
     cursor: pointer;
