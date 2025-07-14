@@ -289,3 +289,33 @@ h1, h2, h3 {
         grid-template-columns: repeat(6, 1fr); /* 6 columns on larger desktops */
     }
 }
+
+@media (max-width: 768px) {
+    .project-container {
+        padding: 0 20px;
+    }
+
+    .project-card-front h3 {
+        font-size: 1.5em;
+    }
+
+    .project-card-front p {
+        font-size: 1em;
+        line-height: 1.4;
+    }
+}
+
+@media (max-width: 480px) {
+    .project-card {
+        min-height: auto;
+    }
+
+    .project-card-front h3 {
+        font-size: 1.2em;
+    }
+
+    .project-card-front p {
+        font-size: 0.9em;
+        line-height: 1.3;
+    }
+}
