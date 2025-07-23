@@ -31,6 +31,28 @@ document.addEventListener("DOMContentLoaded", () => {
     })
   })
 
+  // Auto-scroll for projects carousel
+  const projectsCarousel = document.querySelector(".projects-carousel");
+  let projectScrollInterval;
+
+  const startProjectScroll = () => {
+    projectScrollInterval = setInterval(() => {
+      if (projectsCarousel.scrollLeft + projectsCarousel.clientWidth >= projectsCarousel.scrollWidth) {
+        projectsCarousel.scrollLeft = 0; // Loop back to start
+      } else {
+        projectsCarousel.scrollLeft += projectsCarousel.clientWidth; // Scroll one card width
+      }
+    }, 7000); // 7 seconds
+  };
+
+  const stopProjectScroll = () => {
+    clearInterval(projectScrollInterval);
+  };
+
+  projectsCarousel.addEventListener('mouseenter', stopProjectScroll);
+  projectsCarousel.addEventListener('mouseleave', startProjectScroll);
+  startProjectScroll();
+
   // Dynamic scroll snapping for footer visibility
   const html = document.documentElement;
 
@@ -43,41 +65,84 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Blog functionality
-  const blogPostsContainer = document.getElementById("blog-posts");
-  const blogContentModal = document.getElementById("blog-content-modal");
-  const blogContentContainer = document.getElementById("blog-content");
-  const closeModalButton = document.querySelector(".close-button");
-  const converter = new showdown.Converter();
+  // Blog carousel functionality
+  const blogCarousel = document.getElementById("blog-carousel");
 
   fetch("blogs/metadata.json")
     .then(response => response.json())
     .then(posts => {
-      posts.forEach(post => {
-        const postElement = document.createElement("div");
-        postElement.classList.add("blog-post-item");
-        postElement.textContent = post.title;
-        postElement.addEventListener("click", () => {
-          fetch(`blogs/${post.file}`)
-            .then(response => response.text())
-            .then(markdown => {
-              const html = converter.makeHtml(markdown);
-              blogContentContainer.innerHTML = html;
-              blogContentModal.style.display = "block";
-            });
+      // Sort posts by date in descending order
+      posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      // Take the top 3 recent posts
+      const recentPosts = posts.slice(0, 3);
+
+      recentPosts.forEach(post => {
+        const postContainer = document.createElement("div");
+        postContainer.classList.add("project-container"); // Reusing project-container style
+
+        const postCard = document.createElement("div");
+        postCard.classList.add("project-card"); // Reusing project-card style
+        postCard.style.cursor = "pointer"; // Make it clear it's clickable
+
+        postCard.addEventListener("click", () => {
+          window.location.href = `/posts/${post.slug}/`;
         });
-        blogPostsContainer.appendChild(postElement);
+
+        const postCardInner = document.createElement("div");
+        postCardInner.classList.add("project-card-inner");
+
+        const postCardFront = document.createElement("div");
+        postCardFront.classList.add("project-card-front");
+
+        const titleElement = document.createElement("h3");
+        titleElement.textContent = post.title;
+
+        const dateElement = document.createElement("p");
+        dateElement.classList.add("post-date");
+        dateElement.textContent = post.date;
+
+        const snippetElement = document.createElement("p");
+        snippetElement.textContent = post.snippet;
+
+        postCardFront.appendChild(titleElement);
+        postCardFront.appendChild(dateElement);
+        postCardFront.appendChild(snippetElement);
+
+        postCardInner.appendChild(postCardFront);
+        postCard.appendChild(postCardInner);
+        postContainer.appendChild(postCard);
+        blogCarousel.appendChild(postContainer);
       });
+
+      // Add a single "Read All Blogs" button below the carousel
+      const readAllBlogsButton = document.createElement("a");
+      readAllBlogsButton.href = "blogs.html";
+      readAllBlogsButton.classList.add("button");
+      readAllBlogsButton.textContent = "Read All Blogs";
+      readAllBlogsButton.style.marginTop = "20px"; // Add some spacing
+      blogCarousel.parentNode.appendChild(readAllBlogsButton);
+
+      // Auto-scroll for blog carousel
+      let blogScrollInterval;
+
+      const startBlogScroll = () => {
+        blogScrollInterval = setInterval(() => {
+          if (blogCarousel.scrollLeft + blogCarousel.clientWidth >= blogCarousel.scrollWidth) {
+            blogCarousel.scrollLeft = 0; // Loop back to start
+          } else {
+            blogCarousel.scrollLeft += blogCarousel.clientWidth; // Scroll one card width
+          }
+        }, 5000); // 5 seconds
+      };
+
+      const stopBlogScroll = () => {
+        clearInterval(blogScrollInterval);
+      };
+
+      blogCarousel.addEventListener('mouseenter', stopBlogScroll);
+      blogCarousel.addEventListener('mouseleave', startBlogScroll);
+      startBlogScroll();
     });
-
-  closeModalButton.addEventListener("click", () => {
-    blogContentModal.style.display = "none";
-  });
-
-  window.addEventListener("click", (event) => {
-    if (event.target == blogContentModal) {
-      blogContentModal.style.display = "none";
-    }
-  });
 });
 
