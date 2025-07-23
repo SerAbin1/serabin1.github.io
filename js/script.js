@@ -42,5 +42,42 @@ document.addEventListener("DOMContentLoaded", () => {
       html.classList.remove('no-snap');
     }
   });
+
+  // Blog functionality
+  const blogPostsContainer = document.getElementById("blog-posts");
+  const blogContentModal = document.getElementById("blog-content-modal");
+  const blogContentContainer = document.getElementById("blog-content");
+  const closeModalButton = document.querySelector(".close-button");
+  const converter = new showdown.Converter();
+
+  fetch("blogs/metadata.json")
+    .then(response => response.json())
+    .then(posts => {
+      posts.forEach(post => {
+        const postElement = document.createElement("div");
+        postElement.classList.add("blog-post-item");
+        postElement.textContent = post.title;
+        postElement.addEventListener("click", () => {
+          fetch(`blogs/${post.file}`)
+            .then(response => response.text())
+            .then(markdown => {
+              const html = converter.makeHtml(markdown);
+              blogContentContainer.innerHTML = html;
+              blogContentModal.style.display = "block";
+            });
+        });
+        blogPostsContainer.appendChild(postElement);
+      });
+    });
+
+  closeModalButton.addEventListener("click", () => {
+    blogContentModal.style.display = "none";
+  });
+
+  window.addEventListener("click", (event) => {
+    if (event.target == blogContentModal) {
+      blogContentModal.style.display = "none";
+    }
+  });
 });
 

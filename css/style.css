@@ -389,3 +389,83 @@ footer {
 .no-snap {
   scroll-snap-type: none !important;
 }
+
+/* Blog Section */
+.blog-section {
+    background-color: #000000;
+    flex-direction: column;
+    position: relative;
+    box-sizing: border-box;
+}
+
+.blog-section h2 {
+    font-size: 3em;
+    margin-bottom: 40px;
+    color: #00bfff;
+}
+
+#blog-posts {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
+}
+
+.blog-post-item {
+    background-color: #1a1a1a;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    width: 80%;
+    text-align: center;
+}
+
+.blog-post-item:hover {
+    box-shadow: 0 0 20px rgba(0, 191, 255, 0.6);
+    transform: translateY(-5px);
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.8);
+}
+
+.modal-content {
+    background-color: #1a1a1a;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 800px;
+    border-radius: 10px;
+    position: relative;
+}
+
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#blog-content {
+    color: #f0f0f0;
+}

@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:posts": "node build-posts.js"
   },
   "repository": {
     "type": "git",
@@ -20,5 +21,8 @@
   "homepage": "https://github.com/SerAbin1/serabin1.github.io#readme",
   "dependencies": {
     "typed.js": "^2.1.0"
+  },
+  "devDependencies": {
+    "showdown": "^2.1.0"
   }
 }
