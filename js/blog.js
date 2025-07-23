@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const titleElement = document.createElement("h3");
                 const linkElement = document.createElement("a");
-                linkElement.href = `posts/${post.slug}.html`;
+                linkElement.href = `/posts/${post.slug}/`;
                 linkElement.textContent = post.title;
                 titleElement.appendChild(linkElement);
 

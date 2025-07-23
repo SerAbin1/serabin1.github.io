@@ -21,9 +21,14 @@ metadata.forEach(post => {
     const output = template
         .replace(/{{POST_TITLE}}/g, post.title)
         .replace(/{{POST_DATE}}/g, post.date)
-        .replace(/{{POST_BODY}}/g, html);
+        .replace(/{{POST_BODY}}/g, html)
+        .replace(/{{META_DESCRIPTION}}/g, post.snippet);
 
-    fs.writeFileSync(path.join(postsDir, `${post.slug}.html`), output);
+    const postPath = path.join(postsDir, post.slug);
+    if (!fs.existsSync(postPath)) {
+        fs.mkdirSync(postPath);
+    }
+    fs.writeFileSync(path.join(postPath, 'index.html'), output);
 });
 
 console.log('Blog posts built successfully!');
