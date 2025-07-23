@@ -1,9 +1,10 @@
 @import url("https://fonts.googleapis.com/css2?family=Lora:ital@1&family=Montserrat:wght@700&family=Source+Code+Pro&family=VT323&display=swap");
+@import url("https://fonts.cdnfonts.com/css/wotfard");
 
 html,
 body {
   margin: 0;
-  font-family: "Lora", serif;
+  font-family: "Wotfard", "Lora", serif;
   background-color: #000000; /* Pitch black background */
   color: #f0f0f0; /* Light text */
   scroll-snap-type: y mandatory;
