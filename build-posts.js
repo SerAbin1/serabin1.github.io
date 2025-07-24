@@ -22,7 +22,8 @@ metadata.forEach(post => {
         .replace(/{{POST_TITLE}}/g, post.title)
         .replace(/{{POST_DATE}}/g, post.date)
         .replace(/{{POST_BODY}}/g, html)
-        .replace(/{{META_DESCRIPTION}}/g, post.snippet);
+        .replace(/{{META_DESCRIPTION}}/g, post.snippet)
+        .replace(/{{POST_SLUG}}/g, post.slug);
 
     const postPath = path.join(postsDir, post.slug);
     if (!fs.existsSync(postPath)) {
