@@ -2,7 +2,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     const blogListContainer = document.getElementById("blog-list");
 
-    fetch("blogs/metadata.json")
+    fetch("../blog_source/metadata.json")
         .then(response => response.json())
         .then(posts => {
             posts.forEach(post => {

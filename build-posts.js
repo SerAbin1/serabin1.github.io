@@ -5,7 +5,7 @@ const showdown = require('showdown');
 
 const converter = new showdown.Converter();
 const postsDir = path.join(__dirname, 'posts');
-const blogsDir = path.join(__dirname, 'blogs');
+const blogsDir = path.join(__dirname, 'blog_source');
 const metadataPath = path.join(blogsDir, 'metadata.json');
 
 if (!fs.existsSync(postsDir)) {

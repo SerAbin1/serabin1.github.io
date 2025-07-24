@@ -68,7 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Blog carousel functionality
   const blogCarousel = document.getElementById("blog-carousel");
 
-  fetch("blogs/metadata.json")
+  fetch("blog_source/metadata.json")
     .then(response => response.json())
     .then(posts => {
       // Sort posts by date in descending order
@@ -117,7 +117,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Add a single "Read All Blogs" button below the carousel
       const readAllBlogsButton = document.createElement("a");
-      readAllBlogsButton.href = "blogs.html";
+      readAllBlogsButton.href = "/blogs/";
       readAllBlogsButton.classList.add("button");
       readAllBlogsButton.textContent = "Read All Blogs";
       readAllBlogsButton.style.marginTop = "20px"; // Add some spacing
