@@ -40,6 +40,20 @@
     box-sizing: border-box;
 }
 
+@media (max-width: 768px) {
+    .blog-listing-section,
+    .post-section {
+        padding: 20px; /* Reduce padding for tablets and smaller */
+    }
+}
+
+@media (max-width: 480px) {
+    .blog-listing-section,
+    .post-section {
+        padding: 10px; /* Further reduce padding for mobile phones */
+    }
+}
+
 .post-content {
     width: 100%;
     max-width: 800px;

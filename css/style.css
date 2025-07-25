@@ -1,10 +1,10 @@
-@import url("https://fonts.googleapis.com/css2?family=Lora:ital@1&family=Montserrat:wght@700&family=Source+Code+Pro&family=VT323&display=swap");
 @import url("https://fonts.cdnfonts.com/css/wotfard");
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css");
 
 html,
 body {
   margin: 0;
-  font-family: "Wotfard", "Lora", serif;
+  font-family: "Wotfard", serif;
   background-color: #000000; /* Pitch black background */
   color: #f0f0f0; /* Light text */
   scroll-snap-type: y mandatory;
@@ -20,6 +20,10 @@ body {
 
 body::-webkit-scrollbar {
   display: none; /* Chrome, Safari, Opera*/
+}
+
+.robot-text {
+  font-family: "Source Code Pro", monospace;
 }
 
 .projects-carousel::-webkit-scrollbar {
@@ -392,10 +396,10 @@ footer {
 
 /* Blog Section */
 .blog-section {
-    background-color: #000000;
-    flex-direction: column;
-    position: relative;
-    box-sizing: border-box;
+  background-color: #000000;
+  flex-direction: column;
+  position: relative;
+  box-sizing: border-box;
 }
 
 .blog-section h2 {
@@ -405,14 +409,14 @@ footer {
 }
 
 .blog-main-title {
-    text-align: center;
+  text-align: center;
 }
 
 .blog-main-title a {
-    text-decoration: none;
-    color: #00bfff;
+  text-decoration: none;
+  color: #00bfff;
 }
 
 .blog-main-title a:hover {
-    color: #39ff14;
+  color: #39ff14;
 }
