@@ -1,23 +1,9 @@
 [
   {
-    "title": "My First Blog Post",
-    "file": "post1.md",
-    "date": "2025-07-23",
-    "snippet": "This is the content of my first blog post. It's written in Markdown.",
-    "slug": "my-first-blog-post"
-  },
-  {
-    "title": "The Art of Backend Development",
-    "file": "post2.md",
-    "date": "2025-07-24",
-    "snippet": "Backend development is the engine of any modern web application. It's the unseen work that makes everything possible...",
-    "slug": "art-of-backend-development"
-  },
-  {
-    "title": "Mastering Markdown for Technical Documentation",
-    "file": "post3.md",
-    "date": "2025-07-25",
-    "snippet": "Markdown is an essential tool for developers, writers, and anyone who needs to create clean, readable, and well-structured documents.",
-    "slug": "mastering-markdown-for-technical-documentation"
+    "title": "Sockets or How Processes Communicate",
+    "file": "socket.md",
+    "date": "2025-08-05",
+    "snippet": "An introduction to socket programming.",
+    "slug": "ipc-sockets-process-communication"
   }
 ]
