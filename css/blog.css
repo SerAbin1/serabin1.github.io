@@ -94,14 +94,46 @@
   }
 }
 
-.post-body pre {
+.code-block-wrapper {
+    position: relative;
+    background-color: #1e1e1e;
+    border-radius: 5px;
+    padding: 1em;
+}
+
+.post-body .code-block-wrapper pre {
   overflow-x: auto; /* Allow horizontal scrolling for code blocks */
-  padding: 1em;
-  background-color: #282c34; /* Dark background for code blocks */
-  border-radius: 5px;
   white-space: pre-wrap; /* Allow long lines to wrap */
   word-wrap: break-word; /* Break long words */
-  position: relative;
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
+}
+
+/* Remove the border from the line numbers */
+.hljs-ln-numbers {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+    text-align: left;
+    color: #ccc;
+    vertical-align: top;
+    padding-right: 20px !important;
+}
+
+.hljs-ln td {
+    border: none !important;
+    padding: 0 !important;
+}
+
+/* for block of code */
+.hljs-ln-code {
+    padding-left: 10px !important;
 }
 
 .copy-button {

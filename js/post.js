@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const codeElement = codeBlock.querySelector("code");
         if (codeElement) {
             const wrapper = document.createElement("div");
-            wrapper.style.position = "relative";
+            wrapper.className = "code-block-wrapper";
 
             const copyButton = document.createElement("button");
             copyButton.className = "copy-button";
