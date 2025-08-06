@@ -96,9 +96,6 @@
 
 .code-block-wrapper {
     position: relative;
-    background-color: #1e1e1e;
-    border-radius: 5px;
-    padding: 1em;
 }
 
 .post-body .code-block-wrapper pre {
@@ -106,9 +103,9 @@
   white-space: pre-wrap; /* Allow long lines to wrap */
   word-wrap: break-word; /* Break long words */
   margin: 0;
-  padding: 0;
-  background: none;
-  border: none;
+  padding: 0; /* Remove all padding from the pre */
+  background-color: #1e1e1e;
+  border-radius: 5px;
 }
 
 /* Remove the border from the line numbers */
@@ -123,7 +120,7 @@
     text-align: left;
     color: #ccc;
     vertical-align: top;
-    padding-right: 20px !important;
+    padding: 1em 30px 1em 1em !important; /* Apply padding to line numbers */
 }
 
 .hljs-ln td {
@@ -133,7 +130,7 @@
 
 /* for block of code */
 .hljs-ln-code {
-    padding-left: 10px !important;
+    padding: 1em 1em 1em 10px !important; /* Apply padding to code */
 }
 
 .copy-button {
