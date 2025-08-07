@@ -23,28 +23,28 @@ Now let's see some code. All the code examples in this blog will be in the C pro
 int socket(int domain, int type, int protocol);
 ```
 
-The _domain_ argument specifies a the protocol family to be used in the communication. They are defined in `<sys/socket.h>`
+The _domain_ argument specifies the protocol family to be used in the communication. They are defined in `<sys/socket.h>`
 
-- **AF_UNIX** or **AF_LOCAL** for inter-process communication on the same machine
+- **AF\_UNIX** or **AF\_LOCAL** for inter-process communication on the same machine
 - **AF_INET** for IPv4 Internet protocols
 - **AF_INET6** for IPv6 Internet protocols
 
 The _type_ argument specifies the, well, type of communication, or semantics if you will.
 
-- **SOCK_STREAM** for reliable, connection-oriented communication or TCP
-- **SOCK_DGRAM** for unreliable, connectionless communication or UDP
+- **SOCK_STREAM** for reliable, connection-oriented communication (typically over TCP)
+- **SOCK_DGRAM** for unreliable, connectionless communication (typically over UDP)
 
 The _protocol_ argument specifies the specific protocol to be used. Some families may have only one protocol, or the combination of the _domain_ and _type_ may be enough and the _protocol_ will be 0.
 
-The `socket()` returns a file descriptor, an identifier by which we can refer to this socket in the future. It is given as an argument to subsequent operations on this socket.
+The `socket()` returns a file descriptor, an identifier by which we can refer to this socket in the future. You pass it as an argument to subsequent operations on this socket.
 
 ### Unix Socket
 
 If you're not an experienced C programmer, some things in the below code will be confusing so here's an explanation for most of it:
 
-- **sockaddr_un**: A structure used to hold the address information for a Unix domain socket. From `<sys/un.h>`
-- **perror**: A function that prints a descriptive error message to `stderr` based on the last system error that occurred. From `<stdio.h>`
-- **memset**: A standard C library function that fills a block of memory with a particular value (in this case, zeros). From `<string.h>`
+- **`sockaddr_un`**: A structure used to hold the address information for a Unix domain socket. From `<sys/un.h>`
+- **`perror`**: A function that prints a descriptive error message to `stderr` based on the last system error that occurred. From `<stdio.h>`
+- **`memset`**: A standard C library function that fills a block of memory with a particular value (in this case, zeros). From `<string.h>`
 - **`addr.sun_family`**: A field in the `sockaddr_un` struct that identifies the address family, which we set to `AF_UNIX` to create a Unix domain socket.
 - **`addr.sun_path`**: The field in the `sockaddr_un` struct that contains the actual filesystem path for the socket file.
 

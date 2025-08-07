@@ -120,17 +120,17 @@
     text-align: left;
     color: #ccc;
     vertical-align: top;
-    padding: 1em 30px 1em 1em !important; /* Apply padding to line numbers */
+    padding: 0 10px 0 0.5em !important; /* Apply padding to line numbers */
 }
 
 .hljs-ln td {
     border: none !important;
-    padding: 0 !important;
+    line-height: 1.6; /* Apply line-height to the table cell */
 }
 
 /* for block of code */
 .hljs-ln-code {
-    padding: 1em 1em 1em 10px !important; /* Apply padding to code */
+    padding: 0 1em 0 10px !important; /* Apply padding to code */
 }
 
 .copy-button {
