@@ -57,6 +57,15 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        "terminal-green": {
+          DEFAULT: "hsl(var(--terminal-green))",
+          dim: "hsl(var(--terminal-green-dim))",
+          bright: "hsl(var(--terminal-green-bright))",
+        },
+        "code-keyword": "hsl(var(--code-keyword))",
+        "code-string": "hsl(var(--code-string))",
+        "code-comment": "hsl(var(--code-comment))",
+        "code-number": "hsl(var(--code-number))",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -84,6 +93,20 @@ export default {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "blink": "blink 1s infinite",
+        "fade-in": "fade-in 0.6s ease-out",
+        "slide-up": "slide-up 0.6s ease-out",
+      },
+      backgroundImage: {
+        "gradient-terminal": "var(--gradient-terminal)",
+        "gradient-accent": "var(--gradient-accent)",
+      },
+      boxShadow: {
+        "glow": "var(--shadow-glow)",
+        "card": "var(--shadow-card)",
+      },
+      fontFamily: {
+        mono: ["'Fira Code'", "'JetBrains Mono'", "'Consolas'", "monospace"],
       },
     },
   },
