@@ -613,12 +613,11 @@ Database security is not a one-time setup but an ongoing process. Regular review
             <p className="text-muted-foreground mb-6">
               Check out my complete blog for more technical articles and tutorials
             </p>
-            <Button
-              onClick={() => window.open('https://serabin1.github.io/blogs/', '_blank')}
-              className="font-mono"
-            >
-              visit_blog()
-            </Button>
+            <Link to="/blogs">
+              <Button className="font-mono">
+                visit_blog()
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

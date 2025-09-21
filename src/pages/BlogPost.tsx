@@ -522,10 +522,10 @@ Database security is an ongoing process requiring vigilance, regular updates, an
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-black text-white">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <Link to="/">
-          <Button variant="ghost" className="mb-8">
+          <Button variant="ghost" className="mb-8 text-white hover:text-white hover:bg-white/10">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Home
           </Button>
@@ -533,29 +533,29 @@ Database security is an ongoing process requiring vigilance, regular updates, an
         
         <article>
           <header className="mb-8">
-            <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
-            <p className="text-xl text-muted-foreground mb-4">{post.description}</p>
+            <h1 className="text-4xl font-bold mb-4 text-white">{post.title}</h1>
+            <p className="text-xl text-gray-300 mb-4">{post.description}</p>
             
-            <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+            <div className="flex flex-wrap items-center gap-4 text-sm text-gray-400">
               <span>{post.date}</span>
               <span>•</span>
               <span>{post.readTime}</span>
               <span>•</span>
-              <span className="bg-primary/10 text-primary px-2 py-1 rounded">
+              <span className="bg-white/10 text-white px-2 py-1 rounded">
                 {post.category}
               </span>
             </div>
             
             <div className="flex flex-wrap gap-2 mt-4">
               {post.tags.map((tag) => (
-                <span key={tag} className="bg-muted px-2 py-1 rounded text-sm">
+                <span key={tag} className="bg-white/10 text-white px-2 py-1 rounded text-sm">
                   #{tag}
                 </span>
               ))}
             </div>
           </header>
           
-          <div className="prose prose-lg max-w-none">
+          <div className="prose prose-lg max-w-none prose-invert">
             <MarkdownRenderer content={post.content} />
           </div>
         </article>
