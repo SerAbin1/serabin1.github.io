@@ -1,12 +1,11 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useParams, Link } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Calendar, Clock, ArrowRight } from "lucide-react";
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import BlogPost from "./BlogPost";
+import MarkdownRenderer from "@/components/MarkdownRenderer";
 
-const Blog = () => {
-  const [selectedPost, setSelectedPost] = useState<number | null>(null);
+const BlogPost = () => {
+  const { slug } = useParams();
+
   const blogPosts = [
     {
       slug: "sockets-how-processes-communicate",
@@ -174,7 +173,7 @@ const { body, validationResult } = require('express-validator');
 
 const validateUser = [
   body('email').isEmail().normalizeEmail(),
-  body('password').isLength({ min: 8 }).matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/),
+  body('password').isLength({ min: 8 }).matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)/),
   body('name').trim().isLength({ min: 2, max: 50 }).escape(),
   
   (req, res, next) => {
@@ -499,131 +498,70 @@ mysql test_db < test_backup.sql
 - Encryption key management
 - Change management procedures
 
-## Security Checklist
-
-- ✅ Strong authentication mechanisms
-- ✅ Encrypted data at rest and in transit  
-- ✅ Parameterized queries everywhere
-- ✅ Regular security updates
-- ✅ Comprehensive monitoring
-- ✅ Secure backup procedures
-- ✅ Access control implementation
-- ✅ Regular security audits
-
-Database security is not a one-time setup but an ongoing process. Regular reviews, updates, and monitoring are essential for maintaining a strong security posture.`
+Database security is an ongoing process requiring vigilance, regular updates, and continuous monitoring to protect against evolving threats.`
     }
   ];
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short', 
-      day: 'numeric'
-    });
-  };
+  const post = blogPosts.find(p => p.slug === slug);
 
-  if (selectedPost !== null) {
-    const post = blogPosts[selectedPost];
+  if (!post) {
     return (
-      <BlogPost
-        {...post}
-        onBack={() => setSelectedPost(null)}
-      />
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold mb-4">Blog Post Not Found</h1>
+          <p className="text-muted-foreground mb-8">The blog post you're looking for doesn't exist.</p>
+          <Link to="/">
+            <Button>
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Home
+            </Button>
+          </Link>
+        </div>
+      </div>
     );
   }
 
   return (
-    <section id="blogs" className="py-20 bg-background">
-      <div className="container mx-auto px-6">
-        <div className="text-center mb-16">
-          <div className="code-comment text-lg mb-4">
-            <span className="terminal-text">~$</span> find ./blog -name "*.md"
+    <div className="min-h-screen bg-background">
+      <div className="container mx-auto px-4 py-8 max-w-4xl">
+        <Link to="/">
+          <Button variant="ghost" className="mb-8">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Home
+          </Button>
+        </Link>
+        
+        <article>
+          <header className="mb-8">
+            <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
+            <p className="text-xl text-muted-foreground mb-4">{post.description}</p>
+            
+            <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+              <span>{post.date}</span>
+              <span>•</span>
+              <span>{post.readTime}</span>
+              <span>•</span>
+              <span className="bg-primary/10 text-primary px-2 py-1 rounded">
+                {post.category}
+              </span>
+            </div>
+            
+            <div className="flex flex-wrap gap-2 mt-4">
+              {post.tags.map((tag) => (
+                <span key={tag} className="bg-muted px-2 py-1 rounded text-sm">
+                  #{tag}
+                </span>
+              ))}
+            </div>
+          </header>
+          
+          <div className="prose prose-lg max-w-none">
+            <MarkdownRenderer content={post.content} />
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold terminal-glow mb-4">
-            Technical Blog
-          </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Sharing knowledge about backend development, cybersecurity, and system design
-          </p>
-        </div>
-
-        <div className="max-w-4xl mx-auto">
-          <div className="space-y-8">
-            {blogPosts.map((post, index) => (
-              <Card key={index} className="bg-card border-border hover:shadow-card transition-all duration-300 group">
-                <CardHeader>
-                  <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="px-2 py-1 text-xs bg-accent text-accent-foreground rounded font-mono">
-                          {post.category}
-                        </span>
-                      </div>
-                      <CardTitle className="terminal-text text-xl mb-2 group-hover:terminal-glow transition-all">
-                        {post.title}
-                      </CardTitle>
-                      <CardDescription className="text-muted-foreground leading-relaxed">
-                        {post.description}
-                      </CardDescription>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground font-mono">
-                    <div className="flex items-center gap-1">
-                      <Calendar className="w-4 h-4" />
-                      <span>{formatDate(post.date)}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Clock className="w-4 h-4" />
-                      <span>{post.readTime}</span>
-                    </div>
-                  </div>
-                </CardHeader>
-
-                <CardContent className="space-y-4">
-                  <div className="flex flex-wrap gap-2">
-                    {post.tags.map((tag, i) => (
-                      <span
-                        key={i}
-                        className="px-2 py-1 text-xs bg-secondary text-secondary-foreground rounded font-mono"
-                      >
-                        #{tag}
-                      </span>
-                    ))}
-                  </div>
-
-                  <div className="pt-2">
-                    <Link to={`/blogs/${post.slug}`}>
-                      <Button className="flex items-center gap-2">
-                        <span>Read Article</span>
-                        <ArrowRight className="w-4 h-4" />
-                      </Button>
-                    </Link>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          {/* Blog CTA */}
-          <div className="text-center mt-12 p-8 bg-card/30 backdrop-blur-sm rounded-lg border border-border">
-            <h3 className="text-xl font-bold terminal-text mb-4">
-              Want to read more?
-            </h3>
-            <p className="text-muted-foreground mb-6">
-              Check out my complete blog for more technical articles and tutorials
-            </p>
-            <Button
-              onClick={() => window.open('https://serabin1.github.io/blogs/', '_blank')}
-              className="font-mono"
-            >
-              visit_blog()
-            </Button>
-          </div>
-        </div>
+        </article>
       </div>
-    </section>
+    </div>
   );
 };
 
-export default Blog;
+export default BlogPost;
