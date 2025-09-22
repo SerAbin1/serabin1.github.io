@@ -1,5 +1,5 @@
 import { useParams, Link } from "react-router-dom";
-import { blogPosts } from "@/components/AllBlogs";
+import { blogPosts } from "@/data/blogPosts";
 import BlogPost from "@/components/BlogPost";
 import NotFound from "./NotFound";
 

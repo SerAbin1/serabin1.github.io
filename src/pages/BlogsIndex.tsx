@@ -3,36 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Calendar, Clock, ArrowRight, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 
+import { blogPosts } from "@/data/blogPosts";
+
 const BlogsIndex = () => {
-  const blogPosts = [
-    {
-      slug: "sockets-how-processes-communicate",
-      title: "Sockets or How Processes Communicate",
-      description: "An introduction to socket programming, covering TCP/UDP protocols, client-server architecture, and inter-process communication fundamentals.",
-      date: "2025-08-05",
-      readTime: "8 min read",
-      category: "Network Programming",
-      tags: ["Sockets", "TCP", "UDP", "System Programming"],
-    },
-    {
-      slug: "building-secure-rest-apis",
-      title: "Building Secure REST APIs",
-      description: "Best practices for implementing authentication, authorization, and security measures in modern web APIs.",
-      date: "2025-07-20",
-      readTime: "12 min read", 
-      category: "Backend Development",
-      tags: ["REST API", "Security", "JWT", "RBAC"],
-    },
-    {
-      slug: "database-security-fundamentals",
-      title: "Database Security Fundamentals",
-      description: "Essential security practices for database management, including access control, encryption, and vulnerability prevention.",
-      date: "2025-07-10",
-      readTime: "15 min read",
-      category: "Cybersecurity",
-      tags: ["Database", "Security", "SQL Injection", "Encryption"],
-    }
-  ];
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
