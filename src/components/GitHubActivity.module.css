@@ -1,0 +1,29 @@
+/* src/components/GitHubActivity.module.css */
+
+/* Hide native scrollbars but preserve scrolling */
+
+/* Container itself */
+.scrollbarContainer {
+  -ms-overflow-style: none; /* IE, Edge */
+  scrollbar-width: none; /* Firefox */
+  overscroll-behavior-x: contain;
+}
+
+/* WebKit browsers (Chrome, Safari) — horizontal and vertical */
+.scrollbarContainer::-webkit-scrollbar {
+  height: 0; /* hide horizontal scrollbar */
+  width: 0; /* hide vertical scrollbar (if any) */
+}
+
+/* Make absolutely sure any nested scrollbar thumbs are transparent */
+.scrollbarContainer::-webkit-scrollbar-thumb,
+.scrollbarContainer *::-webkit-scrollbar-thumb {
+  background-color: transparent !important;
+  border: 0 !important;
+}
+
+/* Fallback: if some UA paints a track, make it transparent too */
+.scrollbarContainer::-webkit-scrollbar-track,
+.scrollbarContainer *::-webkit-scrollbar-track {
+  background: transparent !important;
+}

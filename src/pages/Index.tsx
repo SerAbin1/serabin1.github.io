@@ -5,6 +5,7 @@ import Skills from "@/components/Skills";
 
 import Blog from "@/components/Blog";
 import Footer from "@/components/Footer";
+import GitHubActivity from "@/components/GitHubActivity";
 
 const Index = () => {
   return (
@@ -14,7 +15,7 @@ const Index = () => {
         <Experience />
         <Projects />
         <Skills />
-        
+        <GitHubActivity /> 
         <Blog />
       </main>
       <Footer />
