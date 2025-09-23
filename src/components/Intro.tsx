@@ -29,7 +29,7 @@ const Intro = () => {
       <div className="text-center max-w-4xl mx-auto px-6">
         {/* Animated code line */}
         <div className="mb-12">
-          <pre className="text-2xl md:text-4xl font-mono terminal-glow">
+          <pre className="text-xl md:text-3xl font-mono terminal-glow">
             <span className="code-keyword">print</span>
             <span className="text-foreground">(</span>
             <span className="code-string">

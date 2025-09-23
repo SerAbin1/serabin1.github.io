@@ -1,11 +1,11 @@
-import Intro from "@/components/Intro";
-import Experience from "@/components/Experience";
-import Projects from "@/components/Projects";
-import Skills from "@/components/Skills";
+import Intro from "@/components/Intro"
+import Experience from "@/components/Experience"
+import Projects from "@/components/Projects"
 
-import Blog from "@/components/Blog";
-import Footer from "@/components/Footer";
-import GitHubActivity from "@/components/GitHubActivity";
+import Blog from "@/components/Blog"
+import Footer from "@/components/Footer"
+import GitHubActivity from "@/components/GitHubActivity"
+import TechStack from "@/components/TechStack"
 
 const Index = () => {
   return (
@@ -14,13 +14,13 @@ const Index = () => {
         <Intro />
         <Experience />
         <Projects />
-        <Skills />
-        <GitHubActivity /> 
+        <TechStack />
+        <GitHubActivity />
         <Blog />
       </main>
       <Footer />
     </div>
-  );
-};
+  )
+}
 
-export default Index;
+export default Index

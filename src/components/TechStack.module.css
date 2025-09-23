@@ -1,0 +1,17 @@
+/* src/components/TechStack.module.css */
+
+.scroller {
+  /* A linear animation that runs forever */
+  animation: scroll 40s linear infinite;
+}
+
+/* The animation keyframes */
+@keyframes scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    /* Moves the container to the left by the width of the original content */
+    transform: translateX(-100%);
+  }
+}
