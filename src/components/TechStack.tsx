@@ -2,6 +2,7 @@
 
 import React from "react"
 import styles from "./TechStack.module.css" // Import our local CSS
+import Certifications from "./Certifications"
 
 // Define a type for our tech stack data for type safety
 type TechItem = {
@@ -124,31 +125,9 @@ const TechStack = () => {
           </div>
         </div>
 
-        {/* The "Show All" button (functionality can be added later) HIDDEN for now (remove hidden class) */}
-        <div className="flex justify-center hidden">
-          <button
-            className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-colors border border-gray-700 bg-gray-900 shadow-sm hover:bg-gray-800 hover:text-white rounded-full h-10 w-10 text-gray-300"
-            title="Show all technologies"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="h-4 w-4"
-            >
-              <rect width="18" height="18" x="3" y="3" rx="2"></rect>
-              <path d="M3 9h18"></path>
-              <path d="M3 15h18"></path>
-              <path d="M9 3v18"></path>
-              <path d="M15 3v18"></path>
-            </svg>
-          </button>
+        {/* Certifications Button */}
+        <div className="flex justify-center">
+          <Certifications />
         </div>
       </div>
     </section>

@@ -101,4 +101,3 @@ Socket programming powers many technologies we use daily:
 Understanding sockets gives you the foundation to build robust, scalable network applications and debug network-related issues effectively.`,
   },
 ]
-
