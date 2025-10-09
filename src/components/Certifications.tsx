@@ -35,7 +35,7 @@ const Certifications = () => {
                 key={index}
                 className="border border-border rounded-lg p-6 hover:shadow-lg transition-shadow bg-card"
               >
-                <h4 className="font-bold text-lg mb-1">{cert.name}</h4>
+                <h4 className="font-bold text-lg mb-1"><a href={cert.link} target="_blank" rel="noopener noreferrer">{cert.name}</a></h4>
                 <p className="text-sm text-muted-foreground mb-4">{cert.issuer}</p>
                 <div className="flex flex-wrap gap-2">
                   {cert.skills.map((skill, skillIndex) => (
