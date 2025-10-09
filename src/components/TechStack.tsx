@@ -1,14 +1,14 @@
 // src/components/TechStack.tsx
 
-import React from "react"
-import styles from "./TechStack.module.css" // Import our local CSS
-import Certifications from "./Certifications"
+import React from "react";
+import styles from "./TechStack.module.css"; // Import our local CSS
+import Certifications from "./Certifications";
 
 // Define a type for our tech stack data for type safety
 type TechItem = {
-  name: string
-  logoUrl: string
-}
+  name: string;
+  logoUrl: string;
+};
 
 // All the technologies are stored in this array. Easy to update!
 const techStackData: TechItem[] = [
@@ -82,14 +82,14 @@ const techStackData: TechItem[] = [
     logoUrl:
       "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tensorflow/tensorflow-original.svg",
   },
-]
+];
 
 const TechStack = () => {
   // To create the infinite scroll effect, we duplicate the array of logos
-  const duplicatedTech = [...techStackData, ...techStackData]
+  const duplicatedTech = [...techStackData, ...techStackData];
 
   return (
-    <section id="tech-stack" className="mb-section-lg">
+    <section id="tech-stack" className="py-20">
       <div className="space-y-content-md">
         <div className="flex flex-col items-center justify-center space-y-4 text-center">
           <div className="space-y-2">
@@ -131,7 +131,7 @@ const TechStack = () => {
         </div>
       </div>
     </section>
-  )
-}
+  );
+};
 
-export default TechStack
+export default TechStack;

@@ -20,7 +20,7 @@ const GitHubActivity = () => {
   )
 
   return (
-    <section id="github" className="mb-section-lg">
+    <section id="github" className="py-15">
       <div className="space-y-8 w-full py-8 md:py-12">
         {/* Title and Paragraph */}
         <div className="flex flex-col items-center justify-center space-y-4 text-center px-4">
@@ -76,3 +76,4 @@ const GitHubActivity = () => {
 }
 
 export default GitHubActivity
+
