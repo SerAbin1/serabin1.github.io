@@ -24,7 +24,7 @@ const Footer = () => {
             </div>
             <div className="ml-4">
               <span className="code-string">"linkedin"</span>:{" "}
-              <span className="code-string">"abin-biju"</span>
+              <span className="code-string">"abin-biju7"</span>
             </div>
             <div>{"}"}</div>
           </div>
@@ -40,7 +40,7 @@ const Footer = () => {
               GitHub
             </a>
             <a
-              href="https://linkedin.com/in/abin-biju"
+              href="https://linkedin.com/in/abin-biju7"
               target="_blank"
               rel="noopener noreferrer"
               className="terminal-text hover:terminal-glow transition-all"
@@ -71,4 +71,3 @@ const Footer = () => {
 };
 
 export default Footer;
-
