@@ -7,25 +7,31 @@ const Footer = () => {
         <div className="text-center space-y-4">
           {/* Terminal-style footer */}
           <div className="font-mono text-sm code-comment">
-            <div><span className="terminal-text">~$</span> echo "Thanks for visiting!"</div>
+            <div>
+              <span className="terminal-text">~$</span> echo "Thanks for
+              visiting!"
+            </div>
             <div className="mt-2">
               <span className="code-keyword">const</span> contact = {"{"}
             </div>
             <div className="ml-4">
-              <span className="code-string">"email"</span>: <span className="code-string">"contact@abin-biju.dev"</span>,
+              <span className="code-string">"email"</span>:{" "}
+              <span className="code-string">"sonuabin7@gmail.com"</span>,
             </div>
             <div className="ml-4">
-              <span className="code-string">"github"</span>: <span className="code-string">"serabin1"</span>,
+              <span className="code-string">"github"</span>:{" "}
+              <span className="code-string">"SerAbin1"</span>,
             </div>
             <div className="ml-4">
-              <span className="code-string">"linkedin"</span>: <span className="code-string">"/in/abin-biju"</span>
+              <span className="code-string">"linkedin"</span>:{" "}
+              <span className="code-string">"abin-biju"</span>
             </div>
             <div>{"}"}</div>
           </div>
 
           {/* Social links */}
           <div className="flex justify-center gap-6 text-sm">
-            <a 
+            <a
               href="https://github.com/serabin1"
               target="_blank"
               rel="noopener noreferrer"
@@ -33,7 +39,7 @@ const Footer = () => {
             >
               GitHub
             </a>
-            <a 
+            <a
               href="https://linkedin.com/in/abin-biju"
               target="_blank"
               rel="noopener noreferrer"
@@ -41,7 +47,7 @@ const Footer = () => {
             >
               LinkedIn
             </a>
-            <a 
+            <a
               href="https://serabin1.github.io/blogs/"
               target="_blank"
               rel="noopener noreferrer"
@@ -54,7 +60,8 @@ const Footer = () => {
           {/* Copyright */}
           <div className="pt-8 border-t border-border text-xs text-muted-foreground font-mono">
             <span className="code-comment">
-              // Copyright © {currentYear} Abin Biju. Built with React & Tailwind CSS
+              // Copyright © {currentYear} Abin Biju. Built with React &
+              Tailwind CSS
             </span>
           </div>
         </div>
@@ -64,3 +71,4 @@ const Footer = () => {
 };
 
 export default Footer;
+

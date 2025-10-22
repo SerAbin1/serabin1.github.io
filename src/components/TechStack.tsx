@@ -96,7 +96,7 @@ const TechStack = () => {
             <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-white">
               Tech Stack.
             </h2>
-            <p className="text-gray-400 md:text-xl/relaxed">
+            <p className="text-muted-foreground md:text-xl/relaxed">
               The stuff I use to build the stuff I build.
             </p>
           </div>

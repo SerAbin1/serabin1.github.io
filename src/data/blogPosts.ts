@@ -1,12 +1,12 @@
 export interface BlogPost {
-  title: string
-  description: string
-  date: string
-  readTime: string
-  category: string
-  slug: string
-  tags: string[]
-  content: string
+  title: string;
+  description: string;
+  date: string;
+  readTime: string;
+  category: string;
+  slug: string;
+  tags: string[];
+  content: string;
 }
 
 export const blogPosts: BlogPost[] = [
@@ -100,4 +100,5 @@ Socket programming powers many technologies we use daily:
 
 Understanding sockets gives you the foundation to build robust, scalable network applications and debug network-related issues effectively.`,
   },
-]
+];
+
