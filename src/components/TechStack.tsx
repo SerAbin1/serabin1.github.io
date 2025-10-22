@@ -12,12 +12,7 @@ type TechItem = {
 
 // All the technologies are stored in this array. Easy to update!
 const techStackData: TechItem[] = [
-  {
-    name: "Python",
-    logoUrl:
-      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg",
-  },
-  {
+  /*{
     name: "Java",
     logoUrl:
       "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg",
@@ -26,22 +21,32 @@ const techStackData: TechItem[] = [
     name: "TypeScript",
     logoUrl:
       "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg",
-  },
+  },*/
   {
     name: "JavaScript",
     logoUrl:
       "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg",
   },
   {
+    name: "Python",
+    logoUrl:
+      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg",
+  },
+  {
+    name: "Cpp",
+    logoUrl:
+      "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/cplusplus/cplusplus-original.svg",
+  },
+  {
     name: "React",
     logoUrl:
       "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg",
   },
-  {
+  /*{
     name: "Next.js",
     logoUrl:
       "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-line.svg",
-  },
+  },*/
   {
     name: "Tailwind CSS",
     logoUrl:
@@ -50,17 +55,27 @@ const techStackData: TechItem[] = [
   {
     name: "Node.js",
     logoUrl:
-      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-plain.svg",
+      "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nodejs/nodejs-plain-wordmark.svg",
   },
-  {
+  /*{
     name: "Flask",
     logoUrl:
       "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flask/flask-original.svg",
+  },*/
+  {
+    name: "MongoDB",
+    logoUrl:
+      "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mongodb/mongodb-original.svg",
   },
   {
     name: "MySQL",
     logoUrl:
-      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg",
+      "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-plain-wordmark.svg",
+  },
+  {
+    name: "PostgeSQL",
+    logoUrl:
+      "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/postgresql/postgresql-plain-wordmark.svg",
   },
   {
     name: "Docker",
@@ -72,7 +87,7 @@ const techStackData: TechItem[] = [
     logoUrl:
       "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg",
   },
-  {
+  /*{
     name: "PyTorch",
     logoUrl:
       "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pytorch/pytorch-original.svg",
@@ -81,7 +96,7 @@ const techStackData: TechItem[] = [
     name: "TensorFlow",
     logoUrl:
       "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tensorflow/tensorflow-original.svg",
-  },
+  },*/
 ];
 
 const TechStack = () => {
