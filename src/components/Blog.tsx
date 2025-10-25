@@ -88,7 +88,7 @@ const Blog = () => {
 
                   <div className="pt-2">
                     <Link to={`/blogs/${post.slug}`}>
-                      <Button className="flex items-center gap-2">
+                      <Button variant="outline" size="sm" className="flex items-center gap-2">
                         <span>Read Article</span>
                         <ArrowRight className="w-4 h-4" />
                       </Button>
@@ -99,17 +99,10 @@ const Blog = () => {
             ))}
           </div>
 
-          {/* Blog CTA */}
-          <div className="text-center mt-12 p-8 bg-card/30 backdrop-blur-sm rounded-lg border border-border">
-            <h3 className="text-xl font-bold terminal-text mb-4">
-              Want to read more?
-            </h3>
-            <p className="text-muted-foreground mb-6">
-              Check out my complete blog for more technical articles and tutorials
-            </p>
+          <div className="text-center mt-12">
             <Link to="/blogs">
               <Button className="font-mono">
-                visit_blog()
+                visit_blogs()
               </Button>
             </Link>
           </div>

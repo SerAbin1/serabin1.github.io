@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { certifications } from "@/data/certifications";
 import { Button } from "@/components/ui/button";
-import { Award, ChevronDown, ChevronUp } from "lucide-react";
+import { Award, ChevronDown, ChevronUp, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 const Certifications = () => {
@@ -36,8 +36,8 @@ const Certifications = () => {
                 className="border border-border rounded-lg p-6 hover:shadow-lg transition-shadow bg-card"
               >
                 <h4 className="font-bold text-lg mb-1">
-                  <a href={cert.link} target="_blank" rel="noopener noreferrer">
-                    {cert.name}
+                  <a href={cert.link} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+                    {cert.name} <ExternalLink className="h-4 w-4" />
                   </a>
                 </h4>
                 <p className="text-sm text-muted-foreground mb-4">

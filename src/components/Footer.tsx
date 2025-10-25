@@ -2,7 +2,7 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="py-12 bg-card border-t border-border">
+    <footer className="py-12 bg-background border-t border-border">
       <div className="container mx-auto px-6">
         <div className="text-center space-y-4">
           {/* Terminal-style footer */}

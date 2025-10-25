@@ -31,7 +31,7 @@ const Experience = () => {
   ];
 
   return (
-    <section id="experience" className="py-20 bg-gradient-terminal">
+    <section id="experience" className="py-20 bg-background">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
           <div className="code-comment text-lg mb-4">
@@ -55,7 +55,7 @@ const Experience = () => {
                       <CardTitle className="terminal-text text-xl">
                         {exp.title}
                       </CardTitle>
-                      <CardDescription className="text-lg font-medium text-foreground">
+                      <CardDescription className="text-xs font-medium text-foreground">
                         {exp.company} • {exp.location}
                       </CardDescription>
                     </div>
@@ -80,7 +80,7 @@ const Experience = () => {
                       {exp.technologies.map((tech, i) => (
                         <span
                           key={i}
-                          className="px-3 py-1 text-xs bg-accent text-accent-foreground rounded-full font-mono"
+                          className="px-3 py-1 text-xs bg-secondary text-secondary-foreground rounded-full font-mono"
                         >
                           {tech}
                         </span>
