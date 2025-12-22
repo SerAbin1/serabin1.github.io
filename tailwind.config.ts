@@ -106,6 +106,7 @@ export default {
         "card": "var(--shadow-card)",
       },
       fontFamily: {
+        sans: ["'Inter'", "system-ui", "-apple-system", "BlinkMacSystemFont", "'Segoe UI'", "sans-serif"],
         mono: ["'Fira Code'", "'JetBrains Mono'", "'Consolas'", "monospace"],
       },
     },

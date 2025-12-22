@@ -1,12 +1,5 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Calendar, Clock, ArrowLeft, ExternalLink } from "lucide-react";
+import { Link } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 import MarkdownRenderer from "./MarkdownRenderer";
 
 interface BlogPostProps {
@@ -18,7 +11,6 @@ interface BlogPostProps {
   content: string;
   tags: string[];
   onBack: () => void;
-  externalLink?: string;
 }
 
 const BlogPost = ({
@@ -30,7 +22,6 @@ const BlogPost = ({
   content,
   tags,
   onBack,
-  externalLink,
 }: BlogPostProps) => {
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -41,30 +32,53 @@ const BlogPost = ({
   };
 
   return (
-    <section className="py-20 bg-background min-h-screen">
-      <div className="container mx-auto px-6">
-        <div className="max-w-4xl mx-auto">
-          {/* Back button */}
-          <Button
-            onClick={onBack}
-            variant="outline"
-            className="mb-8 flex items-center gap-2"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Blog
-          </Button>
+    <div className="min-h-screen bg-background">
+      <article className="w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8 max-w-3xl mx-auto">
+        <button
+          onClick={onBack}
+          className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors mb-8 sm:mb-12"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          <span>Blog</span>
+        </button>
 
-          {/* Article content */}
-          <Card className="bg-card border-border">
-            <CardContent className="p-8">
-              <MarkdownRenderer content={content} />
-            </CardContent>
-          </Card>
+        <header className="mb-8 sm:mb-12">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground mb-4">
+            <time className="font-mono tabular-nums">{formatDate(date)}</time>
+            <span className="hidden sm:inline">·</span>
+            <span>{readTime}</span>
+            <span className="hidden sm:inline">·</span>
+            <span className="text-primary/80">{category}</span>
+          </div>
+
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold tracking-tight leading-tight mb-4">
+            {title}
+          </h1>
+
+          <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
+            {description}
+          </p>
+
+          {tags.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-6">
+              {tags.map((tag) => (
+                <span
+                  key={tag}
+                  className="text-xs font-mono px-2 py-1 bg-muted rounded text-muted-foreground"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+        </header>
+
+        <div className="prose-container">
+          <MarkdownRenderer content={content} />
         </div>
-      </div>
-    </section>
+      </article>
+    </div>
   );
 };
 
 export default BlogPost;
-

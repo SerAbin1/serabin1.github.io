@@ -1,112 +1,61 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Calendar, Clock, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { blogPosts } from "@/data/blogPosts";
-import { useState } from "react";
 import { Link } from "react-router-dom";
-import BlogPost from "./BlogPost";
 
 const Blog = () => {
-  const [selectedPost, setSelectedPost] = useState<number | null>(null);
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
-      month: 'short', 
+      month: 'short',
       day: 'numeric'
     });
   };
 
-  if (selectedPost !== null) {
-    const post = blogPosts[selectedPost];
-    return (
-      <BlogPost
-        {...post}
-        onBack={() => setSelectedPost(null)}
-      />
-    );
-  }
+  const recentPosts = blogPosts.slice(0, 3);
 
   return (
-    <section id="blogs" className="py-20 bg-background">
-      <div className="container mx-auto px-6">
-        <div className="text-center mb-16">
-          <div className="code-comment text-lg mb-4">
-            <span className="terminal-text">~$</span> find ./blog -name "*.md"
-          </div>
-          <h2 className="text-3xl md:text-4xl font-bold terminal-glow mb-4">
-            Technical Blog
-          </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Sharing knowledge about backend development, cybersecurity, and system design
+    <section id="blogs" className="py-16 sm:py-20 bg-background">
+      <div className="w-full px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto">
+        <header className="mb-8 sm:mb-12">
+          <p className="text-sm font-mono text-muted-foreground mb-2">
+            <span className="text-primary">$</span> cat ./blog/recent.md
           </p>
-        </div>
+          <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">
+            Recent Posts
+          </h2>
+        </header>
 
-        <div className="max-w-4xl mx-auto">
-          <div className="space-y-8">
-            {blogPosts.map((post, index) => (
-              <Card key={index} className="bg-card border-border hover:shadow-card transition-all duration-300 group">
-                <CardHeader>
-                  <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="px-2 py-1 text-xs bg-accent text-accent-foreground rounded font-mono">
-                          {post.category}
-                        </span>
-                      </div>
-                      <CardTitle className="terminal-text text-xl mb-2 group-hover:terminal-glow transition-all">
-                        {post.title}
-                      </CardTitle>
-                      <CardDescription className="text-muted-foreground leading-relaxed">
-                        {post.description}
-                      </CardDescription>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground font-mono">
-                    <div className="flex items-center gap-1">
-                      <Calendar className="w-4 h-4" />
-                      <span>{formatDate(post.date)}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Clock className="w-4 h-4" />
-                      <span>{post.readTime}</span>
-                    </div>
-                  </div>
-                </CardHeader>
-
-                <CardContent className="space-y-4">
-                  <div className="flex flex-wrap gap-2">
-                    {post.tags.map((tag, i) => (
-                      <span
-                        key={i}
-                        className="px-2 py-1 text-xs bg-secondary text-secondary-foreground rounded font-mono"
-                      >
-                        #{tag}
-                      </span>
-                    ))}
-                  </div>
-
-                  <div className="pt-2">
-                    <Link to={`/blogs/${post.slug}`}>
-                      <Button variant="outline" size="sm" className="flex items-center gap-2">
-                        <span>Read Article</span>
-                        <ArrowRight className="w-4 h-4" />
-                      </Button>
-                    </Link>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          <div className="text-center mt-12">
-            <Link to="/blogs">
-              <Button className="font-mono">
-                visit_blogs()
-              </Button>
+        <div className="space-y-1 mb-8">
+          {recentPosts.map((post) => (
+            <Link
+              key={post.slug}
+              to={`/blogs/${post.slug}`}
+              className="group block py-4 -mx-3 px-3 rounded-lg hover:bg-muted/50 transition-colors"
+            >
+              <article className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-4">
+                <time className="text-sm text-muted-foreground font-mono shrink-0 tabular-nums">
+                  {formatDate(post.date)}
+                </time>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-base font-medium text-foreground group-hover:text-primary transition-colors">
+                    {post.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground mt-0.5 line-clamp-1">
+                    {post.description}
+                  </p>
+                </div>
+              </article>
             </Link>
-          </div>
+          ))}
         </div>
+
+        <Link
+          to="/blogs"
+          className="inline-flex items-center text-sm font-medium text-primary hover:underline underline-offset-2"
+        >
+          View all posts
+          <ArrowRight className="ml-1 h-4 w-4" />
+        </Link>
       </div>
     </section>
   );

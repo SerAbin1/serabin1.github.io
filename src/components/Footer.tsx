@@ -1,69 +1,35 @@
 const Footer = () => {
   const currentYear = new Date().getFullYear();
 
-  return (
-    <footer className="py-12 bg-background border-t border-border">
-      <div className="container mx-auto px-6">
-        <div className="text-center space-y-4">
-          {/* Terminal-style footer */}
-          <div className="font-mono text-sm code-comment">
-            <div>
-              <span className="terminal-text">~$</span> echo "Thanks for
-              visiting!"
-            </div>
-            <div className="mt-2">
-              <span className="code-keyword">const</span> contact = {"{"}
-            </div>
-            <div className="ml-4">
-              <span className="code-string">"email"</span>:{" "}
-              <span className="code-string">"sonuabin7@gmail.com"</span>,
-            </div>
-            <div className="ml-4">
-              <span className="code-string">"github"</span>:{" "}
-              <span className="code-string">"SerAbin1"</span>,
-            </div>
-            <div className="ml-4">
-              <span className="code-string">"linkedin"</span>:{" "}
-              <span className="code-string">"abin-biju7"</span>
-            </div>
-            <div>{"}"}</div>
-          </div>
+  const links = [
+    { label: "GitHub", href: "https://github.com/serabin1" },
+    { label: "LinkedIn", href: "https://linkedin.com/in/abin-biju7" },
+    { label: "Blog", href: "/blogs" },
+  ];
 
-          {/* Social links */}
-          <div className="flex justify-center gap-6 text-sm">
-            <a
-              href="https://github.com/serabin1"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="terminal-text hover:terminal-glow transition-all"
-            >
-              GitHub
-            </a>
-            <a
-              href="https://linkedin.com/in/abin-biju7"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="terminal-text hover:terminal-glow transition-all"
-            >
-              LinkedIn
-            </a>
-            <a
-              href="https://serabin1.github.io/blogs/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="terminal-text hover:terminal-glow transition-all"
-            >
-              Blog
-            </a>
+  return (
+    <footer className="py-8 sm:py-12 bg-background border-t border-border">
+      <div className="w-full px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          {/* Links */}
+          <div className="flex items-center gap-6 text-sm">
+            {links.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                target={link.href.startsWith("http") ? "_blank" : undefined}
+                rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                {link.label}
+              </a>
+            ))}
           </div>
 
           {/* Copyright */}
-          <div className="pt-8 border-t border-border text-xs text-muted-foreground font-mono">
-            <span className="code-comment">
-              // Copyright © {currentYear} Abin Biju. Built with React &
-              Tailwind CSS
-            </span>
-          </div>
+          <p className="text-sm text-muted-foreground">
+            © {currentYear} Abin Biju
+          </p>
         </div>
       </div>
     </footer>

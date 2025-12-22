@@ -10,28 +10,28 @@ interface MarkdownRendererProps {
 
 const MarkdownRenderer = ({ content, className = "" }: MarkdownRendererProps) => {
   return (
-    <div className={`prose prose-invert max-w-none ${className}`}>
+    <div className={`markdown-content ${className}`}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeHighlight]}
         components={{
           h1: ({ children }) => (
-            <h1 className="text-2xl font-bold text-foreground mb-4">
+            <h1 className="text-2xl sm:text-3xl font-semibold text-foreground mt-10 mb-4 first:mt-0">
               {children}
             </h1>
           ),
           h2: ({ children }) => (
-            <h2 className="text-xl font-semibold text-foreground mb-3">
+            <h2 className="text-xl sm:text-2xl font-semibold text-foreground mt-8 mb-3">
               {children}
             </h2>
           ),
           h3: ({ children }) => (
-            <h3 className="text-lg font-medium text-foreground mb-2">
+            <h3 className="text-lg sm:text-xl font-medium text-foreground mt-6 mb-2">
               {children}
             </h3>
           ),
           p: ({ children }) => (
-            <p className="text-foreground mb-4 leading-relaxed">
+            <p className="text-foreground mb-5 leading-[1.75] text-base sm:text-[17px]">
               {children}
             </p>
           ),
@@ -39,7 +39,7 @@ const MarkdownRenderer = ({ content, className = "" }: MarkdownRendererProps) =>
             const isInline = !className;
             if (isInline) {
               return (
-                <code className="bg-secondary px-1 py-0.5 rounded text-sm font-mono text-foreground">
+                <code className="bg-muted px-1.5 py-0.5 rounded text-sm font-mono text-foreground">
                   {children}
                 </code>
               );
@@ -51,12 +51,12 @@ const MarkdownRenderer = ({ content, className = "" }: MarkdownRendererProps) =>
             );
           },
           pre: ({ children }) => (
-            <pre className="bg-card border border rounded-lg p-4 overflow-x-auto mb-4">
+            <pre className="bg-card border border-border rounded-lg p-4 overflow-x-auto mb-6 text-sm">
               {children}
             </pre>
           ),
           blockquote: ({ children }) => (
-            <blockquote className="border-l-4 border pl-4 italic text-muted-foreground my-4">
+            <blockquote className="border-l-2 border-primary/50 pl-4 italic text-muted-foreground my-6">
               {children}
             </blockquote>
           ),
@@ -65,40 +65,46 @@ const MarkdownRenderer = ({ content, className = "" }: MarkdownRendererProps) =>
               href={href}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary hover:text-primary/80 underline"
+              className="text-primary hover:underline underline-offset-2"
             >
               {children}
             </a>
           ),
           ul: ({ children }) => (
-            <ul className="list-disc list-inside mb-4 text-foreground space-y-1">
+            <ul className="list-disc pl-5 mb-5 text-foreground space-y-2 leading-relaxed">
               {children}
             </ul>
           ),
           ol: ({ children }) => (
-            <ol className="list-decimal list-inside mb-4 text-foreground space-y-1">
+            <ol className="list-decimal pl-5 mb-5 text-foreground space-y-2 leading-relaxed">
               {children}
             </ol>
           ),
           li: ({ children }) => (
-            <li className="ml-2">{children}</li>
+            <li className="pl-1">{children}</li>
           ),
           table: ({ children }) => (
-            <div className="overflow-x-auto mb-4">
-              <table className="w-full border-collapse border border">
+            <div className="overflow-x-auto mb-6 -mx-4 sm:mx-0">
+              <table className="w-full border-collapse text-sm min-w-full">
                 {children}
               </table>
             </div>
           ),
           th: ({ children }) => (
-            <th className="border border px-4 py-2 bg-secondary text-left font-semibold text-foreground">
+            <th className="border border-border px-3 py-2 bg-muted text-left font-medium text-foreground">
               {children}
             </th>
           ),
           td: ({ children }) => (
-            <td className="border border px-4 py-2 text-foreground">
+            <td className="border border-border px-3 py-2 text-foreground">
               {children}
             </td>
+          ),
+          hr: () => (
+            <hr className="border-border my-8" />
+          ),
+          strong: ({ children }) => (
+            <strong className="font-semibold">{children}</strong>
           ),
         }}
       >

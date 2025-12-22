@@ -1,84 +1,66 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Calendar, Clock, ArrowRight, ArrowLeft } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-
 import { blogPosts } from "@/data/blogPosts";
 
 const BlogsIndex = () => {
-
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
-      month: 'short', 
+      month: 'short',
       day: 'numeric'
     });
   };
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        <Link to="/">
-          <Button variant="ghost" className="mb-8">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Home
-          </Button>
+      <div className="w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8 max-w-3xl mx-auto">
+        <Link
+          to="/"
+          className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors mb-8 sm:mb-12"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          <span>Back</span>
         </Link>
-        
-        <div className="text-center mb-16">
-          <h1 className="text-4xl font-bold mb-4">Blog Posts</h1>
-          <p className="text-xl text-muted-foreground">
-            Technical articles and tutorials on software development
+
+        <header className="mb-10 sm:mb-16">
+          <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight mb-3">
+            Blog
+          </h1>
+          <p className="text-muted-foreground text-base sm:text-lg leading-relaxed">
+            Technical articles on backend development, security, and systems.
           </p>
-        </div>
+        </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {blogPosts.map((post, index) => (
-            <Card key={index} className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-              <CardHeader>
-                <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
-                  <div className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4" />
-                    <span>{formatDate(post.date)}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4" />
-                    <span>{post.readTime}</span>
-                  </div>
+        <div className="space-y-1">
+          {blogPosts.map((post) => (
+            <Link
+              key={post.slug}
+              to={`/blogs/${post.slug}`}
+              className="group block py-4 sm:py-5 -mx-3 px-3 rounded-lg hover:bg-muted/50 transition-colors"
+            >
+              <article className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-4">
+                <time className="text-sm text-muted-foreground font-mono shrink-0 tabular-nums">
+                  {formatDate(post.date)}
+                </time>
+                <div className="flex-1 min-w-0">
+                  <h2 className="text-base sm:text-lg font-medium text-foreground group-hover:text-primary transition-colors leading-snug">
+                    {post.title}
+                  </h2>
+                  <p className="text-sm text-muted-foreground mt-1 line-clamp-2 leading-relaxed">
+                    {post.description}
+                  </p>
                 </div>
-                <CardTitle className="text-xl group-hover:text-primary transition-colors">
-                  {post.title}
-                </CardTitle>
-                <CardDescription className="text-base">
-                  {post.description}
-                </CardDescription>
-              </CardHeader>
-              
-              <CardContent>
-                <div className="flex items-center gap-2 mb-4">
-                  <span className="bg-primary/10 text-primary px-2 py-1 rounded text-sm font-medium">
-                    {post.category}
-                  </span>
-                </div>
-                
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {post.tags.map((tag) => (
-                    <span key={tag} className="bg-muted px-2 py-1 rounded text-sm">
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
-
-                <Link to={`/blogs/${post.slug}`}>
-                  <Button className="w-full group">
-                    <span>Read Article</span>
-                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
+                <ArrowRight className="hidden sm:block h-4 w-4 text-muted-foreground/50 group-hover:text-primary group-hover:translate-x-1 transition-all shrink-0" />
+              </article>
+            </Link>
           ))}
         </div>
+
+        {blogPosts.length === 0 && (
+          <p className="text-muted-foreground text-center py-12">
+            No posts yet. Check back soon!
+          </p>
+        )}
       </div>
     </div>
   );

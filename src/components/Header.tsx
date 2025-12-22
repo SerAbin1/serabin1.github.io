@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
+import { Menu, X } from "lucide-react";
 
 const Header = () => {
   const [activeSection, setActiveSection] = useState("intro");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -30,47 +31,73 @@ const Header = () => {
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
     }
+    setMobileMenuOpen(false);
   };
 
   const navItems = [
-    { id: "intro", label: "intro" },
-    { id: "experience", label: "experience" },
-    { id: "projects", label: "projects" },
-    { id: "skills", label: "skills" },
-    { id: "blogs", label: "blogs" },
+    { id: "intro", label: "Home" },
+    { id: "experience", label: "Experience" },
+    { id: "projects", label: "Projects" },
+    { id: "skills", label: "Skills" },
+    { id: "blogs", label: "Blog" },
   ];
 
   return (
-    <header className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-sm border-b border-border">
-      <nav className="container mx-auto px-6 py-4">
+    <header className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-border">
+      <nav className="w-full px-4 sm:px-6 lg:px-8 py-3 sm:py-4 max-w-5xl mx-auto">
         <div className="flex items-center justify-between">
-          <div className="terminal-text font-bold">
-            <span className="code-keyword">$</span> abin-biju
-          </div>
-          
-          <div className="hidden md:flex items-center space-x-1">
+          <button
+            onClick={() => scrollToSection("intro")}
+            className="font-semibold text-foreground hover:text-primary transition-colors"
+          >
+            <span className="font-mono text-primary">$</span> abin-biju
+          </button>
+
+          {/* Desktop nav */}
+          <div className="hidden md:flex items-center gap-1">
             {navItems.map((item) => (
-              <Button
+              <button
                 key={item.id}
-                variant="ghost"
-                size="sm"
                 onClick={() => scrollToSection(item.id)}
-                className={`terminal-text hover:bg-accent transition-colors ${
-                  activeSection === item.id ? "bg-accent" : ""
-                }`}
+                className={`px-3 py-1.5 text-sm rounded-md transition-colors ${activeSection === item.id
+                    ? "text-foreground bg-muted"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                  }`}
               >
                 {item.label}
-              </Button>
+              </button>
             ))}
           </div>
 
-          {/* Mobile menu - simplified */}
-          <div className="md:hidden">
-            <Button variant="ghost" size="sm" className="terminal-text">
-              menu
-            </Button>
-          </div>
+          {/* Mobile menu button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden p-2 -mr-2 text-foreground"
+            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+          >
+            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
         </div>
+
+        {/* Mobile menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden pt-4 pb-2">
+            <div className="flex flex-col gap-1">
+              {navItems.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => scrollToSection(item.id)}
+                  className={`px-3 py-2.5 text-left text-sm rounded-md transition-colors ${activeSection === item.id
+                      ? "text-foreground bg-muted"
+                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                    }`}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </nav>
     </header>
   );
