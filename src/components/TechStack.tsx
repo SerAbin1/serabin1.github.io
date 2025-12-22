@@ -1,8 +1,7 @@
 // src/components/TechStack.tsx
 
 import React from "react";
-import styles from "./TechStack.module.css"; // Import our local CSS
-import Certifications from "./Certifications";
+import styles from "./TechStack.module.css";
 
 // Define a type for our tech stack data for type safety
 type TechItem = {
@@ -138,11 +137,6 @@ const TechStack = () => {
               </div>
             ))}
           </div>
-        </div>
-
-        {/* Certifications Button */}
-        <div className="flex justify-center">
-          <Certifications />
         </div>
       </div>
     </section>
