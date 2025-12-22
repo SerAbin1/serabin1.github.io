@@ -51,7 +51,7 @@ const MarkdownRenderer = ({ content, className = "" }: MarkdownRendererProps) =>
             );
           },
           pre: ({ children }) => (
-            <pre className="bg-card border border-border rounded-lg p-4 overflow-x-auto mb-6 text-sm">
+            <pre className="bg-[#0d1117] rounded-lg p-4 overflow-x-auto mb-6 text-sm -mx-4 sm:mx-0">
               {children}
             </pre>
           ),

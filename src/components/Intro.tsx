@@ -24,7 +24,7 @@ const Intro = () => {
   return (
     <section
       id="intro"
-      className="min-h-screen flex items-center justify-center bg-background pt-16"
+      className="flex items-center justify-center bg-background pt-24 pb-16 sm:pt-28 sm:pb-20"
     >
       <div className="w-full px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto text-center">
         {/* Animated code line */}

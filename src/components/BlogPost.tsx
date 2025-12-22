@@ -6,10 +6,7 @@ interface BlogPostProps {
   title: string;
   description: string;
   date: string;
-  readTime: string;
-  category: string;
   content: string;
-  tags: string[];
   onBack: () => void;
 }
 
@@ -17,10 +14,7 @@ const BlogPost = ({
   title,
   description,
   date,
-  readTime,
-  category,
   content,
-  tags,
   onBack,
 }: BlogPostProps) => {
   const formatDate = (dateString: string) => {
@@ -43,13 +37,9 @@ const BlogPost = ({
         </button>
 
         <header className="mb-8 sm:mb-12">
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground mb-4">
-            <time className="font-mono tabular-nums">{formatDate(date)}</time>
-            <span className="hidden sm:inline">·</span>
-            <span>{readTime}</span>
-            <span className="hidden sm:inline">·</span>
-            <span className="text-primary/80">{category}</span>
-          </div>
+          <time className="text-sm text-muted-foreground font-mono tabular-nums mb-4 block">
+            {formatDate(date)}
+          </time>
 
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold tracking-tight leading-tight mb-4">
             {title}
@@ -58,19 +48,6 @@ const BlogPost = ({
           <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
             {description}
           </p>
-
-          {tags.length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-6">
-              {tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="text-xs font-mono px-2 py-1 bg-muted rounded text-muted-foreground"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          )}
         </header>
 
         <div className="prose-container">

@@ -10,7 +10,7 @@ const Footer = () => {
   return (
     <footer className="py-8 sm:py-12 bg-background border-t border-border">
       <div className="w-full px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
           {/* Links */}
           <div className="flex items-center gap-6 text-sm">
             {links.map((link) => (

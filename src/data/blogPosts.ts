@@ -2,10 +2,7 @@ export interface BlogPost {
   title: string;
   description: string;
   date: string;
-  readTime: string;
-  category: string;
   slug: string;
-  tags: string[];
   content: string;
 }
 
@@ -15,10 +12,7 @@ export const blogPosts: BlogPost[] = [
     description:
       "An introduction to socket programming, covering TCP/UDP protocols, client-server architecture, and inter-process communication fundamentals.",
     date: "2025-08-05",
-    readTime: "8 min read",
-    category: "Network Programming",
     slug: "sockets-or-how-processes-communicate",
-    tags: ["Sockets", "TCP", "UDP", "System Programming"],
     content: `# Sockets or How Processes Communicate
 
 Socket programming is a fundamental concept in network programming that enables processes to communicate with each other across networks. Whether you're building web applications, distributed systems, or real-time communication tools, understanding sockets is crucial for any backend developer.
