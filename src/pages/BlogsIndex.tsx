@@ -1,8 +1,12 @@
+import { useEffect } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { blogPosts } from "@/data/blogPosts";
 
 const BlogsIndex = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',

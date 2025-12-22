@@ -4,7 +4,7 @@ const Footer = () => {
   const links = [
     { label: "GitHub", href: "https://github.com/serabin1" },
     { label: "LinkedIn", href: "https://linkedin.com/in/abin-biju7" },
-    { label: "Blog", href: "/blogs" },
+    { label: "Mail", href: "mailto:sonuabin7@gmail.com" },
   ];
 
   return (

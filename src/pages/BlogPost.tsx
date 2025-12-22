@@ -1,4 +1,5 @@
 import { useParams, Link } from "react-router-dom";
+import { useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
 import { blogPosts } from "@/data/blogPosts";
@@ -6,6 +7,10 @@ import { blogPosts } from "@/data/blogPosts";
 const BlogPost = () => {
   const { slug } = useParams();
   const post = blogPosts.find(p => p.slug === slug);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [slug]);
 
   if (!post) {
     return (
