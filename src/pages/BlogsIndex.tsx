@@ -8,10 +8,10 @@ const BlogsIndex = () => {
     window.scrollTo(0, 0);
   }, []);
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
@@ -31,7 +31,8 @@ const BlogsIndex = () => {
             Blog
           </h1>
           <p className="text-muted-foreground text-base sm:text-lg leading-relaxed">
-            Technical articles on backend development, security, and systems.
+            I like to write notes when, or most often after, I learn something.
+            And sometimes i'll just paste it in here.
           </p>
         </header>
 
@@ -71,3 +72,4 @@ const BlogsIndex = () => {
 };
 
 export default BlogsIndex;
+

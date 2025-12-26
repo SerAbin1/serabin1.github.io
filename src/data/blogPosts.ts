@@ -8,6 +8,31 @@ export interface BlogPost {
 
 export const blogPosts: BlogPost[] = [
   {
+    title: "Understanding Serialization",
+    description:
+      "Serialization is easy if, you know what it is, if not, you'll be wondering why do you need to serialize data to send it over the wire if its all bits anyways.",
+    date: "2025-12-22",
+    slug: "serialization",
+    content: `### Serialization
+Let's say you want to send these bytes over the wire:
+\`\`\`
+00000000 00000000 00000000 00000101
+\`\`\`
+How does the receiver interpret it? As integer, float, ascii string...?
+This is what serialization solves. It encodes the bits and how to ***interpret*** those bits. It answers questions such as:
+- In what order are fields written?
+- How big is each field?
+- How do we know where one field ends?
+- How do we know where the message ends?
+- How do we handle missing or extra fields?
+- How do we handle different machines?
+
+#### Text based serialization protocols
+JSON, XML
+#### Binary serialization protocols
+Protocol Buffers (Protobuf), FlatBuffers, Cap'n Proto, MesssagePack, CBOR`,
+  },
+  {
     title: "Sockets or How Processes Communicate",
     description:
       "An introduction to socket programming, covering TCP/UDP protocols, client-server architecture, and inter-process communication fundamentals.",
@@ -95,4 +120,3 @@ Socket programming powers many technologies we use daily:
 Understanding sockets gives you the foundation to build robust, scalable network applications and debug network-related issues effectively.`,
   },
 ];
-
