@@ -1,6 +1,21 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useEffect, useRef } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const Experience = () => {
+  const sectionRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const cardsRef = useRef<HTMLDivElement>(null);
+
   const experiences = [
     {
       title: "Backend Developer",
@@ -11,9 +26,15 @@ const Experience = () => {
         "Building backend infrastructure for a bus tracking application",
         "Developing scalable APIs for real-time bus location data and route information",
         "Implementing efficient data processing systems for live tracking",
-        "Designing robust database architecture for user and route management"
+        "Designing robust database architecture for user and route management",
       ],
-      technologies: ["Node.js", "Express.js", "PostgreSQL", "Docker", "Real-time APIs"]
+      technologies: [
+        "Node.js",
+        "Express.js",
+        "PostgreSQL",
+        "Docker",
+        "Real-time APIs",
+      ],
     },
     {
       title: "Backend Developer Intern",
@@ -24,16 +45,67 @@ const Experience = () => {
         "Engineered a full-stack business management platform, streamlining invoicing and analytics",
         "Led backend development, building REST APIs for dynamic invoice generation",
         "Implemented secure Role Based Access Control (RBAC) and authentication systems",
-        "Collaborated on React.js frontend and dashboard to visualize key business metrics"
+        "Collaborated on React.js frontend and dashboard to visualize key business metrics",
       ],
-      technologies: ["Node.js", "Express.js", "React.js", "PostgreSQL", "RBAC", "JWT"]
-    }
+      technologies: ["Node.js", "Express.js", "React.js", "PostgreSQL", "RBAC", "JWT"],
+    },
   ];
 
+  // GSAP animations
+  useEffect(() => {
+    const section = sectionRef.current;
+    const header = headerRef.current;
+    const cardsContainer = cardsRef.current;
+
+    if (!section || !header || !cardsContainer) return;
+
+    // Header animation
+    gsap.fromTo(
+      header.children,
+      { opacity: 0, y: 30 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.6,
+        stagger: 0.1,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: header,
+          start: "top 85%",
+          toggleActions: "play none none none",
+        },
+      }
+    );
+
+    // Cards animation
+    const cards = cardsContainer.querySelectorAll("[data-card]");
+    gsap.fromTo(
+      cards,
+      { opacity: 0, y: 50, scale: 0.98 },
+      {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.7,
+        stagger: 0.2,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: cardsContainer,
+          start: "top 80%",
+          toggleActions: "play none none none",
+        },
+      }
+    );
+
+    return () => {
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+    };
+  }, []);
+
   return (
-    <section id="experience" className="py-20 bg-background">
+    <section ref={sectionRef} id="experience" className="py-20 bg-background">
       <div className="container mx-auto px-6">
-        <div className="text-center mb-16">
+        <div ref={headerRef} className="text-center mb-16">
           <div className="code-comment text-lg mb-4">
             <span className="terminal-text">~$</span> cat experience.log
           </div>
@@ -46,9 +118,13 @@ const Experience = () => {
         </div>
 
         <div className="max-w-4xl mx-auto">
-          <div className="space-y-8">
+          <div ref={cardsRef} className="space-y-8">
             {experiences.map((exp, index) => (
-              <Card key={index} className="bg-card/50 backdrop-blur-sm border-border hover:shadow-card transition-all duration-300">
+              <Card
+                key={index}
+                data-card
+                className="bg-card/50 backdrop-blur-sm border-border hover:shadow-card transition-all duration-300"
+              >
                 <CardHeader>
                   <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
                     <div>
@@ -64,17 +140,20 @@ const Experience = () => {
                     </div>
                   </div>
                 </CardHeader>
-                
+
                 <CardContent className="space-y-4">
                   <ul className="space-y-2">
                     {exp.description.map((item, i) => (
-                      <li key={i} className="flex items-start gap-2 text-muted-foreground">
+                      <li
+                        key={i}
+                        className="flex items-start gap-2 text-muted-foreground"
+                      >
                         <span className="terminal-text mt-1">▸</span>
                         <span>{item}</span>
                       </li>
                     ))}
                   </ul>
-                  
+
                   <div className="pt-4 border-t border-border">
                     <div className="flex flex-wrap gap-2">
                       {exp.technologies.map((tech, i) => (

@@ -1,3 +1,6 @@
+import { useEffect, useRef } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
   Card,
   CardContent,
@@ -8,7 +11,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { ExternalLink, Github } from "lucide-react";
 
+gsap.registerPlugin(ScrollTrigger);
+
 const Projects = () => {
+  const sectionRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const footerRef = useRef<HTMLDivElement>(null);
+
   const projects = [
     {
       title: "Business Management Platform",
@@ -39,10 +49,81 @@ const Projects = () => {
     },
   ];
 
+  // GSAP animations
+  useEffect(() => {
+    const section = sectionRef.current;
+    const header = headerRef.current;
+    const grid = gridRef.current;
+    const footer = footerRef.current;
+
+    if (!section || !header || !grid) return;
+
+    // Header animation
+    gsap.fromTo(
+      header.children,
+      { opacity: 0, y: 30 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.6,
+        stagger: 0.1,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: header,
+          start: "top 85%",
+          toggleActions: "play none none none",
+        },
+      }
+    );
+
+    // Project cards animation
+    const cards = grid.querySelectorAll("[data-project-card]");
+    gsap.fromTo(
+      cards,
+      { opacity: 0, y: 60, scale: 0.95 },
+      {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        duration: 0.7,
+        stagger: 0.15,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: grid,
+          start: "top 80%",
+          toggleActions: "play none none none",
+        },
+      }
+    );
+
+    // Footer link animation
+    if (footer) {
+      gsap.fromTo(
+        footer,
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: footer,
+            start: "top 90%",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+    }
+
+    return () => {
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+    };
+  }, []);
+
   return (
-    <section id="projects" className="py-20 bg-background">
+    <section ref={sectionRef} id="projects" className="py-20 bg-background">
       <div className="container mx-auto px-6">
-        <div className="text-center mb-16">
+        <div ref={headerRef} className="text-center mb-16">
           <div className="code-comment text-lg mb-4">
             <span className="terminal-text">~$</span> ls -la projects/
           </div>
@@ -54,10 +135,14 @@ const Projects = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+        <div
+          ref={gridRef}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto"
+        >
           {projects.map((project, index) => (
             <Card
               key={index}
+              data-project-card
               className="bg-card border-border hover:shadow-card transition-all duration-300 group"
             >
               <CardHeader>
@@ -117,7 +202,7 @@ const Projects = () => {
           ))}
         </div>
 
-        <div className="text-center mt-12">
+        <div ref={footerRef} className="text-center mt-12">
           <div className="code-comment">
             <span className="terminal-text">~$</span> More projects available on{" "}
             <a
@@ -134,4 +219,3 @@ const Projects = () => {
 };
 
 export default Projects;
-

@@ -1,10 +1,13 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
+import { gsap } from "gsap"
 
 const Intro = () => {
   const [displayText, setDisplayText] = useState("")
   const [showCursor, setShowCursor] = useState(true)
   const fullText = 'print("Hello, World!")'
+  const containerRef = useRef<HTMLDivElement>(null)
 
+  // Typewriter effect
   useEffect(() => {
     let currentIndex = 0
     const typeWriter = () => {
@@ -17,8 +20,39 @@ const Intro = () => {
       }
     }
 
-    const timer = setTimeout(typeWriter, 500)
+    const timer = setTimeout(typeWriter, 800)
     return () => clearTimeout(timer)
+  }, [])
+
+  // GSAP intro animations
+  useEffect(() => {
+    const container = containerRef.current
+    if (!container) return
+
+    const tl = gsap.timeline({ defaults: { ease: "power3.out" } })
+
+    const codeBlock = container.querySelector("[data-animate='code']")
+    const heading = container.querySelector("[data-animate='heading']")
+    const description = container.querySelector("[data-animate='description']")
+    const buttons = container.querySelector("[data-animate='buttons']")
+    const terminal = container.querySelector("[data-animate='terminal']")
+
+    // Set initial states
+    gsap.set([codeBlock, heading, description, buttons, terminal], {
+      opacity: 0,
+      y: 40,
+    })
+
+    // Animate sequence with staggered timing
+    tl.to(codeBlock, { opacity: 1, y: 0, duration: 0.7 }, 0.1)
+      .to(heading, { opacity: 1, y: 0, duration: 0.7 }, 0.3)
+      .to(description, { opacity: 1, y: 0, duration: 0.6 }, 0.5)
+      .to(buttons, { opacity: 1, y: 0, duration: 0.5 }, 0.7)
+      .to(terminal, { opacity: 1, y: 0, duration: 0.5 }, 0.9)
+
+    return () => {
+      tl.kill()
+    }
   }, [])
 
   return (
@@ -26,9 +60,12 @@ const Intro = () => {
       id="intro"
       className="flex items-center justify-center bg-background pt-24 pb-16 sm:pt-28 sm:pb-20"
     >
-      <div className="w-full px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto text-center">
+      <div
+        ref={containerRef}
+        className="w-full px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto text-center"
+      >
         {/* Animated code line */}
-        <div className="mb-8 sm:mb-12">
+        <div data-animate="code" className="mb-8 sm:mb-12">
           <pre className="text-lg sm:text-xl md:text-2xl font-mono">
             <span className="text-primary">print</span>
             <span className="text-foreground">(</span>
@@ -41,17 +78,27 @@ const Intro = () => {
         </div>
 
         {/* Main heading */}
-        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight mb-4 sm:mb-6">
+        <h1
+          data-animate="heading"
+          className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight mb-4 sm:mb-6"
+        >
           I'm Abin Biju.
         </h1>
 
         {/* Description */}
-        <p className="text-base sm:text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed mb-8 sm:mb-10">
-          Backend developer and cybersecurity enthusiast. Check out some of the stuff I've done and learned below.
+        <p
+          data-animate="description"
+          className="text-base sm:text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed mb-8 sm:mb-10"
+        >
+          Backend developer and cybersecurity enthusiast. Check out some of the
+          stuff I've done and learned below.
         </p>
 
         {/* CTA */}
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+        <div
+          data-animate="buttons"
+          className="flex flex-col sm:flex-row gap-3 justify-center"
+        >
           <button
             onClick={() =>
               document
@@ -75,7 +122,10 @@ const Intro = () => {
         </div>
 
         {/* Terminal prompt */}
-        <div className="mt-12 sm:mt-16 text-left max-w-sm mx-auto font-mono text-sm">
+        <div
+          data-animate="terminal"
+          className="mt-12 sm:mt-16 text-left max-w-sm mx-auto font-mono text-sm"
+        >
           <div className="text-muted-foreground">
             <span className="text-primary">~$</span> whoami
           </div>

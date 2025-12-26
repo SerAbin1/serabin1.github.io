@@ -1,26 +1,16 @@
-// src/components/TechStack.tsx
-
-import React from "react";
+import { useEffect, useRef } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import styles from "./TechStack.module.css";
 
-// Define a type for our tech stack data for type safety
+gsap.registerPlugin(ScrollTrigger);
+
 type TechItem = {
   name: string;
   logoUrl: string;
 };
 
-// All the technologies are stored in this array. Easy to update!
 const techStackData: TechItem[] = [
-  /*{
-    name: "Java",
-    logoUrl:
-      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg",
-  },
-  {
-    name: "TypeScript",
-    logoUrl:
-      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg",
-  },*/
   {
     name: "JavaScript",
     logoUrl:
@@ -41,11 +31,6 @@ const techStackData: TechItem[] = [
     logoUrl:
       "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg",
   },
-  /*{
-    name: "Next.js",
-    logoUrl:
-      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-line.svg",
-  },*/
   {
     name: "Tailwind CSS",
     logoUrl:
@@ -56,11 +41,6 @@ const techStackData: TechItem[] = [
     logoUrl:
       "https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nodejs/nodejs-plain-wordmark.svg",
   },
-  /*{
-    name: "Flask",
-    logoUrl:
-      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flask/flask-original.svg",
-  },*/
   {
     name: "MongoDB",
     logoUrl:
@@ -86,26 +66,70 @@ const techStackData: TechItem[] = [
     logoUrl:
       "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg",
   },
-  /*{
-    name: "PyTorch",
-    logoUrl:
-      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pytorch/pytorch-original.svg",
-  },
-  {
-    name: "TensorFlow",
-    logoUrl:
-      "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tensorflow/tensorflow-original.svg",
-  },*/
 ];
 
 const TechStack = () => {
-  // To create the infinite scroll effect, we duplicate the array of logos
+  const sectionRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
+
   const duplicatedTech = [...techStackData, ...techStackData];
 
+  // GSAP animations
+  useEffect(() => {
+    const section = sectionRef.current;
+    const header = headerRef.current;
+    const carousel = carouselRef.current;
+
+    if (!section || !header || !carousel) return;
+
+    // Header animation
+    gsap.fromTo(
+      header.children,
+      { opacity: 0, y: 30 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.6,
+        stagger: 0.15,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: header,
+          start: "top 85%",
+          toggleActions: "play none none none",
+        },
+      }
+    );
+
+    // Carousel fade in
+    gsap.fromTo(
+      carousel,
+      { opacity: 0, scale: 0.98 },
+      {
+        opacity: 1,
+        scale: 1,
+        duration: 0.8,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: carousel,
+          start: "top 85%",
+          toggleActions: "play none none none",
+        },
+      }
+    );
+
+    return () => {
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+    };
+  }, []);
+
   return (
-    <section id="tech-stack" className="py-20">
+    <section ref={sectionRef} id="tech-stack" className="py-20">
       <div className="space-y-content-md">
-        <div className="flex flex-col items-center justify-center space-y-4 text-center">
+        <div
+          ref={headerRef}
+          className="flex flex-col items-center justify-center space-y-4 text-center"
+        >
           <div className="space-y-2">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-white">
               Tech Stack.
@@ -116,9 +140,8 @@ const TechStack = () => {
           </div>
         </div>
 
-        {/* This is the main container for the scrolling carousel */}
-        <div className="relative w-full overflow-hidden py-8">
-          {/* This div holds the logos and has the animation class applied */}
+        {/* Scrolling carousel */}
+        <div ref={carouselRef} className="relative w-full overflow-hidden py-8">
           <div className={`flex items-center ${styles.scroller}`}>
             {duplicatedTech.map((tech, index) => (
               <div
