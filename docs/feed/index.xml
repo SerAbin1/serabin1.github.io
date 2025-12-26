@@ -6,7 +6,7 @@
     <link>https://serabin1.github.io</link>
     <atom:link href="https://serabin1.github.io/feed" rel="self" type="application/rss+xml"/>
     <language>en-us</language>
-    <lastBuildDate>Fri, 26 Dec 2025 16:52:32 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 26 Dec 2025 17:07:40 GMT</lastBuildDate>
     <managingEditor>Abin Biju</managingEditor>
     <webMaster>Abin Biju</webMaster>
     
@@ -15,7 +15,8 @@
       <link>https://serabin1.github.io/blogs/serialization</link>
       <guid isPermaLink="true">https://serabin1.github.io/blogs/serialization</guid>
       <description>Serialization is easy if, you know what it is, if not, you&apos;ll be wondering why do you need to serialize data to send it over the wire if its all bits anyways.</description>
-      <content:encoded><![CDATA[<p><h3>Serialization</h3><br>Let's say you want to send these bytes over the wire:<br>\<code>\</code>\<code><br>00000000 00000000 00000000 00000101<br>\</code>\<code>\</code><br>How does the receiver interpret it? As integer, float, ascii string...?<br>This is what serialization solves. It encodes the bits and how to <em><strong>interpret</strong></em> those bits. It answers questions such as:<br><li>In what order are fields written?</li><br><li>How big is each field?</li><br><li>How do we know where one field ends?</li><br><li>How do we know where the message ends?</li><br><li>How do we handle missing or extra fields?</li><br><li>How do we handle different machines?</li></p><p><h4>Text based serialization protocols</h4><br>JSON, XML<br><h4>Binary serialization protocols</h4><br>Protocol Buffers (Protobuf), FlatBuffers, Cap'n Proto, MesssagePack, CBOR</p>]]></content:encoded>
+      <content:encoded><![CDATA[<h3>Serialization</h3> Let's say you want to send these bytes over the wire: <pre><code>00000000 00000000 00000000 00000101</code></pre> How does the receiver interpret it? As integer, float, ascii string...? This is what serialization solves. It encodes the bits and how to <strong><em>interpret</em></strong> those bits. It answers questions such as: <li>In what order are fields written?</li> <li>How big is each field?</li> <li>How do we know where one field ends?</li> <li>How do we know where the message ends?</li> <li>How do we handle missing or extra fields?</li> <li>How do we handle different machines?</li>
+<h4>Text based serialization protocols</h4> JSON, XML <h4>Binary serialization protocols</h4> Protocol Buffers (Protobuf), FlatBuffers, Cap'n Proto, MesssagePack, CBOR]]></content:encoded>
       <pubDate>Mon, 22 Dec 2025 00:00:00 GMT</pubDate>
       <author>Abin Biju</author>
     </item>
@@ -24,7 +25,53 @@
       <link>https://serabin1.github.io/blogs/sockets-or-how-processes-communicate</link>
       <guid isPermaLink="true">https://serabin1.github.io/blogs/sockets-or-how-processes-communicate</guid>
       <description>An introduction to socket programming, covering TCP/UDP protocols, client-server architecture, and inter-process communication fundamentals.</description>
-      <content:encoded><![CDATA[<p><h1>Sockets or How Processes Communicate</h1></p><p>Socket programming is a fundamental concept in network programming that enables processes to communicate with each other across networks. Whether you're building web applications, distributed systems, or real-time communication tools, understanding sockets is crucial for any backend developer.</p><p><h2>What are Sockets?</h2></p><p>A socket is an endpoint for communication between two machines. Think of it as a telephone connection - one process "calls" another process, and once the connection is established, they can exchange data bidirectionally.</p><p><h2>Types of Sockets</h2></p><p><h3>TCP Sockets (Stream Sockets)</h3><br><li><strong>Reliable</strong>: Guarantees data delivery and order</li><br><li><strong>Connection-oriented</strong>: Establishes a connection before data transfer</li><br><li><strong>Use cases</strong>: Web browsers, email, file transfers</li></p><p><h3>UDP Sockets (Datagram Sockets)  </h3><br><li><strong>Fast</strong>: Lower overhead, no connection establishment</li><br><li><strong>Unreliable</strong>: No guarantee of delivery or order</li><br><li><strong>Use cases</strong>: Gaming, live streaming, DNS lookups</li></p><p><h2>Socket Programming Fundamentals</h2></p><p><h3>Server-Side Implementation</h3></p><p>\<code>\</code>\<code>python<br>import socket</p><p><h1>Create socket</h1><br>server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</p><p><h1>Bind to address and port</h1><br>server_socket.bind(('localhost', 8080))</p><p><h1>Listen for connections</h1><br>server_socket.listen(5)</p><p>while True:<br>    client_socket, address = server_socket.accept()<br>    data = client_socket.recv(1024)<br>    client_socket.send(b"Hello from server!")<br>    client_socket.close()<br>\</code>\<code>\</code></p><p><h3>Client-Side Implementation</h3></p><p>\<code>\</code>\<code>python<br>import socket</p><p><h1>Create socket</h1><br>client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</p><p><h1>Connect to server</h1><br>client_socket.connect(('localhost', 8080))</p><p><h1>Send data</h1><br>client_socket.send(b"Hello from client!")</p><p><h1>Receive response</h1><br>response = client_socket.recv(1024)<br>print(response.decode())</p><p>client_socket.close()<br>\</code>\<code>\</code></p><p><h2>Best Practices</h2></p><p>1. <strong>Error Handling</strong>: Always implement proper error handling for network operations<br>2. <strong>Resource Management</strong>: Close sockets properly to avoid resource leaks<br>3. <strong>Security</strong>: Validate input data and implement authentication when needed<br>4. <strong>Performance</strong>: Use connection pooling for high-traffic applications</p><p><h2>Real-World Applications</h2></p><p>Socket programming powers many technologies we use daily:<br><li><strong>Web Servers</strong>: HTTP communication between browsers and servers</li><br><li><strong>Chat Applications</strong>: Real-time messaging systems</li><br><li><strong>Database Connections</strong>: Client-server database communication</li><br><li><strong>API Services</strong>: RESTful and GraphQL API endpoints</li></p><p>Understanding sockets gives you the foundation to build robust, scalable network applications and debug network-related issues effectively.</p>]]></content:encoded>
+      <content:encoded><![CDATA[<h1>Sockets or How Processes Communicate</h1>
+<p>Socket programming is a fundamental concept in network programming that enables processes to communicate with each other across networks. Whether you're building web applications, distributed systems, or real-time communication tools, understanding sockets is crucial for any backend developer.</p>
+<h2>What are Sockets?</h2>
+<p>A socket is an endpoint for communication between two machines. Think of it as a telephone connection - one process "calls" another process, and once the connection is established, they can exchange data bidirectionally.</p>
+<h2>Types of Sockets</h2>
+<h3>TCP Sockets (Stream Sockets)</h3> <li><strong>Reliable</strong>: Guarantees data delivery and order</li> <li><strong>Connection-oriented</strong>: Establishes a connection before data transfer</li> <li><strong>Use cases</strong>: Web browsers, email, file transfers</li>
+<h3>UDP Sockets (Datagram Sockets)  </h3> <li><strong>Fast</strong>: Lower overhead, no connection establishment</li> <li><strong>Unreliable</strong>: No guarantee of delivery or order</li> <li><strong>Use cases</strong>: Gaming, live streaming, DNS lookups</li>
+<h2>Socket Programming Fundamentals</h2>
+<h3>Server-Side Implementation</h3>
+<pre><code>import socket
+
+# Create socket
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+# Bind to address and port
+server_socket.bind(('localhost', 8080))
+
+# Listen for connections
+server_socket.listen(5)
+
+while True:
+    client_socket, address = server_socket.accept()
+    data = client_socket.recv(1024)
+    client_socket.send(b"Hello from server!")
+    client_socket.close()</code></pre>
+<h3>Client-Side Implementation</h3>
+<pre><code>import socket
+
+# Create socket
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+# Connect to server
+client_socket.connect(('localhost', 8080))
+
+# Send data
+client_socket.send(b"Hello from client!")
+
+# Receive response
+response = client_socket.recv(1024)
+print(response.decode())
+
+client_socket.close()</code></pre>
+<h2>Best Practices</h2>
+<p>1. <strong>Error Handling</strong>: Always implement proper error handling for network operations<br>2. <strong>Resource Management</strong>: Close sockets properly to avoid resource leaks<br>3. <strong>Security</strong>: Validate input data and implement authentication when needed<br>4. <strong>Performance</strong>: Use connection pooling for high-traffic applications</p>
+<h2>Real-World Applications</h2>
+<p>Socket programming powers many technologies we use daily:<br><li><strong>Web Servers</strong>: HTTP communication between browsers and servers</li><br><li><strong>Chat Applications</strong>: Real-time messaging systems</li><br><li><strong>Database Connections</strong>: Client-server database communication</li><br><li><strong>API Services</strong>: RESTful and GraphQL API endpoints</li></p>
+<p>Understanding sockets gives you the foundation to build robust, scalable network applications and debug network-related issues effectively.</p>]]></content:encoded>
       <pubDate>Tue, 05 Aug 2025 00:00:00 GMT</pubDate>
       <author>Abin Biju</author>
     </item>
