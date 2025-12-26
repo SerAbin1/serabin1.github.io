@@ -1,59 +1,60 @@
-import { useEffect, useState, useRef } from "react"
-import { gsap } from "gsap"
+import { useEffect, useState, useRef } from "react";
+import { gsap } from "gsap";
+import MagneticButton from "./MagneticButton";
 
 const Intro = () => {
-  const [displayText, setDisplayText] = useState("")
-  const [showCursor, setShowCursor] = useState(true)
-  const fullText = 'print("Hello, World!")'
-  const containerRef = useRef<HTMLDivElement>(null)
+  const [displayText, setDisplayText] = useState("");
+  const [showCursor, setShowCursor] = useState(true);
+  const fullText = 'print("Hello, World!")';
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Typewriter effect
   useEffect(() => {
-    let currentIndex = 0
+    let currentIndex = 0;
     const typeWriter = () => {
       if (currentIndex <= fullText.length) {
-        setDisplayText(fullText.slice(0, currentIndex))
-        currentIndex++
-        setTimeout(typeWriter, 100)
+        setDisplayText(fullText.slice(0, currentIndex));
+        currentIndex++;
+        setTimeout(typeWriter, 100);
       } else {
-        setShowCursor(false)
+        setShowCursor(false);
       }
-    }
+    };
 
-    const timer = setTimeout(typeWriter, 800)
-    return () => clearTimeout(timer)
-  }, [])
+    const timer = setTimeout(typeWriter, 800);
+    return () => clearTimeout(timer);
+  }, []);
 
   // GSAP intro animations
   useEffect(() => {
-    const container = containerRef.current
-    if (!container) return
+    const container = containerRef.current;
+    if (!container) return;
 
-    const tl = gsap.timeline({ defaults: { ease: "power3.out" } })
+    const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-    const codeBlock = container.querySelector("[data-animate='code']")
-    const heading = container.querySelector("[data-animate='heading']")
-    const description = container.querySelector("[data-animate='description']")
-    const buttons = container.querySelector("[data-animate='buttons']")
-    const terminal = container.querySelector("[data-animate='terminal']")
+    const codeBlock = container.querySelector("[data-animate='code']");
+    const heading = container.querySelector("[data-animate='heading']");
+    const description = container.querySelector("[data-animate='description']");
+    const buttons = container.querySelector("[data-animate='buttons']");
+    const terminal = container.querySelector("[data-animate='terminal']");
 
     // Set initial states
     gsap.set([codeBlock, heading, description, buttons, terminal], {
       opacity: 0,
       y: 40,
-    })
+    });
 
     // Animate sequence with staggered timing
     tl.to(codeBlock, { opacity: 1, y: 0, duration: 0.7 }, 0.1)
       .to(heading, { opacity: 1, y: 0, duration: 0.7 }, 0.3)
       .to(description, { opacity: 1, y: 0, duration: 0.6 }, 0.5)
       .to(buttons, { opacity: 1, y: 0, duration: 0.5 }, 0.7)
-      .to(terminal, { opacity: 1, y: 0, duration: 0.5 }, 0.9)
+      .to(terminal, { opacity: 1, y: 0, duration: 0.5 }, 0.9);
 
     return () => {
-      tl.kill()
-    }
-  }, [])
+      tl.kill();
+    };
+  }, []);
 
   return (
     <section
@@ -94,31 +95,33 @@ const Intro = () => {
           stuff I've done and learned below.
         </p>
 
-        {/* CTA */}
+        {/* CTA - Using Magnetic Buttons */}
         <div
           data-animate="buttons"
           className="flex flex-col sm:flex-row gap-3 justify-center"
         >
-          <button
+          <MagneticButton
             onClick={() =>
               document
                 .getElementById("experience")
                 ?.scrollIntoView({ behavior: "smooth" })
             }
             className="px-6 py-2.5 bg-primary text-primary-foreground rounded-md hover:opacity-90 transition-opacity font-medium"
+            strength={0.4}
           >
             View Work
-          </button>
-          <button
+          </MagneticButton>
+          <MagneticButton
             onClick={() =>
               document
                 .getElementById("projects")
                 ?.scrollIntoView({ behavior: "smooth" })
             }
             className="px-6 py-2.5 border border-border text-foreground rounded-md hover:bg-muted transition-colors font-medium"
+            strength={0.4}
           >
             See Projects
-          </button>
+          </MagneticButton>
         </div>
 
         {/* Terminal prompt */}
@@ -135,7 +138,7 @@ const Intro = () => {
         </div>
       </div>
     </section>
-  )
-}
+  );
+};
 
-export default Intro
+export default Intro;

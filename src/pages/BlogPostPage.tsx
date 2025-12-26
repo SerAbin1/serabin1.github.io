@@ -1,7 +1,8 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { blogPosts } from "@/data/blogPosts";
 import BlogPost from "@/components/BlogPost";
 import NotFound from "./NotFound";
+import PageTransition from "@/components/PageTransition";
 
 const BlogPostPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -12,10 +13,9 @@ const BlogPostPage = () => {
   }
 
   return (
-    <BlogPost
-      {...post}
-      onBack={() => window.history.back()}
-    />
+    <PageTransition>
+      <BlogPost {...post} onBack={() => window.history.back()} />
+    </PageTransition>
   );
 };
 
