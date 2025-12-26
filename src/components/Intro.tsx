@@ -98,7 +98,7 @@ const Intro = () => {
         {/* CTA - Using Magnetic Buttons */}
         <div
           data-animate="buttons"
-          className="flex flex-col sm:flex-row gap-3 justify-center"
+          className="flex flex-col sm:flex-row gap-3 justify-center flex-wrap"
         >
           <MagneticButton
             onClick={() =>
@@ -109,7 +109,7 @@ const Intro = () => {
             className="px-6 py-2.5 bg-primary text-primary-foreground rounded-md hover:opacity-90 transition-opacity font-medium"
             strength={0.4}
           >
-            View Work
+            Work
           </MagneticButton>
           <MagneticButton
             onClick={() =>
@@ -120,7 +120,18 @@ const Intro = () => {
             className="px-6 py-2.5 border border-border text-foreground rounded-md hover:bg-muted transition-colors font-medium"
             strength={0.4}
           >
-            See Projects
+            Projects
+          </MagneticButton>
+          <MagneticButton
+            onClick={() =>
+              document
+                .getElementById("blogs")
+                ?.scrollIntoView({ behavior: "smooth" })
+            }
+            className="px-6 py-2.5 border border-border text-foreground rounded-md hover:bg-muted transition-colors font-medium"
+            strength={0.4}
+          >
+            Blog
           </MagneticButton>
         </div>
 
