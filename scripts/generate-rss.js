@@ -53,30 +53,82 @@ function formatRFC822Date(dateString) {
 
 // Convert markdown to basic HTML for RSS content
 function markdownToHtml(markdown) {
-    let html = markdown
-        // Code blocks
-        .replace(/```(\w+)?\n([\s\S]*?)```/g, "<pre><code>$2</code></pre>")
-        // Inline code
-        .replace(/`([^`]+)`/g, "<code>$1</code>")
-        // Headers
-        .replace(/^#### (.+)$/gm, "<h4>$1</h4>")
-        .replace(/^### (.+)$/gm, "<h3>$1</h3>")
-        .replace(/^## (.+)$/gm, "<h2>$1</h2>")
-        .replace(/^# (.+)$/gm, "<h1>$1</h1>")
-        // Bold
-        .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
-        // Italic
-        .replace(/\*([^*]+)\*/g, "<em>$1</em>")
-        // Links
-        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
-        // List items
-        .replace(/^- (.+)$/gm, "<li>$1</li>")
-        // Paragraphs (double newlines)
-        .replace(/\n\n/g, "</p><p>")
-        // Single newlines within paragraphs
-        .replace(/\n/g, "<br>");
+    // Handle escaped backticks from template literals
+    let html = markdown.replace(/\\`/g, "`");
 
-    return `<p>${html}</p>`;
+    // Store code blocks with placeholders to preserve them during processing
+    const codeBlocks = [];
+    html = html.replace(/```[\w]*\n([\s\S]*?)```/g, (match, code) => {
+        const escapedCode = code
+            .trim()
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
+        const placeholder = `__CODEBLOCK_${codeBlocks.length}__`;
+        codeBlocks.push(`<pre><code>${escapedCode}</code></pre>`);
+        return placeholder;
+    });
+
+    // Inline code - also use placeholders
+    const inlineCode = [];
+    html = html.replace(/`([^`]+)`/g, (match, code) => {
+        const placeholder = `__INLINECODE_${inlineCode.length}__`;
+        inlineCode.push(`<code>${code}</code>`);
+        return placeholder;
+    });
+
+    // Headers
+    html = html.replace(/^#### (.+)$/gm, "<h4>$1</h4>");
+    html = html.replace(/^### (.+)$/gm, "<h3>$1</h3>");
+    html = html.replace(/^## (.+)$/gm, "<h2>$1</h2>");
+    html = html.replace(/^# (.+)$/gm, "<h1>$1</h1>");
+
+    // Bold and italic
+    html = html.replace(/\*\*\*([^*]+)\*\*\*/g, "<strong><em>$1</em></strong>");
+    html = html.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+    html = html.replace(/\*([^*]+)\*/g, "<em>$1</em>");
+
+    // Links
+    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+
+    // Lists
+    html = html.replace(/^- (.+)$/gm, "<li>$1</li>");
+
+    // Split by double newlines for paragraphs
+    const blocks = html.split(/\n\n+/);
+
+    html = blocks
+        .map((block) => {
+            block = block.trim();
+            if (!block) return "";
+
+            // Don't wrap placeholders or block elements
+            if (/^(__CODEBLOCK_|<h[1-4]|<pre|<ul|<ol)/.test(block)) {
+                return block.replace(/\n/g, " ");
+            }
+
+            // Wrap list items in ul
+            if (block.startsWith("<li>")) {
+                return `<ul>${block.replace(/\n/g, "")}</ul>`;
+            }
+
+            // Regular paragraph
+            return `<p>${block.replace(/\n/g, "<br>")}</p>`;
+        })
+        .filter(Boolean)
+        .join("\n");
+
+    // Restore code blocks
+    codeBlocks.forEach((code, i) => {
+        html = html.replace(`__CODEBLOCK_${i}__`, code);
+    });
+
+    // Restore inline code
+    inlineCode.forEach((code, i) => {
+        html = html.replace(`__INLINECODE_${i}__`, code);
+    });
+
+    return html;
 }
 
 async function generateRSSFeed() {
