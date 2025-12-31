@@ -30,6 +30,21 @@ const MarkdownRenderer = ({ content, className = "" }: MarkdownRendererProps) =>
               {children}
             </h3>
           ),
+          h4: ({ children }) => (
+            <h4 className="text-base sm:text-lg font-semibold text-foreground mt-5 mb-2">
+              {children}
+            </h4>
+          ),
+          h5: ({ children }) => (
+            <h5 className="text-base font-semibold text-foreground mt-4 mb-2">
+              {children}
+            </h5>
+          ),
+          h6: ({ children }) => (
+            <h6 className="text-sm font-semibold text-foreground uppercase tracking-wide mt-4 mb-2">
+              {children}
+            </h6>
+          ),
           p: ({ children }) => (
             <p className="text-foreground mb-5 leading-[1.75] text-base sm:text-[17px]">
               {children}

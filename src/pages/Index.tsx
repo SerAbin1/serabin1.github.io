@@ -7,9 +7,14 @@ import GitHubActivity from "@/components/GitHubActivity";
 import TechStack from "@/components/TechStack";
 import PageTransition from "@/components/PageTransition";
 
+import { Helmet } from "react-helmet-async";
+
 const Index = () => {
   return (
     <PageTransition>
+      <Helmet>
+        <link rel="canonical" href="https://serabin1.github.io/" />
+      </Helmet>
       <div className="min-h-screen bg-background">
         <main>
           <Intro />

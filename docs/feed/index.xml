@@ -6,10 +6,98 @@
     <link>https://serabin1.github.io</link>
     <atom:link href="https://serabin1.github.io/feed" rel="self" type="application/rss+xml"/>
     <language>en-us</language>
-    <lastBuildDate>Fri, 26 Dec 2025 17:07:40 GMT</lastBuildDate>
+    <lastBuildDate>Wed, 31 Dec 2025 09:45:15 GMT</lastBuildDate>
     <managingEditor>Abin Biju</managingEditor>
     <webMaster>Abin Biju</webMaster>
     
+    <item>
+      <title>Writing Testable Code</title>
+      <link>https://serabin1.github.io/blogs/hexagonal-architecture</link>
+      <guid isPermaLink="true">https://serabin1.github.io/blogs/hexagonal-architecture</guid>
+      <description>An introduction to the Hexagonal Architecture (Ports and Adapters)</description>
+      <content:encoded><![CDATA[<p>There was a bug in our backend (or so I thought). A certain bus's morning trip was not ending, the system showed it active even at 5PM (it's trip ends at 10:50AM). The actual bug was not even a bug, it was a corrupted data. A single stop in the trip route had a wrong scheduled arrival time, causing the delay calculation logic to calculate a delay of 624 minutes. Then why am I talking about this bug?</p>
+<p>Because of what it led me to: The Hexagonal Architecture. Also known as the Ports and Adapters pattern.</p>
+<p>The human brain can keep only so much in its short term memory (6 plus or minus 2 is what the science tells us). In other words, the more stuff you have to keep track of, the harder it becomes to reason about or understand. So it follows that good code, code that is readable and easy to reason about, should require us to keep track of as little as possible at any given time.</p>
+<p>And I'm sure you can guess where I'm heading with this; yes, our backend code was the exact opposite. It required one to keep track of a whole bunch of stuff and wade through all kinds of concerns, concerns that didn't have anything to do with the <em>core domain</em> logic directly, to understand and reason about the logical and data flow. And a practical offshoot is that the code is untestable or at least it is untestable without mocking half the world.</p>
+<h2>The Code</h2> Our main scheduler logic, which dealt with the starting and ending of trips: <pre><code>// scheduler/worker.js (simplified)
+worker.process(async (job) =&gt; {
+    const { tripId, action } = job.data;
+    if (action == "start") {
+        const trip = await Trip.findByPk(tripId); // Infrastructure (Read)
+        const redisData = await redisClient.get(key); // Infrastructure (Read)
+
+        // Bussiness logic
+        if (redisData.trip_id !== trip.id) {
+            console.log("Conflict!");
+            return; 
+        }
+
+        // 3. Infrastructure (Write)
+        await redisClient.del(key);
+    } else if (action == "end") {
+        //...
+    }
+});</code></pre>
+<h2>The New Code</h2> The logic was split into three layers, with each layer doing one and one thing well.
+<ul><li>Domain -> Decisions (the core business logic lives here, easily testable!)</li><li>Application -> Execution</li><li>Worker -> Coordination</li></ul>
+<h3>The Domain: Pure Functions</h3> We extracted all decision-making complexity into a single place. This file imports <strong>nothing</strong> related to DB or Redis. It takes plain objects and returns a <strong>Decision</strong>.
+<pre><code>// scheduler/domain/tripDecisions.js
+export const evaluateTripAction = ({ trip, redisBusState, currentIstDate }) =&gt; {
+    // Pure Logic: No side effects!
+    if (redisBusState &amp;&amp; redisBusState.trip_id !== trip.id) {
+         return [{ 
+             type: "END_SKIP_MISMATCH", 
+             reason: "Bus active on different trip" 
+         }];
+    }
+
+    // Logic: Check time guard
+    if (isTooEarly(currentIstDate, trip.scheduled_end_time)) {
+        return [{ type: "END_DEFER" }];
+    }
+
+    return [{ type: "END_COMPLETE", payload: { ... } }];
+};</code></pre>
+<p>We can now test _every single edge case_ with simple unit tests. No mocks required.</p>
+<pre><code>// schduler/tests/tripDecisions.test.js
+test('Should return END_SKIP_MISMATCH if Bus active on different Trip', () =&gt; {
+    const decision = evaluateTripAction({
+        trip: { id: 101 },
+        redisBusState: { trip_id: 999 }, // Plain object!
+        action: 'end'
+    });
+
+    expect(decision[0].type).toBe("END_SKIP_MISMATCH");
+});</code></pre>
+<h3>The Application: The Side-Effect Handler</h3> We moved the actual "doing" part to application/tripExecutor.js. It doesn't "think"; it just executes instructions.
+<pre><code>// scheduler/application/tripExecutor.js
+export const executeDecisions = async (decisions, { redisClient, logger }) =&gt; {
+    for (const decision of decisions) {
+        switch (decision.type) {
+            case "END_SKIP_MISMATCH":
+                logger.warn("Skipping end due to mismatch");
+                break;
+            case "END_COMPLETE":
+                await redisClient.del(activeKey); // Only here do we touch Redis
+                break;
+        }
+    }
+};</code></pre>
+<h3>The Worker: The Coordinator</h3> The worker.js became a dumb coordinator.
+<pre><code>// worker.js
+const trip = await Trip.findByPk(1);             // 1. Fetch State
+const redisState = await redisClient.get(key);
+
+const decisions = evaluateTripAction({           // 2. Decide (Pure)
+    trip: trip.toJSON(), 
+    redisBusState: JSON.parse(redisState) 
+});
+
+await executeDecisions(decisions, { redisClient }); // 3. Execute (Impure)</code></pre>
+<h3>Conclusion</h3>]]></content:encoded>
+      <pubDate>Wed, 31 Dec 2025 00:00:00 GMT</pubDate>
+      <author>Abin Biju</author>
+    </item>
     <item>
       <title>Understanding Serialization</title>
       <link>https://serabin1.github.io/blogs/serialization</link>

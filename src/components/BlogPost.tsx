@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import MarkdownRenderer from "./MarkdownRenderer";
+import { Helmet } from "react-helmet-async";
 
 interface BlogPostProps {
   title: string;
@@ -27,6 +28,10 @@ const BlogPost = ({
 
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>{title} - Abin Biju</title>
+        <link rel="canonical" href={window.location.href} />
+      </Helmet>
       <article className="w-full px-4 sm:px-6 lg:px-8 py-6 sm:py-8 max-w-3xl mx-auto">
         <button
           onClick={onBack}
