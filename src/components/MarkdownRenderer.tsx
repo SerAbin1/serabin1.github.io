@@ -1,7 +1,10 @@
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
+import rehypeRaw from 'rehype-raw';
 import 'highlight.js/styles/github-dark.css';
+import LRUVisualizer from './LRUVisualizer';
+import LFUVisualizer from './LFUVisualizer';
 
 interface MarkdownRendererProps {
   content: string;
@@ -13,8 +16,12 @@ const MarkdownRenderer = ({ content, className = "" }: MarkdownRendererProps) =>
     <div className={`markdown-content ${className}`}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
-        rehypePlugins={[rehypeHighlight]}
+        rehypePlugins={[rehypeRaw, rehypeHighlight]}
         components={{
+          // @ts-ignore Custom component
+          "lru-visualizer": LRUVisualizer,
+          // @ts-ignore Custom component
+          "lfu-visualizer": LFUVisualizer,
           h1: ({ children }) => (
             <h1 className="text-2xl sm:text-3xl font-semibold text-foreground mt-10 mb-4 first:mt-0">
               {children}

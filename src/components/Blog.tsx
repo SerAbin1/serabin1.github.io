@@ -118,7 +118,7 @@ const Blog = () => {
               className="group block py-4 -mx-3 px-3 rounded-lg hover:bg-muted/50 transition-colors"
             >
               <article className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-4">
-                <time className="text-sm text-muted-foreground font-mono shrink-0 tabular-nums">
+                <time className="text-sm text-muted-foreground font-mono shrink-0 tabular-nums w-32">
                   {formatDate(post.date)}
                 </time>
                 <div className="flex-1 min-w-0">

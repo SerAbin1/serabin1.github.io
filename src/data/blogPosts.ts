@@ -8,6 +8,276 @@ export interface BlogPost {
 
 export const blogPosts: BlogPost[] = [
   {
+    title: "LRU & LFU Cache",
+    description: "Visual explanation of LRU and LFU Cache implementation",
+    date: "2026-01-04",
+    slug: "lru-lfu-cache",
+    content: `
+
+## LRU Cache
+
+We have a limited capacity.
+
+So what do we do when we need to keep track of many things at once?
+
+We need some way to decide what we will take out of our cache when it becomes full. In other words, we need an eviction policy. An eviction policy defines which item should be removed to make space for a new one.
+
+LRU stands for _Least Recently Used_. The idea is simple: when the cache is full, we evict the item that has been used the least recently.
+
+Before going any further, it is worth looking at the problem statement itself:
+
+[LeetCode 146: LRU Cache](https://leetcode.com/problems/lru-cache/)
+
+Now, let us restate the problem in simpler terms.
+
+We are required to implement three things:
+
+- **Initialize the LRU cache** with a fixed capacity
+- **\`get(key)\`**: Given a key, return its value if it exists; otherwise return \`-1\`
+- **\`put(key, value)\`**: Given a key and a value, update the value if the key exists; otherwise insert the key-value pair
+
+There is one critical constraint: both \`get\` and \`put\` must run in **O(1)** time, that is, constant time complexity.
+
+So the real question is how we design a data structure that satisfies this requirement.
+
+---
+
+### Data Structure
+
+The choice of an appropriate data structure has a major impact on the algorithm and the final solution. But how do we know what is appropriate?
+
+The answer depends entirely on the requirements of the problem.
+
+Here, we have two operations—\`GET\` and \`PUT\`—and both must be constant time.
+
+Let us start with the most common data structure: an array.
+
+<lru-visualizer mode="array"></lru-visualizer>
+
+As we can see, when we retrieve an element from an array, we must reorder the array to maintain LRU order. This requires shifting elements, which takes linear time, O(n).
+
+That violates the problem constraints, so an array is not a valid choice.
+
+So what is the real requirement here?
+
+Whenever an element is accessed, we must remove it from its current position and insert it at the most recently used position.
+
+This leads us to a linked list.
+
+A linked list is not stored sequentially in memory. Instead, it uses pointers. This allows us to remove a node from anywhere and insert it elsewhere using pointer manipulation.
+
+<lru-visualizer mode="linked-list"></lru-visualizer>
+
+This solves part of the problem. However, a linked list has another issue.
+
+It does not support random access. If the user gives us a key, we cannot jump directly to the node without traversal, which would again be O(n).
+
+So what do we need?
+
+We need a mapping from a key to its corresponding node.
+
+This is exactly what a hash map provides.
+
+The final design uses **two data structures**:
+
+- A **hash map** mapping keys to nodes
+- A **doubly linked list** maintaining LRU order
+
+The hash map gives us O(1) access to nodes, and the doubly linked list allows O(1) removal and insertion.
+
+We specifically use a _doubly_ linked list because removal requires access to both previous and next nodes. A singly linked list cannot do this efficiently without traversal.
+
+---
+
+### GET and PUT Operations
+
+Now let us look at what actually happens in \`GET\` and \`PUT\`.
+
+Both operations share a core behavior: **updating recency**. Any accessed or updated item becomes the most recently used.
+
+#### Pseudocode: GET
+
+\`\`\`python
+def GET(key):
+    # Check if key exists
+    if key not in hashmap:
+        return -1
+    
+    # Key exists: move to MRU position
+    node = hashmap[key]
+    remove(node)           # Detach from current position
+    insert(node)           # Re-attach at MRU (tail)
+    
+    return node.value
+\`\`\`
+
+#### Pseudocode: PUT
+
+\`\`\`python
+def PUT(key, value):
+    # Case 1: Key already exists - update value
+    if key in hashmap:
+        node = hashmap[key]
+        node.value = value
+        remove(node)           # Detach from current position
+        insert(node)           # Re-attach at MRU (tail)
+    
+    # Case 2: New key
+    else:
+        # Evict LRU if at capacity
+        if len(hashmap) >= capacity:
+            lru = left.next    # Left sentinel's next is LRU
+            remove(lru)
+            del hashmap[lru.key]
+        
+        # Insert new node
+        node = Node(key, value)
+        insert(node)
+        hashmap[key] = node
+\`\`\`
+
+Both operations remove a node and reinsert it at the MRU position. Since this logic is shared, we abstract it into helper functions.
+
+---
+
+### Updating LRU Status
+
+We define two helper functions:
+
+- \`remove(node)\`
+- \`insert(node)\`
+
+To make this reliable, we use **two sentinel nodes**:
+
+- \`left\`: before the LRU
+    
+- \`right\`: after the MRU
+    
+- \`left.next\` → LRU
+    
+- \`right.prev\` → MRU
+    
+
+This eliminates edge cases and allows constant-time operations.
+
+Conceptually:
+
+\`\`\`
+left <-> LRU <-> ... <-> MRU <-> right
+\`\`\`
+
+---
+
+### Code
+
+Below is the implementation placeholder. The actual code is intentionally omitted.
+
+\`\`\`Python
+class Node:
+    def __init__(self, key, val):
+        self.key = key
+        self.val = val
+        self.prev = None
+        self.next = None
+
+class LRUCache:
+
+    def __init__(self, capacity: int):
+        self.capacity = capacity
+        self.cache = {} # Maps key -> Node
+        
+        # Initialize dummy head and dummy tail to simplify edge cases
+        # Usage Order: Head (MRU) <-> ... <-> Tail (LRU)
+        # (Note: You can flip this direction, as long as you are consistent)
+        self.head = Node(0, 0)
+        self.tail = Node(0, 0)
+        self.head.next = self.tail
+        self.tail.prev = self.head
+
+    # Helper: Remove a node from the linked list
+    def _remove(self, node):
+        prev_node = node.prev
+        next_node = node.next
+        prev_node.next = next_node
+        next_node.prev = prev_node
+
+    # Helper: Add a node right after head (Mark as MRU)
+    def _add(self, node):
+        next_node = self.head.next
+        self.head.next = node
+        node.prev = self.head
+        node.next = next_node
+        next_node.prev = node
+
+    def get(self, key: int) -> int:
+        if key in self.cache:
+            node = self.cache[key]
+            # Refresh usage: remove from current spot, add to head
+            self._remove(node)
+            self._add(node)
+            return node.val
+        return -1
+
+    def put(self, key: int, value: int) -> None:
+        if key in self.cache:
+            # Update value and refresh usage
+            node = self.cache[key]
+            self._remove(node)
+            node.val = value # update value
+            self._add(node)
+        else:
+            if len(self.cache) >= self.capacity:
+                # Evict LRU (node before tail)
+                lru_node = self.tail.prev
+                self._remove(lru_node)
+                del self.cache[lru_node.key]
+            
+            # Add new node
+            new_node = Node(key, value)
+            self._add(new_node)
+            self.cache[key] = new_node
+\`\`\`
+
+---
+
+### LRU Visualization (Final)
+
+<lru-visualizer mode="lru"></lru-visualizer>
+
+---
+
+## LFU Cache
+
+LRU uses time as its eviction signal. LFU, on the other hand, uses **frequency**.
+
+LFU stands for _Least Frequently Used_. Instead of tracking which item was used most recently, we track how often each item is used.
+
+When the cache is full, we evict the item with the lowest frequency.
+
+If multiple items have the same frequency, we break the tie using LRU semantics within that frequency.
+
+Conceptually, LFU can be built on top of the same ideas as LRU:
+
+- A hash map for O(1) access
+- Multiple linked lists, one per frequency bucket
+- A way to track the minimum frequency
+
+The structure is more complex, but the philosophy is the same: use pointer manipulation and indexing to avoid scanning.
+
+<lfu-visualizer></lfu-visualizer>
+
+---
+
+### Closing Note
+
+Solving problems require understanding **constraints**, choosing the right **data structures**, and composing simple ideas until the complexity disappears.
+
+But the most important part is struggle; to truly understand something, we must struggle with it a while. So here ya go:
+- [LeetCode 460: LFU Cache](https://leetcode.com/problems/lfu-cache/description/)
+- [LeetCode 432: All O(1) Data Structure](https://leetcode.com/problems/all-oone-data-structure/description/)
+`,
+  },
+  {
     title: "Writing Testable Code",
     description: "An introduction to the Hexagonal Architecture (Ports and Adapters)",
     date: "2025-12-31",
@@ -52,7 +322,7 @@ The logic was split into three layers, with each layer doing one and one thing w
 - Worker -> Coordination
 
 ### The Domain: Pure Functions
-We extracted all decision-making complexity into a single place. This file imports **nothing** related to DB or Redis. It takes plain objects and returns a **Decision**.
+We extracted all decision-making complexity into a single place. This file imports **nothing** related to DB or Redis. It takes plain objects and returns a **Decision**.
 
 \`\`\`JS
 // scheduler/domain/tripDecisions.js
@@ -74,7 +344,7 @@ export const evaluateTripAction = ({ trip, redisBusState, currentIstDate }) => {
 };
 \`\`\`
 
-We can now test _every single edge case_ with simple unit tests. No mocks required.
+We can now test _every single edge case_ with simple unit tests. No mocks required.
 
 \`\`\`JS
 // schduler/tests/tripDecisions.test.js
@@ -90,7 +360,7 @@ test('Should return END_SKIP_MISMATCH if Bus active on different Trip', () => {
 \`\`\`
 
 ### The Application: The Side-Effect Handler
-We moved the actual "doing" part to application/tripExecutor.js. It doesn't "think"; it just executes instructions.
+We moved the actual "doing" part to application/tripExecutor.js. It doesn't "think"; it just executes instructions.
 
 \`\`\`JS
 // scheduler/application/tripExecutor.js
@@ -109,7 +379,7 @@ export const executeDecisions = async (decisions, { redisClient, logger }) => {
 \`\`\`
 
 ### The Worker: The Coordinator
-The worker.js became a dumb coordinator.
+The worker.js became a dumb coordinator.
 
 \`\`\`JS
 // worker.js
@@ -123,119 +393,6 @@ const decisions = evaluateTripAction({           // 2. Decide (Pure)
 
 await executeDecisions(decisions, { redisClient }); // 3. Execute (Impure)
 \`\`\`
-
-### Conclusion`
-  },
-  {
-    title: "Understanding Serialization",
-    description:
-      "Serialization is easy if, you know what it is, if not, you'll be wondering why do you need to serialize data to send it over the wire if its all bits anyways.",
-    date: "2025-12-22",
-    slug: "serialization",
-    content: `### Serialization
-Let's say you want to send these bytes over the wire:
-\`\`\`
-00000000 00000000 00000000 00000101
-\`\`\`
-How does the receiver interpret it? As integer, float, ascii string...?
-This is what serialization solves. It encodes the bits and how to ***interpret*** those bits. It answers questions such as:
-- In what order are fields written?
-- How big is each field?
-- How do we know where one field ends?
-- How do we know where the message ends?
-- How do we handle missing or extra fields?
-- How do we handle different machines?
-
-#### Text based serialization protocols
-JSON, XML
-#### Binary serialization protocols
-Protocol Buffers (Protobuf), FlatBuffers, Cap'n Proto, MesssagePack, CBOR`,
-  },
-  {
-    title: "Sockets or How Processes Communicate",
-    description:
-      "An introduction to socket programming, covering TCP/UDP protocols, client-server architecture, and inter-process communication fundamentals.",
-    date: "2025-08-05",
-    slug: "sockets-or-how-processes-communicate",
-    content: `# Sockets or How Processes Communicate
-
-Socket programming is a fundamental concept in network programming that enables processes to communicate with each other across networks. Whether you're building web applications, distributed systems, or real-time communication tools, understanding sockets is crucial for any backend developer.
-
-## What are Sockets?
-
-A socket is an endpoint for communication between two machines. Think of it as a telephone connection - one process "calls" another process, and once the connection is established, they can exchange data bidirectionally.
-
-## Types of Sockets
-
-### TCP Sockets (Stream Sockets)
-- **Reliable**: Guarantees data delivery and order
-- **Connection-oriented**: Establishes a connection before data transfer
-- **Use cases**: Web browsers, email, file transfers
-
-### UDP Sockets (Datagram Sockets)  
-- **Fast**: Lower overhead, no connection establishment
-- **Unreliable**: No guarantee of delivery or order
-- **Use cases**: Gaming, live streaming, DNS lookups
-
-## Socket Programming Fundamentals
-
-### Server-Side Implementation
-
-\`\`\`python
-import socket
-
-# Create socket
-server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-# Bind to address and port
-server_socket.bind(('localhost', 8080))
-
-# Listen for connections
-server_socket.listen(5)
-
-while True:
-    client_socket, address = server_socket.accept()
-    data = client_socket.recv(1024)
-    client_socket.send(b"Hello from server!")
-    client_socket.close()
-\`\`\`
-
-### Client-Side Implementation
-
-\`\`\`python
-import socket
-
-# Create socket
-client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-# Connect to server
-client_socket.connect(('localhost', 8080))
-
-# Send data
-client_socket.send(b"Hello from client!")
-
-# Receive response
-response = client_socket.recv(1024)
-print(response.decode())
-
-client_socket.close()
-\`\`\`
-
-## Best Practices
-
-1. **Error Handling**: Always implement proper error handling for network operations
-2. **Resource Management**: Close sockets properly to avoid resource leaks
-3. **Security**: Validate input data and implement authentication when needed
-4. **Performance**: Use connection pooling for high-traffic applications
-
-## Real-World Applications
-
-Socket programming powers many technologies we use daily:
-- **Web Servers**: HTTP communication between browsers and servers
-- **Chat Applications**: Real-time messaging systems
-- **Database Connections**: Client-server database communication
-- **API Services**: RESTful and GraphQL API endpoints
-
-Understanding sockets gives you the foundation to build robust, scalable network applications and debug network-related issues effectively.`,
+`
   },
 ];

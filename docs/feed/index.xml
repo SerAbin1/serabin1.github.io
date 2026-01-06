@@ -6,10 +6,183 @@
     <link>https://serabin1.github.io</link>
     <atom:link href="https://serabin1.github.io/feed" rel="self" type="application/rss+xml"/>
     <language>en-us</language>
-    <lastBuildDate>Wed, 31 Dec 2025 10:23:48 GMT</lastBuildDate>
+    <lastBuildDate>Thu, 08 Jan 2026 18:14:23 GMT</lastBuildDate>
     <managingEditor>Abin Biju</managingEditor>
     <webMaster>Abin Biju</webMaster>
     
+    <item>
+      <title>LRU &amp; LFU Cache</title>
+      <link>https://serabin1.github.io/blogs/lru-lfu-cache</link>
+      <guid isPermaLink="true">https://serabin1.github.io/blogs/lru-lfu-cache</guid>
+      <description>Visual explanation of LRU and LFU Cache implementation</description>
+      <content:encoded><![CDATA[<h2>LRU Cache</h2>
+<p>We have a limited capacity.</p>
+<p>So what do we do when we need to keep track of many things at once?</p>
+<p>We need some way to decide what we will take out of our cache when it becomes full. In other words, we need an eviction policy. An eviction policy defines which item should be removed to make space for a new one.</p>
+<p>LRU stands for _Least Recently Used_. The idea is simple: when the cache is full, we evict the item that has been used the least recently.</p>
+<p>Before going any further, it is worth looking at the problem statement itself:</p>
+<p><a href="https://leetcode.com/problems/lru-cache/">LeetCode 146: LRU Cache</a></p>
+<p>Now, let us restate the problem in simpler terms.</p>
+<p>We are required to implement three things:</p>
+<ul><li><strong>Initialize the LRU cache</strong> with a fixed capacity</li><li><strong><code>get(key)</code></strong>: Given a key, return its value if it exists; otherwise return <code>-1</code></li><li><strong><code>put(key, value)</code></strong>: Given a key and a value, update the value if the key exists; otherwise insert the key-value pair</li></ul>
+<p>There is one critical constraint: both <code>get</code> and <code>put</code> must run in <strong>O(1)</strong> time, that is, constant time complexity.</p>
+<p>So the real question is how we design a data structure that satisfies this requirement.</p>
+<p>---</p>
+<h3>Data Structure</h3>
+<p>The choice of an appropriate data structure has a major impact on the algorithm and the final solution. But how do we know what is appropriate?</p>
+<p>The answer depends entirely on the requirements of the problem.</p>
+<p>Here, we have two operations—<code>GET</code> and <code>PUT</code>—and both must be constant time.</p>
+<p>Let us start with the most common data structure: an array.</p>
+<p><lru-visualizer mode="array"></lru-visualizer></p>
+<p>As we can see, when we retrieve an element from an array, we must reorder the array to maintain LRU order. This requires shifting elements, which takes linear time, O(n).</p>
+<p>That violates the problem constraints, so an array is not a valid choice.</p>
+<p>So what is the real requirement here?</p>
+<p>Whenever an element is accessed, we must remove it from its current position and insert it at the most recently used position.</p>
+<p>This leads us to a linked list.</p>
+<p>A linked list is not stored sequentially in memory. Instead, it uses pointers. This allows us to remove a node from anywhere and insert it elsewhere using pointer manipulation.</p>
+<p><lru-visualizer mode="linked-list"></lru-visualizer></p>
+<p>This solves part of the problem. However, a linked list has another issue.</p>
+<p>It does not support random access. If the user gives us a key, we cannot jump directly to the node without traversal, which would again be O(n).</p>
+<p>So what do we need?</p>
+<p>We need a mapping from a key to its corresponding node.</p>
+<p>This is exactly what a hash map provides.</p>
+<p>The final design uses <strong>two data structures</strong>:</p>
+<ul><li>A <strong>hash map</strong> mapping keys to nodes</li><li>A <strong>doubly linked list</strong> maintaining LRU order</li></ul>
+<p>The hash map gives us O(1) access to nodes, and the doubly linked list allows O(1) removal and insertion.</p>
+<p>We specifically use a _doubly_ linked list because removal requires access to both previous and next nodes. A singly linked list cannot do this efficiently without traversal.</p>
+<p>---</p>
+<h3>GET and PUT Operations</h3>
+<p>Now let us look at what actually happens in <code>GET</code> and <code>PUT</code>.</p>
+<p>Both operations share a core behavior: <strong>updating recency</strong>. Any accessed or updated item becomes the most recently used.</p>
+<h4>Pseudocode: GET</h4>
+<pre><code>def GET(key):
+    # Check if key exists
+    if key not in hashmap:
+        return -1
+    
+    # Key exists: move to MRU position
+    node = hashmap[key]
+    remove(node)           # Detach from current position
+    insert(node)           # Re-attach at MRU (tail)
+    
+    return node.value</code></pre>
+<h4>Pseudocode: PUT</h4>
+<pre><code>def PUT(key, value):
+    # Case 1: Key already exists - update value
+    if key in hashmap:
+        node = hashmap[key]
+        node.value = value
+        remove(node)           # Detach from current position
+        insert(node)           # Re-attach at MRU (tail)
+    
+    # Case 2: New key
+    else:
+        # Evict LRU if at capacity
+        if len(hashmap) &gt;= capacity:
+            lru = left.next    # Left sentinel's next is LRU
+            remove(lru)
+            del hashmap[lru.key]
+        
+        # Insert new node
+        node = Node(key, value)
+        insert(node)
+        hashmap[key] = node</code></pre>
+<p>Both operations remove a node and reinsert it at the MRU position. Since this logic is shared, we abstract it into helper functions.</p>
+<p>---</p>
+<h3>Updating LRU Status</h3>
+<p>We define two helper functions:</p>
+<ul><li><code>remove(node)</code></li><li><code>insert(node)</code></li></ul>
+<p>To make this reliable, we use <strong>two sentinel nodes</strong>:</p>
+<ul><li><code>left</code>: before the LRU</li>    <li><code>right</code>: after the MRU</li>    <li><code>left.next</code> → LRU</li>    <li><code>right.prev</code> → MRU</li></ul>
+<p>This eliminates edge cases and allows constant-time operations.</p>
+<p>Conceptually:</p>
+<pre><code>left &lt;-&gt; LRU &lt;-&gt; ... &lt;-&gt; MRU &lt;-&gt; right</code></pre>
+<p>---</p>
+<h3>Code</h3>
+<p>Below is the implementation placeholder. The actual code is intentionally omitted.</p>
+<pre><code>class Node:
+    def __init__(self, key, val):
+        self.key = key
+        self.val = val
+        self.prev = None
+        self.next = None
+
+class LRUCache:
+
+    def __init__(self, capacity: int):
+        self.capacity = capacity
+        self.cache = {} # Maps key -&gt; Node
+        
+        # Initialize dummy head and dummy tail to simplify edge cases
+        # Usage Order: Head (MRU) &lt;-&gt; ... &lt;-&gt; Tail (LRU)
+        # (Note: You can flip this direction, as long as you are consistent)
+        self.head = Node(0, 0)
+        self.tail = Node(0, 0)
+        self.head.next = self.tail
+        self.tail.prev = self.head
+
+    # Helper: Remove a node from the linked list
+    def _remove(self, node):
+        prev_node = node.prev
+        next_node = node.next
+        prev_node.next = next_node
+        next_node.prev = prev_node
+
+    # Helper: Add a node right after head (Mark as MRU)
+    def _add(self, node):
+        next_node = self.head.next
+        self.head.next = node
+        node.prev = self.head
+        node.next = next_node
+        next_node.prev = node
+
+    def get(self, key: int) -&gt; int:
+        if key in self.cache:
+            node = self.cache[key]
+            # Refresh usage: remove from current spot, add to head
+            self._remove(node)
+            self._add(node)
+            return node.val
+        return -1
+
+    def put(self, key: int, value: int) -&gt; None:
+        if key in self.cache:
+            # Update value and refresh usage
+            node = self.cache[key]
+            self._remove(node)
+            node.val = value # update value
+            self._add(node)
+        else:
+            if len(self.cache) &gt;= self.capacity:
+                # Evict LRU (node before tail)
+                lru_node = self.tail.prev
+                self._remove(lru_node)
+                del self.cache[lru_node.key]
+            
+            # Add new node
+            new_node = Node(key, value)
+            self._add(new_node)
+            self.cache[key] = new_node</code></pre>
+<p>---</p>
+<h3>LRU Visualization (Final)</h3>
+<p><lru-visualizer mode="lru"></lru-visualizer></p>
+<p>---</p>
+<h2>LFU Cache</h2>
+<p>LRU uses time as its eviction signal. LFU, on the other hand, uses <strong>frequency</strong>.</p>
+<p>LFU stands for _Least Frequently Used_. Instead of tracking which item was used most recently, we track how often each item is used.</p>
+<p>When the cache is full, we evict the item with the lowest frequency.</p>
+<p>If multiple items have the same frequency, we break the tie using LRU semantics within that frequency.</p>
+<p>Conceptually, LFU can be built on top of the same ideas as LRU:</p>
+<ul><li>A hash map for O(1) access</li><li>Multiple linked lists, one per frequency bucket</li><li>A way to track the minimum frequency</li></ul>
+<p>The structure is more complex, but the philosophy is the same: use pointer manipulation and indexing to avoid scanning.</p>
+<p><lfu-visualizer></lfu-visualizer></p>
+<p>---</p>
+<h3>Closing Note</h3>
+<p>Solving problems require understanding <strong>constraints</strong>, choosing the right <strong>data structures</strong>, and composing simple ideas until the complexity disappears.</p>
+<p>But the most important part is struggle; to truly understand something, we must struggle with it a while. So here ya go:<br><li><a href="https://leetcode.com/problems/lfu-cache/description/">LeetCode 460: LFU Cache</a></li><br><li><a href="https://leetcode.com/problems/all-oone-data-structure/description/">LeetCode 432: All O(1) Data Structure</a></li></p>]]></content:encoded>
+      <pubDate>Sun, 04 Jan 2026 00:00:00 GMT</pubDate>
+      <author>Abin Biju</author>
+    </item>
     <item>
       <title>Writing Testable Code</title>
       <link>https://serabin1.github.io/blogs/hexagonal-architecture</link>
@@ -40,7 +213,7 @@ worker.process(async (job) =&gt; {
 });</code></pre>
 <h2>The New Code</h2> The logic was split into three layers, with each layer doing one and one thing well.
 <ul><li>Domain -> Decisions (the core business logic lives here, easily testable!)</li><li>Application -> Execution</li><li>Worker -> Coordination</li></ul>
-<h3>The Domain: Pure Functions</h3> We extracted all decision-making complexity into a single place. This file imports <strong>nothing</strong> related to DB or Redis. It takes plain objects and returns a <strong>Decision</strong>.
+<h3>The Domain: Pure Functions</h3> We extracted all decision-making complexity into a single place. This file imports <strong>nothing</strong> related to DB or Redis. It takes plain objects and returns a <strong>Decision</strong>.
 <pre><code>// scheduler/domain/tripDecisions.js
 export const evaluateTripAction = ({ trip, redisBusState, currentIstDate }) =&gt; {
     // Pure Logic: No side effects!
@@ -58,7 +231,7 @@ export const evaluateTripAction = ({ trip, redisBusState, currentIstDate }) =&gt
 
     return [{ type: "END_COMPLETE", payload: { ... } }];
 };</code></pre>
-<p>We can now test _every single edge case_ with simple unit tests. No mocks required.</p>
+<p>We can now test _every single edge case_ with simple unit tests. No mocks required.</p>
 <pre><code>// schduler/tests/tripDecisions.test.js
 test('Should return END_SKIP_MISMATCH if Bus active on different Trip', () =&gt; {
     const decision = evaluateTripAction({
@@ -69,7 +242,7 @@ test('Should return END_SKIP_MISMATCH if Bus active on different Trip', () =&gt;
 
     expect(decision[0].type).toBe("END_SKIP_MISMATCH");
 });</code></pre>
-<h3>The Application: The Side-Effect Handler</h3> We moved the actual "doing" part to application/tripExecutor.js. It doesn't "think"; it just executes instructions.
+<h3>The Application: The Side-Effect Handler</h3> We moved the actual "doing" part to application/tripExecutor.js. It doesn't "think"; it just executes instructions.
 <pre><code>// scheduler/application/tripExecutor.js
 export const executeDecisions = async (decisions, { redisClient, logger }) =&gt; {
     for (const decision of decisions) {
@@ -83,7 +256,7 @@ export const executeDecisions = async (decisions, { redisClient, logger }) =&gt;
         }
     }
 };</code></pre>
-<h3>The Worker: The Coordinator</h3> The worker.js became a dumb coordinator.
+<h3>The Worker: The Coordinator</h3> The worker.js became a dumb coordinator.
 <pre><code>// worker.js
 const trip = await Trip.findByPk(1);             // 1. Fetch State
 const redisState = await redisClient.get(key);
@@ -93,74 +266,8 @@ const decisions = evaluateTripAction({           // 2. Decide (Pure)
     redisBusState: JSON.parse(redisState) 
 });
 
-await executeDecisions(decisions, { redisClient }); // 3. Execute (Impure)</code></pre>
-<h3>Conclusion</h3>]]></content:encoded>
+await executeDecisions(decisions, { redisClient }); // 3. Execute (Impure)</code></pre>]]></content:encoded>
       <pubDate>Wed, 31 Dec 2025 00:00:00 GMT</pubDate>
-      <author>Abin Biju</author>
-    </item>
-    <item>
-      <title>Understanding Serialization</title>
-      <link>https://serabin1.github.io/blogs/serialization</link>
-      <guid isPermaLink="true">https://serabin1.github.io/blogs/serialization</guid>
-      <description>Serialization is easy if, you know what it is, if not, you&apos;ll be wondering why do you need to serialize data to send it over the wire if its all bits anyways.</description>
-      <content:encoded><![CDATA[<h3>Serialization</h3> Let's say you want to send these bytes over the wire: <pre><code>00000000 00000000 00000000 00000101</code></pre> How does the receiver interpret it? As integer, float, ascii string...? This is what serialization solves. It encodes the bits and how to <strong><em>interpret</em></strong> those bits. It answers questions such as: <li>In what order are fields written?</li> <li>How big is each field?</li> <li>How do we know where one field ends?</li> <li>How do we know where the message ends?</li> <li>How do we handle missing or extra fields?</li> <li>How do we handle different machines?</li>
-<h4>Text based serialization protocols</h4> JSON, XML <h4>Binary serialization protocols</h4> Protocol Buffers (Protobuf), FlatBuffers, Cap'n Proto, MesssagePack, CBOR]]></content:encoded>
-      <pubDate>Mon, 22 Dec 2025 00:00:00 GMT</pubDate>
-      <author>Abin Biju</author>
-    </item>
-    <item>
-      <title>Sockets or How Processes Communicate</title>
-      <link>https://serabin1.github.io/blogs/sockets-or-how-processes-communicate</link>
-      <guid isPermaLink="true">https://serabin1.github.io/blogs/sockets-or-how-processes-communicate</guid>
-      <description>An introduction to socket programming, covering TCP/UDP protocols, client-server architecture, and inter-process communication fundamentals.</description>
-      <content:encoded><![CDATA[<h1>Sockets or How Processes Communicate</h1>
-<p>Socket programming is a fundamental concept in network programming that enables processes to communicate with each other across networks. Whether you're building web applications, distributed systems, or real-time communication tools, understanding sockets is crucial for any backend developer.</p>
-<h2>What are Sockets?</h2>
-<p>A socket is an endpoint for communication between two machines. Think of it as a telephone connection - one process "calls" another process, and once the connection is established, they can exchange data bidirectionally.</p>
-<h2>Types of Sockets</h2>
-<h3>TCP Sockets (Stream Sockets)</h3> <li><strong>Reliable</strong>: Guarantees data delivery and order</li> <li><strong>Connection-oriented</strong>: Establishes a connection before data transfer</li> <li><strong>Use cases</strong>: Web browsers, email, file transfers</li>
-<h3>UDP Sockets (Datagram Sockets)  </h3> <li><strong>Fast</strong>: Lower overhead, no connection establishment</li> <li><strong>Unreliable</strong>: No guarantee of delivery or order</li> <li><strong>Use cases</strong>: Gaming, live streaming, DNS lookups</li>
-<h2>Socket Programming Fundamentals</h2>
-<h3>Server-Side Implementation</h3>
-<pre><code>import socket
-
-# Create socket
-server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-# Bind to address and port
-server_socket.bind(('localhost', 8080))
-
-# Listen for connections
-server_socket.listen(5)
-
-while True:
-    client_socket, address = server_socket.accept()
-    data = client_socket.recv(1024)
-    client_socket.send(b"Hello from server!")
-    client_socket.close()</code></pre>
-<h3>Client-Side Implementation</h3>
-<pre><code>import socket
-
-# Create socket
-client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-# Connect to server
-client_socket.connect(('localhost', 8080))
-
-# Send data
-client_socket.send(b"Hello from client!")
-
-# Receive response
-response = client_socket.recv(1024)
-print(response.decode())
-
-client_socket.close()</code></pre>
-<h2>Best Practices</h2>
-<p>1. <strong>Error Handling</strong>: Always implement proper error handling for network operations<br>2. <strong>Resource Management</strong>: Close sockets properly to avoid resource leaks<br>3. <strong>Security</strong>: Validate input data and implement authentication when needed<br>4. <strong>Performance</strong>: Use connection pooling for high-traffic applications</p>
-<h2>Real-World Applications</h2>
-<p>Socket programming powers many technologies we use daily:<br><li><strong>Web Servers</strong>: HTTP communication between browsers and servers</li><br><li><strong>Chat Applications</strong>: Real-time messaging systems</li><br><li><strong>Database Connections</strong>: Client-server database communication</li><br><li><strong>API Services</strong>: RESTful and GraphQL API endpoints</li></p>
-<p>Understanding sockets gives you the foundation to build robust, scalable network applications and debug network-related issues effectively.</p>]]></content:encoded>
-      <pubDate>Tue, 05 Aug 2025 00:00:00 GMT</pubDate>
       <author>Abin Biju</author>
     </item>
   </channel>
