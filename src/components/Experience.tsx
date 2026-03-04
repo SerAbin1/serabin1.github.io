@@ -317,12 +317,6 @@ const Experience = () => {
             </button>
 
             <div className="p-6 md:p-8">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl md:text-2xl font-bold terminal-glow">Featured Freelance Work</h3>
-                <div className="text-sm code-comment font-mono text-muted-foreground mr-8 md:mr-0">
-                  {currentSlide + 1} / {slideshowProjects.length}
-                </div>
-              </div>
 
               <div
                 className="relative pt-2 pb-6"
