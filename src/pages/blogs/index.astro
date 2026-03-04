@@ -39,7 +39,7 @@ function formatDate(dateStr: string) {
     <div class="flex flex-col gap-6 mt-10">
       {sortedPosts.map(post => (
         <a
-          href={`/blogs/${post.slug}`}
+          href={`/blogs/${post.id}`}
           class="group block p-6 rounded-lg border border-border bg-card hover:border-terminal-green/50 hover:bg-card/80 transition-all duration-300"
           data-astro-prefetch
         >

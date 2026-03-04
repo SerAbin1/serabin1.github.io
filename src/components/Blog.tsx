@@ -9,7 +9,7 @@ interface BlogPostData {
   title: string;
   description: string;
   date: string;
-  slug: string;
+  id: string;
 }
 
 interface BlogProps {
@@ -140,8 +140,8 @@ const Blog = ({ posts }: BlogProps) => {
         <div ref={postsRef} className="space-y-1 mb-8 min-h-[300px]">
           {posts.map((post) => (
             <a
-              key={post.slug}
-              href={`/blogs/${post.slug}`}
+              key={post.id}
+              href={`/blogs/${post.id}`}
               data-blog-post
               className="group block py-4 -mx-3 px-3 rounded-lg hover:bg-muted/50 transition-colors"
             >

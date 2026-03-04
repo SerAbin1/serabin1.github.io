@@ -19,7 +19,7 @@ export const GET: APIRoute = async ({ site }) => {
         '## Blog Posts',
         '',
         ...sortedPosts.map(post =>
-            `- [${post.data.title}](${baseUrl}/blogs/${post.slug}/)\n  ${post.data.description} (${post.data.date})`
+            `- [${post.data.title}](${baseUrl}/blogs/${post.id}/)\n  ${post.data.description} (${post.data.date})`
         ),
         '',
         '## Sections',
