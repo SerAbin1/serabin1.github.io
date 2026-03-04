@@ -18,6 +18,7 @@ export default defineConfig({
       syntaxHighlight: 'shiki',
       shikiConfig: {
         theme: 'github-dark',
+        defaultColor: false,
       },
     }),
   ],

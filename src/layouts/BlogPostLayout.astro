@@ -67,42 +67,8 @@ const schema = {
     </header>
 
     <!-- MDX Content -->
-    <article class="prose prose-invert prose-terminal max-w-none text-left prose-headings:font-mono prose-headings:text-foreground prose-a:text-terminal-green hover:prose-a:text-terminal-green-bright prose-pre:!bg-[#0d1117] prose-pre:rounded-lg prose-pre:p-4 prose-pre:-mx-4 sm:prose-pre:mx-0 prose-pre:text-sm prose-pre:overflow-x-auto">
+    <article class="markdown-content w-full">
       <slot />
     </article>
   </div>
 </BaseLayout>
-
-<style is:global>
-  /* Base typography for the article container */
-  .prose-terminal {
-    font-size: 1.05rem;
-    line-height: 1.7;
-  }
-  
-  .prose-terminal p {
-    margin-bottom: 1.5em;
-  }
-  
-  /* Link hover states */
-  .prose-terminal a {
-    text-decoration: underline;
-    text-underline-offset: 4px;
-    transition: all 0.2s ease;
-  }
-  
-  .prose-terminal a:hover {
-    text-decoration-color: hsl(var(--terminal-green));
-  }
-  
-  /* Headings spacing */
-  .prose-terminal h2 {
-    margin-top: 2em;
-    margin-bottom: 0.8em;
-  }
-  
-  .prose-terminal h3 {
-    margin-top: 1.5em;
-    margin-bottom: 0.6em;
-  }
-</style>
