@@ -20,17 +20,7 @@ const Projects = () => {
   const footerRef = useRef<HTMLDivElement>(null);
 
   const projects = [
-    {
-      title: "Business Management Platform",
-      description: [
-        "Engineered a full-stack business management platform, streamlining invoicing and analytics.",
-        "Led backend development, building a REST API for dynamic invoice generation and implementing secure Role Based Access Control and authentication.",
-        "Collaborated on the React.js frontend and dashboard, to visualize key business metrics.",
-      ],
-      technologies: ["React", "NodeJS", "ExpressJS", "PostgreSQL", "RBAC"],
-      github: "https://github.com/SerAbin1/jobQueue",
-      demo: "https://www.industechautomations.in/",
-    },
+
     {
       title: "Visa Platform - Borderly Visa",
       description: [

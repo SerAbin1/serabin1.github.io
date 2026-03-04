@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useEffect } from "react";
+import { useLayoutEffect, useRef, useEffect, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { ChevronLeft, ChevronRight, X, ExternalLink } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -15,41 +16,136 @@ const Experience = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
+  const touchStartX = useRef<number | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
 
-  const experiences = [
+  const slideshowProjects = [
     {
-      title: "Backend Developer",
-      company: "Evide.AI",
-      period: "Present",
-      location: "Remote",
-      description: [
-        "Building backend infrastructure for a bus tracking application",
-        "Developing scalable APIs for real-time bus location data and route information",
-        "Implementing efficient data processing systems for live tracking",
-        "Designing robust database architecture for user and route management",
-      ],
-      technologies: [
-        "Node.js",
-        "Express.js",
-        "PostgreSQL",
-        "Docker",
-        "Real-time APIs",
-      ],
+      name: "Pumato",
+      url: "https://pumato.online/",
+      description: "A full-stack food delivery, laundry, and grocery platform serving 3 campuses and 10,000+ students. Engineered to run entirely on free-tier infrastructure while handling 300,000+ Firestore reads per month — a deliberate architectural challenge.",
+      tags: ["NextJS", "Firebase", "Firestore", "Serverless"]
     },
     {
-      title: "Backend Developer Intern",
-      company: "IndusTech Automations",
-      period: "March - July 2025",
-      location: "Madurai",
-      description: [
-        "Engineered a full-stack business management platform, streamlining invoicing and analytics",
-        "Led backend development, building REST APIs for dynamic invoice generation",
-        "Implemented secure Role Based Access Control (RBAC) and authentication systems",
-        "Collaborated on React.js frontend and dashboard to visualize key business metrics",
-      ],
-      technologies: ["Node.js", "Express.js", "React.js", "PostgreSQL", "RBAC", "JWT"],
+      name: "BorderlyVisa",
+      url: "https://www.borderlyvisa.in/",
+      description: "A modern visa and tourism platform built for affordable, timely visa applications. Co-developed with a focus on SEO performance, clean information architecture, and a trustworthy user experience.",
+      tags: ["React", "SEO", "Supabase"]
     },
+    {
+      name: "SayrTravels",
+      url: "https://www.sayrtravels.in/",
+      description: "A static site for a medical tourism company. Built with a clean, minimal UI that puts the content first — fast, lightweight, and polished.",
+      tags: ["React", "Static", "Minimal UI"]
+    }
   ];
+
+  const experiences: {
+    title: string;
+    company: string;
+    period: string;
+    location: string;
+    description: string[];
+    technologies: string[];
+    hasProjects?: boolean;
+  }[] = [
+      {
+        title: "Backend Developer Intern",
+        company: "Evide.AI",
+        period: "Present",
+        location: "Remote",
+        description: [
+          "Building backend infrastructure for a bus tracking application",
+          "Developing scalable APIs for real-time bus location data and route information",
+          "Implementing efficient data processing systems for live tracking",
+          "Designing robust database architecture for user and route management",
+        ],
+        technologies: [
+          "Node.js",
+          "Express.js",
+          "PostgreSQL",
+          "Docker",
+          "Real-time APIs",
+        ],
+      },
+      {
+        title: "Full Stack Developer",
+        company: "Freelance",
+        period: "Jul 2025 - Present",
+        location: "Remote",
+        description: [
+          "Designed and developed full-stack applications and websites for clients across various domains, working across different tech stacks including React, Next.js, and Node.js.",
+          "Delivered projects deployed via Firebase, Supabase, and Render.",
+          "Handled diverse scales: from high-traffic service platforms to SEO-optimized business sites and clean static builds — each tailored to the client's budget and goals."
+        ],
+        technologies: ["React", "Next.js", "Node.js", "Firebase", "Supabase", "Render"],
+        hasProjects: true,
+      },
+      {
+        title: "Backend Developer Intern",
+        company: "IndusTech Automations",
+        period: "March - July 2025",
+        location: "Madurai",
+        description: [
+          "Engineered a full-stack business management platform, streamlining invoicing and analytics",
+          "Led backend development, building REST APIs for dynamic invoice generation",
+          "Implemented secure Role Based Access Control (RBAC) and authentication systems",
+          "Collaborated on React.js frontend and dashboard to visualize key business metrics",
+        ],
+        technologies: ["Node.js", "Express.js", "React.js", "PostgreSQL", "RBAC", "JWT"],
+      },
+    ];
+
+  // Modal handlers
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!isModalOpen) return;
+      if (e.key === "Escape") setIsModalOpen(false);
+      if (e.key === "ArrowLeft") handlePrevSlide();
+      if (e.key === "ArrowRight") handleNextSlide();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isModalOpen]);
+
+  useEffect(() => {
+    if (isModalOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => { document.body.style.overflow = "unset"; };
+  }, [isModalOpen]);
+
+  const handlePrevSlide = () => {
+    setCurrentSlide((prev) => (prev === 0 ? slideshowProjects.length - 1 : prev - 1));
+  };
+
+  const handleNextSlide = () => {
+    setCurrentSlide((prev) => (prev === slideshowProjects.length - 1 ? 0 : prev + 1));
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const touchEndX = e.touches[0].clientX;
+    const diffX = touchStartX.current - touchEndX;
+
+    if (Math.abs(diffX) > 50) {
+      if (diffX > 0) handleNextSlide();
+      else handlePrevSlide();
+      touchStartX.current = null;
+    }
+  };
+
+  const handleTouchEnd = () => {
+    touchStartX.current = null;
+  };
 
   // GSAP animations
   useLayoutEffect(() => {
@@ -177,12 +273,136 @@ const Experience = () => {
                       ))}
                     </div>
                   </div>
+                  {/* View Projects Link */}
+                  {exp.hasProjects && (
+                    <div className="pt-4 mt-4 border-t border-border/50 flex flex-col items-center sm:items-end">
+                      <button
+                        onClick={() => {
+                          setCurrentSlide(0);
+                          setIsModalOpen(true);
+                        }}
+                        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors group"
+                      >
+                        View Projects
+                        <span className="transform translate-x-0 group-hover:translate-x-1 transition-transform">→</span>
+                      </button>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             ))}
           </div>
         </div>
       </div>
+
+      {/* Project Slideshow Modal */}
+      {isModalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/70 backdrop-blur-sm transition-opacity duration-300 animate-in fade-in"
+          onClick={() => setIsModalOpen(false)}
+        >
+          <div
+            className="relative w-full max-w-3xl bg-card border border-border shadow-2xl rounded-xl overflow-hidden animate-in zoom-in-95 duration-300"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="absolute top-4 right-4 z-10 p-2 text-muted-foreground hover:text-foreground transition-colors rounded-full hover:bg-secondary"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="p-6 md:p-8">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl md:text-2xl font-bold terminal-glow">Featured Freelance Work</h3>
+                <div className="text-sm code-comment font-mono text-muted-foreground mr-8 md:mr-0">
+                  {currentSlide + 1} / {slideshowProjects.length}
+                </div>
+              </div>
+
+              <div
+                className="relative pt-2 pb-6"
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+              >
+                <div className="overflow-hidden">
+                  <div
+                    className="flex transition-transform duration-500 ease-out"
+                    style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+                  >
+                    {slideshowProjects.map((project, idx) => (
+                      <div key={idx} className="w-full flex-shrink-0 px-2">
+                        <div className="space-y-4">
+                          <h4 className="text-lg md:text-xl font-semibold terminal-text">{project.name}</h4>
+                          <p className="text-muted-foreground text-sm leading-relaxed min-h-[60px]">
+                            {project.description}
+                          </p>
+
+                          <div className="rounded-lg border border-border overflow-hidden bg-background h-[180px] md:h-[220px] relative group">
+                            <iframe
+                              src={project.url}
+                              title={`${project.name} Preview`}
+                              className="w-full h-full object-cover pointer-events-none opacity-80 group-hover:opacity-100 transition-opacity"
+                              loading="lazy"
+                            />
+                          </div>
+
+                          <a
+                            href={project.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground hover:underline transition-colors mt-2"
+                          >
+                            Open live site <ExternalLink className="w-3 h-3" />
+                          </a>
+
+                          <div className="flex flex-wrap gap-2 pt-2">
+                            {project.tags.map((tag, i) => (
+                              <span
+                                key={i}
+                                className="px-2 py-0.5 text-[10px] md:text-xs bg-secondary text-secondary-foreground rounded-full font-mono"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Navigation Arrows */}
+                <button
+                  onClick={handlePrevSlide}
+                  className="absolute -left-2 top-[45%] md:-ml-4 p-2 bg-background hover:bg-secondary text-foreground rounded-full border border-border shadow-sm transition-all z-10 flex"
+                >
+                  <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
+                </button>
+                <button
+                  onClick={handleNextSlide}
+                  className="absolute -right-2 top-[45%] md:-mr-4 p-2 bg-background hover:bg-secondary text-foreground rounded-full border border-border shadow-sm transition-all z-10 flex"
+                >
+                  <ChevronRight className="w-4 h-4 md:w-5 md:h-5" />
+                </button>
+              </div>
+
+              {/* Dots */}
+              <div className="flex justify-center gap-2 mt-2">
+                {slideshowProjects.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentSlide(idx)}
+                    className={`h-1.5 rounded-full transition-all duration-300 ${currentSlide === idx ? "bg-primary w-6" : "bg-muted w-1.5 md:w-2 hover:bg-muted-foreground"
+                      }`}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };
