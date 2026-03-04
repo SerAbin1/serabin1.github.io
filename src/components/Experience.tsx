@@ -19,23 +19,27 @@ const Experience = () => {
   const touchStartX = useRef<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
 
   const slideshowProjects = [
     {
       name: "Pumato",
       url: "https://pumato.online/",
+      image: "/projects/pumato.png",
       description: "A full-stack food delivery, laundry, and grocery platform serving 3 campuses and 10,000+ students. Engineered to run entirely on free-tier infrastructure while handling 300,000+ Firestore reads per month — a deliberate architectural challenge.",
       tags: ["NextJS", "Firebase", "Firestore", "Serverless"]
     },
     {
       name: "BorderlyVisa",
       url: "https://www.borderlyvisa.in/",
+      image: "/projects/borderlyvisa.png",
       description: "A modern visa and tourism platform built for affordable, timely visa applications. Co-developed with a focus on SEO performance, clean information architecture, and a trustworthy user experience.",
       tags: ["React", "SEO", "Supabase"]
     },
     {
       name: "SayrTravels",
       url: "https://www.sayrtravels.in/",
+      image: "/projects/sayrtravels.png",
       description: "A static site for a medical tourism company. Built with a clean, minimal UI that puts the content first — fast, lightweight, and polished.",
       tags: ["React", "Static", "Minimal UI"]
     }
@@ -339,23 +343,56 @@ const Experience = () => {
                             {project.description}
                           </p>
 
-                          <div className="rounded-lg border border-border overflow-hidden bg-background h-[180px] md:h-[220px] relative group">
-                            <iframe
-                              src={project.url}
-                              title={`${project.name} Preview`}
-                              className="w-full h-full object-cover pointer-events-none opacity-80 group-hover:opacity-100 transition-opacity"
-                              loading="lazy"
-                            />
+                          <div className="rounded-lg border border-border overflow-hidden bg-background h-[180px] md:h-[220px] relative group flex items-center justify-center">
+                            {failedImages[project.name] ? (
+                              <div className="flex flex-col items-center justify-center w-full h-full bg-card/80 p-4 text-center">
+                                <span className="font-semibold text-foreground mb-3">{project.name}</span>
+                                <a
+                                  href={project.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-2 text-sm font-medium bg-secondary text-secondary-foreground hover:bg-secondary/80 px-5 py-2.5 rounded-md transition-colors"
+                                >
+                                  Visit Site <ExternalLink className="w-4 h-4" />
+                                </a>
+                              </div>
+                            ) : (
+                              <>
+                                <img
+                                  src={project.image}
+                                  alt={`${project.name} Preview`}
+                                  className="w-full h-full object-cover object-top opacity-90 group-hover:opacity-100 transition-opacity"
+                                  loading="lazy"
+                                  onError={() => setFailedImages((prev) => ({ ...prev, [project.name]: true }))}
+                                />
+                                {/* Desktop Hover Overlay */}
+                                <div className="hidden md:flex absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 items-center justify-center">
+                                  <a
+                                    href={project.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-2 text-sm font-medium bg-background text-foreground hover:bg-secondary px-5 py-2.5 rounded-md transition-all transform translate-y-4 group-hover:translate-y-0"
+                                  >
+                                    Visit Site <ExternalLink className="w-4 h-4" />
+                                  </a>
+                                </div>
+                              </>
+                            )}
                           </div>
 
-                          <a
-                            href={project.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground hover:underline transition-colors mt-2"
-                          >
-                            Open live site <ExternalLink className="w-3 h-3" />
-                          </a>
+                          {/* Mobile Static Link (Hidden on Desktop) */}
+                          {!failedImages[project.name] && (
+                            <div className="md:hidden mt-3 mb-1">
+                              <a
+                                href={project.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center justify-center w-full gap-2 text-sm font-medium bg-secondary text-secondary-foreground hover:bg-secondary/80 px-4 py-2.5 rounded-md transition-colors"
+                              >
+                                Visit Site <ExternalLink className="w-4 h-4" />
+                              </a>
+                            </div>
+                          )}
 
                           <div className="flex flex-wrap gap-2 pt-2">
                             {project.tags.map((tag, i) => (
