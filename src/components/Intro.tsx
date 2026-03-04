@@ -4,7 +4,6 @@ import MagneticButton from "./MagneticButton";
 
 const Intro = () => {
   const [displayText, setDisplayText] = useState("");
-  const [showCursor, setShowCursor] = useState(true);
   const fullText = 'print("Hello, World!")';
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -16,8 +15,6 @@ const Intro = () => {
         setDisplayText(fullText.slice(0, currentIndex));
         currentIndex++;
         setTimeout(typeWriter, 100);
-      } else {
-        setShowCursor(false);
       }
     };
 
@@ -74,7 +71,6 @@ const Intro = () => {
               "{displayText.includes('"') ? displayText.split('"')[1] : ""}"
             </span>
             <span className="text-foreground">)</span>
-            {showCursor && <span className="terminal-cursor"></span>}
           </pre>
         </div>
 
