@@ -19,25 +19,13 @@ const Projects = () => {
   const gridRef = useRef<HTMLDivElement>(null);
   const footerRef = useRef<HTMLDivElement>(null);
 
-  const projects = [
-
-    {
-      title: "Visa Platform - Borderly Visa",
-      description: [
-        "Designed and implemented the data management layer for a comprehensive visa and blog web application.",
-        "Structured and maintained Supabase database schemas to handle blog post creation, retrieval, and updates, as well as manage visa application data.",
-        "Focused on efficient data modeling and secure access controls to support both public-facing content and administrative functionalities.",
-      ],
-      technologies: [
-        "JavaScript",
-        "Supabase",
-        "Database Design",
-        "Access Control",
-      ],
-      github: "https://github.com/aziyanck/borderly-visa",
-      demo: "https://www.borderlyvisa.in/",
-    },
-  ];
+  const projects: {
+    title: string;
+    description: string[];
+    technologies: string[];
+    github: string;
+    demo: string;
+  }[] = [];
 
   // GSAP animations
   useLayoutEffect(() => {
