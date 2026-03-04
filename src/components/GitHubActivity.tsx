@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import GitHubCalendar from "react-github-calendar";
@@ -28,7 +28,7 @@ const GitHubActivity = () => {
   );
 
   // GSAP animations
-  useEffect(() => {
+  useLayoutEffect(() => {
     const section = sectionRef.current;
     const header = headerRef.current;
     const mobileCard = mobileCardRef.current;
@@ -36,66 +36,66 @@ const GitHubActivity = () => {
 
     if (!section || !header) return;
 
-    // Header animation
-    gsap.fromTo(
-      header.children,
-      { opacity: 0, y: 30 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.6,
-        stagger: 0.1,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: header,
-          start: "top 85%",
-          toggleActions: "play none none none",
-        },
+    const ctx = gsap.context(() => {
+      // Header animation
+      gsap.fromTo(
+        header.children,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          stagger: 0.1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: header,
+            start: "top 85%",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+
+      // Calendar cards animation
+      if (mobileCard) {
+        gsap.fromTo(
+          mobileCard,
+          { opacity: 0, y: 40, scale: 0.98 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.7,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: mobileCard,
+              start: "top 85%",
+              toggleActions: "play none none none",
+            },
+          }
+        );
       }
-    );
 
-    // Calendar cards animation
-    if (mobileCard) {
-      gsap.fromTo(
-        mobileCard,
-        { opacity: 0, y: 40, scale: 0.98 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.7,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: mobileCard,
-            start: "top 85%",
-            toggleActions: "play none none none",
-          },
-        }
-      );
-    }
+      if (desktopCard) {
+        gsap.fromTo(
+          desktopCard,
+          { opacity: 0, y: 40, scale: 0.98 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: 0.7,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: desktopCard,
+              start: "top 85%",
+              toggleActions: "play none none none",
+            },
+          }
+        );
+      }
+    }, sectionRef);
 
-    if (desktopCard) {
-      gsap.fromTo(
-        desktopCard,
-        { opacity: 0, y: 40, scale: 0.98 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.7,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: desktopCard,
-            start: "top 85%",
-            toggleActions: "play none none none",
-          },
-        }
-      );
-    }
-
-    return () => {
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
-    };
+    return () => ctx.revert();
   }, []);
 
   return (
@@ -121,7 +121,7 @@ const GitHubActivity = () => {
         <div className="md:hidden px-4">
           <div
             ref={mobileCardRef}
-            className="bg-card border border rounded-lg p-4 space-y-4"
+            className="bg-card border border rounded-lg p-4 space-y-4 min-h-[200px]"
           >
             <CustomLegend />
             <div className={`overflow-x-auto ${styles.scrollbarContainer}`}>
@@ -144,7 +144,7 @@ const GitHubActivity = () => {
         <div className="hidden md:flex justify-center">
           <div
             ref={desktopCardRef}
-            className="bg-card border border rounded-lg p-6 max-w-4xl"
+            className="bg-card border border rounded-lg p-6 max-w-4xl min-h-[220px]"
           >
             <GitHubCalendar
               username={username}

@@ -1,4 +1,5 @@
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
+import { Rss } from "lucide-react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -16,32 +17,32 @@ const Footer = () => {
   ];
 
   // GSAP animation
-  useEffect(() => {
+  useLayoutEffect(() => {
     const footer = footerRef.current;
     const content = contentRef.current;
 
     if (!footer || !content) return;
 
-    gsap.fromTo(
-      content.children,
-      { opacity: 0, y: 20 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.5,
-        stagger: 0.1,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: footer,
-          start: "top 95%",
-          toggleActions: "play none none none",
-        },
-      }
-    );
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        content.children,
+        { opacity: 0, y: 20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          stagger: 0.1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: footer,
+            start: "top 95%",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+    }, footerRef);
 
-    return () => {
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
-    };
+    return () => ctx.revert();
   }, []);
 
   return (
@@ -71,6 +72,13 @@ const Footer = () => {
                 {link.label}
               </a>
             ))}
+            <a
+              href="/rss.xml"
+              aria-label="RSS Feed"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <Rss size={16} />
+            </a>
           </div>
 
           {/* Copyright */}

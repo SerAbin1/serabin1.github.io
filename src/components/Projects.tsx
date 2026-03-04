@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef, useEffect } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
@@ -50,7 +50,7 @@ const Projects = () => {
   ];
 
   // GSAP animations
-  useEffect(() => {
+  useLayoutEffect(() => {
     const section = sectionRef.current;
     const header = headerRef.current;
     const grid = gridRef.current;
@@ -58,65 +58,81 @@ const Projects = () => {
 
     if (!section || !header || !grid) return;
 
-    // Header animation
-    gsap.fromTo(
-      header.children,
-      { opacity: 0, y: 30 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.6,
-        stagger: 0.1,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: header,
-          start: "top 85%",
-          toggleActions: "play none none none",
-        },
-      }
-    );
-
-    // Project cards animation
-    const cards = grid.querySelectorAll("[data-project-card]");
-    gsap.fromTo(
-      cards,
-      { opacity: 0, y: 60, scale: 0.95 },
-      {
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        duration: 0.7,
-        stagger: 0.15,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: grid,
-          start: "top 80%",
-          toggleActions: "play none none none",
-        },
-      }
-    );
-
-    // Footer link animation
-    if (footer) {
+    const ctx = gsap.context(() => {
+      // Header animation
       gsap.fromTo(
-        footer,
-        { opacity: 0, y: 20 },
+        header.children,
+        { opacity: 0, y: 30 },
         {
           opacity: 1,
           y: 0,
-          duration: 0.5,
+          duration: 0.6,
+          stagger: 0.1,
           ease: "power2.out",
           scrollTrigger: {
-            trigger: footer,
-            start: "top 90%",
+            trigger: header,
+            start: "top 85%",
             toggleActions: "play none none none",
           },
         }
       );
+
+      // Project cards animation
+      const cards = grid.querySelectorAll("[data-project-card]");
+      gsap.fromTo(
+        cards,
+        { opacity: 0, y: 60, scale: 0.95 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.7,
+          stagger: 0.15,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: grid,
+            start: "top 80%",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+
+      // Footer link animation
+      if (footer) {
+        gsap.fromTo(
+          footer,
+          { opacity: 0, y: 20 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.5,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: footer,
+              start: "top 90%",
+              toggleActions: "play none none none",
+            },
+          }
+        );
+      }
+    }, sectionRef);
+
+    // Refresh triggers once layout shifts settle
+    const timeout = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 500);
+
+    const resizeObserver = new ResizeObserver(() => {
+      ScrollTrigger.refresh();
+    });
+    if (sectionRef.current) {
+      resizeObserver.observe(document.body);
     }
 
     return () => {
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+      clearTimeout(timeout);
+      resizeObserver.disconnect();
+      ctx.revert();
     };
   }, []);
 
@@ -153,7 +169,7 @@ const Projects = () => {
                     </CardTitle>
                   </div>
                 </div>
-                <CardDescription className="text-sm text-muted-foreground leading-relaxed">
+                <div className="text-sm text-muted-foreground leading-relaxed mt-1.5">
                   <ul className="space-y-2">
                     {project.description.map((item, i) => (
                       <li key={i} className="flex items-start gap-2">
@@ -162,7 +178,7 @@ const Projects = () => {
                       </li>
                     ))}
                   </ul>
-                </CardDescription>
+                </div>
               </CardHeader>
 
               <CardContent className="space-y-4">

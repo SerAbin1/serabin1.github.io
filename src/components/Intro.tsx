@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
 import MagneticButton from "./MagneticButton";
 
@@ -26,7 +26,7 @@ const Intro = () => {
   }, []);
 
   // GSAP intro animations
-  useEffect(() => {
+  useLayoutEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 

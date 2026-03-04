@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
@@ -52,54 +52,54 @@ const Experience = () => {
   ];
 
   // GSAP animations
-  useEffect(() => {
+  useLayoutEffect(() => {
     const section = sectionRef.current;
     const header = headerRef.current;
     const cardsContainer = cardsRef.current;
 
     if (!section || !header || !cardsContainer) return;
 
-    // Header animation
-    gsap.fromTo(
-      header.children,
-      { opacity: 0, y: 30 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.6,
-        stagger: 0.1,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: header,
-          start: "top 85%",
-          toggleActions: "play none none none",
-        },
-      }
-    );
+    const ctx = gsap.context(() => {
+      // Header animation
+      gsap.fromTo(
+        header.children,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          stagger: 0.1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: header,
+            start: "top 85%",
+            toggleActions: "play none none none",
+          },
+        }
+      );
 
-    // Cards animation
-    const cards = cardsContainer.querySelectorAll("[data-card]");
-    gsap.fromTo(
-      cards,
-      { opacity: 0, y: 50, scale: 0.98 },
-      {
-        opacity: 1,
-        y: 0,
-        scale: 1,
-        duration: 0.7,
-        stagger: 0.2,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: cardsContainer,
-          start: "top 80%",
-          toggleActions: "play none none none",
-        },
-      }
-    );
+      // Cards animation
+      const cards = cardsContainer.querySelectorAll("[data-card]");
+      gsap.fromTo(
+        cards,
+        { opacity: 0, y: 50, scale: 0.98 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.7,
+          stagger: 0.2,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: cardsContainer,
+            start: "top 80%",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+    }, sectionRef);
 
-    return () => {
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
-    };
+    return () => ctx.revert();
   }, []);
 
   return (

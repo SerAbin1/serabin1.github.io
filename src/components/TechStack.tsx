@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import styles from "./TechStack.module.css";
@@ -76,51 +76,51 @@ const TechStack = () => {
   const duplicatedTech = [...techStackData, ...techStackData];
 
   // GSAP animations
-  useEffect(() => {
+  useLayoutEffect(() => {
     const section = sectionRef.current;
     const header = headerRef.current;
     const carousel = carouselRef.current;
 
     if (!section || !header || !carousel) return;
 
-    // Header animation
-    gsap.fromTo(
-      header.children,
-      { opacity: 0, y: 30 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.6,
-        stagger: 0.15,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: header,
-          start: "top 85%",
-          toggleActions: "play none none none",
-        },
-      }
-    );
+    const ctx = gsap.context(() => {
+      // Header animation
+      gsap.fromTo(
+        header.children,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          stagger: 0.15,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: header,
+            start: "top 85%",
+            toggleActions: "play none none none",
+          },
+        }
+      );
 
-    // Carousel fade in
-    gsap.fromTo(
-      carousel,
-      { opacity: 0, scale: 0.98 },
-      {
-        opacity: 1,
-        scale: 1,
-        duration: 0.8,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: carousel,
-          start: "top 85%",
-          toggleActions: "play none none none",
-        },
-      }
-    );
+      // Carousel fade in
+      gsap.fromTo(
+        carousel,
+        { opacity: 0, scale: 0.98 },
+        {
+          opacity: 1,
+          scale: 1,
+          duration: 0.8,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: carousel,
+            start: "top 85%",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+    }, sectionRef);
 
-    return () => {
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
-    };
+    return () => ctx.revert();
   }, []);
 
   return (

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef, useEffect } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowRight } from "lucide-react";
@@ -31,7 +31,7 @@ const Blog = ({ posts }: BlogProps) => {
   };
 
   // GSAP animations
-  useEffect(() => {
+  useLayoutEffect(() => {
     const section = sectionRef.current;
     const header = headerRef.current;
     const posts = postsRef.current;
@@ -39,64 +39,81 @@ const Blog = ({ posts }: BlogProps) => {
 
     if (!section || !header || !posts) return;
 
-    // Header animation
-    gsap.fromTo(
-      header.children,
-      { opacity: 0, y: 25 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.5,
-        stagger: 0.1,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: header,
-          start: "top 85%",
-          toggleActions: "play none none none",
-        },
-      }
-    );
-
-    // Blog posts animation
-    const postItems = posts.querySelectorAll("[data-blog-post]");
-    gsap.fromTo(
-      postItems,
-      { opacity: 0, x: -30 },
-      {
-        opacity: 1,
-        x: 0,
-        duration: 0.5,
-        stagger: 0.1,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: posts,
-          start: "top 85%",
-          toggleActions: "play none none none",
-        },
-      }
-    );
-
-    // View all link animation
-    if (link) {
+    const ctx = gsap.context(() => {
+      // Header animation
       gsap.fromTo(
-        link,
-        { opacity: 0, y: 15 },
+        header.children,
+        { opacity: 0, y: 25 },
         {
           opacity: 1,
           y: 0,
-          duration: 0.4,
+          duration: 0.5,
+          stagger: 0.1,
           ease: "power2.out",
           scrollTrigger: {
-            trigger: link,
-            start: "top 90%",
+            trigger: header,
+            start: "top 85%",
             toggleActions: "play none none none",
           },
         }
       );
+
+      // Blog posts animation
+      const postItems = posts.querySelectorAll("[data-blog-post]");
+      gsap.fromTo(
+        postItems,
+        { opacity: 0, x: -30 },
+        {
+          opacity: 1,
+          x: 0,
+          duration: 0.5,
+          stagger: 0.1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: posts,
+            start: "top 85%",
+            toggleActions: "play none none none",
+          },
+        }
+      );
+
+      // View all link animation
+      if (link) {
+        gsap.fromTo(
+          link,
+          { opacity: 0, y: 15 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.4,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: link,
+              start: "top 90%",
+              toggleActions: "play none none none",
+            },
+          }
+        );
+      }
+    }, sectionRef);
+
+    // Refresh triggers once all images/fonts are loaded and layout shifts settle
+    const timeout = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 500);
+
+    // Refresh on any dynamic resize of the document body
+    const resizeObserver = new ResizeObserver(() => {
+      ScrollTrigger.refresh();
+    });
+    if (sectionRef.current) {
+      resizeObserver.observe(document.body);
     }
 
     return () => {
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+      clearTimeout(timeout);
+      resizeObserver.disconnect();
+      ctx.revert();
     };
   }, []);
 

@@ -1,6 +1,5 @@
 ---
 import '@/index.css';
-import { ViewTransitions } from 'astro:transitions';
 
 interface Props {
   title?: string;
@@ -27,6 +26,9 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     
     <!-- Canonical URL -->
     <link rel="canonical" href={canonicalURL} />
+    
+    <!-- RSS Autodiscovery -->
+    <link rel="alternate" type="application/rss+xml" title="Abin Biju's Blog" href="/rss.xml" />
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
@@ -53,8 +55,6 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <meta property="twitter:url" content={canonicalURL} />
     <meta property="twitter:title" content={title} />
     <meta property="twitter:description" content={description} />
-
-    <ViewTransitions />
   </head>
   <body class="min-h-screen bg-background text-foreground antialiased selection:bg-terminal-green/30 selection:text-terminal-green">
     <slot />
