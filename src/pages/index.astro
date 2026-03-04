@@ -1,0 +1,43 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Intro from '../components/Intro';
+import Experience from '../components/Experience';
+import Projects from '../components/Projects';
+import TechStack from '../components/TechStack';
+import GitHubActivity from '../components/GitHubActivity';
+import Blog from '../components/Blog';
+import Footer from '../components/Footer';
+import { getCollection } from 'astro:content';
+
+const allPosts = await getCollection('blog');
+const sortedPosts = allPosts.sort(
+  (a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf()
+);
+const recentPosts = sortedPosts.slice(0, 3).map(post => ({
+  title: post.data.title,
+  description: post.data.description,
+  date: post.data.date,
+  slug: post.slug,
+}));
+---
+
+<BaseLayout
+  title="Abin Biju - SDE"
+  description="Backend enthusiast. Cybersec admirer. I break things. I build things."
+>
+  <div class="relative">
+    <!--
+      client:only="react" is used here because every section uses GSAP ScrollTrigger
+      which requires a live browser DOM. Attempting SSR would fail with
+      "element type is invalid" errors from CSS modules / browser-only APIs.
+      The static <BaseLayout> shell (title, meta, OG tags) is fully server-rendered.
+    -->
+    <Intro client:only="react" />
+    <Experience client:only="react" />
+    <Projects client:only="react" />
+    <TechStack client:only="react" />
+    <GitHubActivity client:only="react" />
+    <Blog posts={recentPosts} client:only="react" />
+    <Footer client:only="react" />
+  </div>
+</BaseLayout>

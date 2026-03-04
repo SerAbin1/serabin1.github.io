@@ -1,0 +1,21 @@
+---
+import BlogPostLayout from '../../layouts/BlogPostLayout.astro';
+import LRUVisualizer from '../../components/LRUVisualizer';
+import LFUVisualizer from '../../components/LFUVisualizer';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const blogEntries = await getCollection('blog');
+  return blogEntries.map(entry => ({
+    params: { slug: entry.slug },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await entry.render();
+---
+
+<BlogPostLayout post={entry}>
+  <Content components={{ LRUVisualizer, LFUVisualizer }} />
+</BlogPostLayout>

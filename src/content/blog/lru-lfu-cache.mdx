@@ -1,18 +1,10 @@
-export interface BlogPost {
-  title: string;
-  description: string;
-  date: string;
-  slug: string;
-  content: string;
-}
-
-export const blogPosts: BlogPost[] = [
-  {
-    title: "LRU & LFU Cache",
-    description: "Visual explanation of LRU and LFU Cache implementation",
-    date: "2026-01-04",
-    slug: "lru-lfu-cache",
-    content: `
+---
+title: "LRU & LFU Cache"
+description: "Visual explanation of LRU and LFU Cache implementation"
+date: "2026-01-04"
+---
+import LRUVisualizer from "@/components/LRUVisualizer.tsx";
+import LFUVisualizer from "@/components/LFUVisualizer.tsx";
 
 ## LRU Cache
 
@@ -33,10 +25,10 @@ Now, let us restate the problem in simpler terms.
 We are required to implement three things:
 
 - **Initialize the LRU cache** with a fixed capacity
-- **\`get(key)\`**: Given a key, return its value if it exists; otherwise return \`-1\`
-- **\`put(key, value)\`**: Given a key and a value, update the value if the key exists; otherwise insert the key-value pair
+- **`get(key)`**: Given a key, return its value if it exists; otherwise return `-1`
+- **`put(key, value)`**: Given a key and a value, update the value if the key exists; otherwise insert the key-value pair
 
-There is one critical constraint: both \`get\` and \`put\` must run in **O(1)** time, that is, constant time complexity.
+There is one critical constraint: both `get` and `put` must run in **O(1)** time, that is, constant time complexity.
 
 So the real question is how we design a data structure that satisfies this requirement.
 
@@ -48,11 +40,11 @@ The choice of an appropriate data structure has a major impact on the algorithm 
 
 The answer depends entirely on the requirements of the problem.
 
-Here, we have two operations—\`GET\` and \`PUT\`—and both must be constant time.
+Here, we have two operations—`GET` and `PUT`—and both must be constant time.
 
 Let us start with the most common data structure: an array.
 
-<lru-visualizer mode="array"></lru-visualizer>
+<LRUVisualizer mode="array" client:visible />
 
 As we can see, when we retrieve an element from an array, we must reorder the array to maintain LRU order. This requires shifting elements, which takes linear time, O(n).
 
@@ -64,9 +56,7 @@ Whenever an element is accessed, we must remove it from its current position and
 
 This leads us to a linked list.
 
-A linked list is not stored sequentially in memory. Instead, it uses pointers. This allows us to remove a node from anywhere and insert it elsewhere using pointer manipulation.
-
-<lru-visualizer mode="linked-list"></lru-visualizer>
+<LRUVisualizer mode="linked-list" client:visible />
 
 This solves part of the problem. However, a linked list has another issue.
 
@@ -91,13 +81,13 @@ We specifically use a _doubly_ linked list because removal requires access to bo
 
 ### GET and PUT Operations
 
-Now let us look at what actually happens in \`GET\` and \`PUT\`.
+Now let us look at what actually happens in `GET` and `PUT`.
 
 Both operations share a core behavior: **updating recency**. Any accessed or updated item becomes the most recently used.
 
 #### Pseudocode: GET
 
-\`\`\`python
+```python
 def GET(key):
     # Check if key exists
     if key not in hashmap:
@@ -109,11 +99,11 @@ def GET(key):
     insert(node)           # Re-attach at MRU (tail)
     
     return node.value
-\`\`\`
+```
 
 #### Pseudocode: PUT
 
-\`\`\`python
+```python
 def PUT(key, value):
     # Case 1: Key already exists - update value
     if key in hashmap:
@@ -134,7 +124,7 @@ def PUT(key, value):
         node = Node(key, value)
         insert(node)
         hashmap[key] = node
-\`\`\`
+```
 
 Both operations remove a node and reinsert it at the MRU position. Since this logic is shared, we abstract it into helper functions.
 
@@ -144,27 +134,27 @@ Both operations remove a node and reinsert it at the MRU position. Since this lo
 
 We define two helper functions:
 
-- \`remove(node)\`
-- \`insert(node)\`
+- `remove(node)`
+- `insert(node)`
 
 To make this reliable, we use **two sentinel nodes**:
 
-- \`left\`: before the LRU
+- `left`: before the LRU
     
-- \`right\`: after the MRU
+- `right`: after the MRU
     
-- \`left.next\` → LRU
+- `left.next` → LRU
     
-- \`right.prev\` → MRU
+- `right.prev` → MRU
     
 
 This eliminates edge cases and allows constant-time operations.
 
 Conceptually:
 
-\`\`\`
+```
 left <-> LRU <-> ... <-> MRU <-> right
-\`\`\`
+```
 
 ---
 
@@ -172,7 +162,7 @@ left <-> LRU <-> ... <-> MRU <-> right
 
 Below is the implementation placeholder. The actual code is intentionally omitted.
 
-\`\`\`Python
+```python
 class Node:
     def __init__(self, key, val):
         self.key = key
@@ -236,13 +226,13 @@ class LRUCache:
             new_node = Node(key, value)
             self._add(new_node)
             self.cache[key] = new_node
-\`\`\`
+```
 
 ---
 
 ### LRU Visualization (Final)
 
-<lru-visualizer mode="lru"></lru-visualizer>
+<LRUVisualizer mode="lru" client:visible />
 
 ---
 
@@ -264,7 +254,7 @@ Conceptually, LFU can be built on top of the same ideas as LRU:
 
 The structure is more complex, but the philosophy is the same: use pointer manipulation and indexing to avoid scanning.
 
-<lfu-visualizer></lfu-visualizer>
+<LFUVisualizer client:visible />
 
 ---
 
@@ -275,124 +265,3 @@ Solving problems require understanding **constraints**, choosing the right **dat
 But the most important part is struggle; to truly understand something, we must struggle with it a while. So here ya go:
 - [LeetCode 460: LFU Cache](https://leetcode.com/problems/lfu-cache/description/)
 - [LeetCode 432: All O(1) Data Structure](https://leetcode.com/problems/all-oone-data-structure/description/)
-`,
-  },
-  {
-    title: "Writing Testable Code",
-    description: "An introduction to the Hexagonal Architecture (Ports and Adapters)",
-    date: "2025-12-31",
-    slug: "hexagonal-architecture",
-    content: `There was a bug in our backend (or so I thought). A certain bus's morning trip was not ending, the system showed it active even at 5PM (it's trip ends at 10:50AM). The actual bug was not even a bug, it was a corrupted data. A single stop in the trip route had a wrong scheduled arrival time, causing the delay calculation logic to calculate a delay of 624 minutes. Then why am I talking about this bug?
-
-Because of what it led me to: The Hexagonal Architecture. Also known as the Ports and Adapters pattern.
-
-The human brain can keep only so much in its short term memory (6 plus or minus 2 is what the science tells us). In other words, the more stuff you have to keep track of, the harder it becomes to reason about or understand. So it follows that good code, code that is readable and easy to reason about, should require us to keep track of as little as possible at any given time. 
-
-And I'm sure you can guess where I'm heading with this; yes, our backend code was the exact opposite. It required one to keep track of a whole bunch of stuff and wade through all kinds of concerns, concerns that didn't have anything to do with the *core domain* logic directly, to understand and reason about the logical and data flow. And a practical offshoot is that the code is untestable or at least it is untestable without mocking half the world.
-
-## The Code
-Our main scheduler logic, which dealt with the starting and ending of trips:
-\`\`\`JS
-// scheduler/worker.js (simplified)
-worker.process(async (job) => {
-    const { tripId, action } = job.data;
-    if (action == "start") {
-        const trip = await Trip.findByPk(tripId); // Infrastructure (Read)
-        const redisData = await redisClient.get(key); // Infrastructure (Read)
-
-        // Bussiness logic
-        if (redisData.trip_id !== trip.id) {
-            console.log("Conflict!");
-            return; 
-        }
-
-        // 3. Infrastructure (Write)
-        await redisClient.del(key);
-    } else if (action == "end") {
-        //...
-    }
-});
-\`\`\`
-
-## The New Code
-The logic was split into three layers, with each layer doing one and one thing well.
-
-- Domain -> Decisions (the core business logic lives here, easily testable!)
-- Application -> Execution
-- Worker -> Coordination
-
-### The Domain: Pure Functions
-We extracted all decision-making complexity into a single place. This file imports **nothing** related to DB or Redis. It takes plain objects and returns a **Decision**.
-
-\`\`\`JS
-// scheduler/domain/tripDecisions.js
-export const evaluateTripAction = ({ trip, redisBusState, currentIstDate }) => {
-    // Pure Logic: No side effects!
-    if (redisBusState && redisBusState.trip_id !== trip.id) {
-         return [{ 
-             type: "END_SKIP_MISMATCH", 
-             reason: "Bus active on different trip" 
-         }];
-    }
-
-    // Logic: Check time guard
-    if (isTooEarly(currentIstDate, trip.scheduled_end_time)) {
-        return [{ type: "END_DEFER" }];
-    }
-
-    return [{ type: "END_COMPLETE", payload: { ... } }];
-};
-\`\`\`
-
-We can now test _every single edge case_ with simple unit tests. No mocks required.
-
-\`\`\`JS
-// schduler/tests/tripDecisions.test.js
-test('Should return END_SKIP_MISMATCH if Bus active on different Trip', () => {
-    const decision = evaluateTripAction({
-        trip: { id: 101 },
-        redisBusState: { trip_id: 999 }, // Plain object!
-        action: 'end'
-    });
-
-    expect(decision[0].type).toBe("END_SKIP_MISMATCH");
-});
-\`\`\`
-
-### The Application: The Side-Effect Handler
-We moved the actual "doing" part to application/tripExecutor.js. It doesn't "think"; it just executes instructions.
-
-\`\`\`JS
-// scheduler/application/tripExecutor.js
-export const executeDecisions = async (decisions, { redisClient, logger }) => {
-    for (const decision of decisions) {
-        switch (decision.type) {
-            case "END_SKIP_MISMATCH":
-                logger.warn("Skipping end due to mismatch");
-                break;
-            case "END_COMPLETE":
-                await redisClient.del(activeKey); // Only here do we touch Redis
-                break;
-        }
-    }
-};
-\`\`\`
-
-### The Worker: The Coordinator
-The worker.js became a dumb coordinator.
-
-\`\`\`JS
-// worker.js
-const trip = await Trip.findByPk(1);             // 1. Fetch State
-const redisState = await redisClient.get(key);
-
-const decisions = evaluateTripAction({           // 2. Decide (Pure)
-    trip: trip.toJSON(), 
-    redisBusState: JSON.parse(redisState) 
-});
-
-await executeDecisions(decisions, { redisClient }); // 3. Execute (Impure)
-\`\`\`
-`
-  },
-];

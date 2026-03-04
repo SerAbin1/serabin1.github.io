@@ -2,12 +2,21 @@ import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ArrowRight } from "lucide-react";
-import { blogPosts } from "@/data/blogPosts";
-import { Link } from "react-router-dom";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const Blog = () => {
+interface BlogPostData {
+  title: string;
+  description: string;
+  date: string;
+  slug: string;
+}
+
+interface BlogProps {
+  posts: BlogPostData[];
+}
+
+const Blog = ({ posts }: BlogProps) => {
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLElement>(null);
   const postsRef = useRef<HTMLDivElement>(null);
@@ -20,8 +29,6 @@ const Blog = () => {
       day: "numeric",
     });
   };
-
-  const recentPosts = blogPosts.slice(0, 3);
 
   // GSAP animations
   useEffect(() => {
@@ -110,10 +117,10 @@ const Blog = () => {
         </header>
 
         <div ref={postsRef} className="space-y-1 mb-8">
-          {recentPosts.map((post) => (
-            <Link
+          {posts.map((post) => (
+            <a
               key={post.slug}
-              to={`/blogs/${post.slug}`}
+              href={`/blogs/${post.slug}`}
               data-blog-post
               className="group block py-4 -mx-3 px-3 rounded-lg hover:bg-muted/50 transition-colors"
             >
@@ -130,18 +137,18 @@ const Blog = () => {
                   </p>
                 </div>
               </article>
-            </Link>
+            </a>
           ))}
         </div>
 
-        <Link
+        <a
           ref={linkRef}
-          to="/blogs"
+          href="/blogs"
           className="inline-flex items-center text-sm font-medium text-primary hover:underline underline-offset-2"
         >
           View all posts
           <ArrowRight className="ml-1 h-4 w-4" />
-        </Link>
+        </a>
       </div>
     </section>
   );

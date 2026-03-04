@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import NotFound from '../components/NotFound';
+---
+
+<BaseLayout
+  title="404 – Page Not Found | Abin Biju"
+  description="This page does not exist. But there is a game here."
+>
+  <!-- Static fallback content visible without JS -->
+  <noscript>
+    <div class="min-h-screen flex flex-col items-center justify-center text-center px-4">
+      <h1 class="text-6xl font-mono font-bold text-terminal-green mb-4">404</h1>
+      <p class="text-xl text-muted-foreground mb-8">Page not found.</p>
+      <a href="/" class="text-terminal-green underline underline-offset-4 hover:text-terminal-green-bright">
+        Go back home
+      </a>
+    </div>
+  </noscript>
+
+  <!-- Snake game (client-only, fully interactive) -->
+  <NotFound client:only="react" />
+</BaseLayout>
