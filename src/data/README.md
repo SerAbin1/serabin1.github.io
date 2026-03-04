@@ -1,39 +1,36 @@
-# Blog Data Management
+# Blog Content Management
 
 ## Adding New Blog Posts
 
-To add a new blog post, edit `src/data/blogPosts.ts` and add a new object to the `blogPosts` array:
+To add a new blog post, create a new `.mdx` file inside the `src/content/blog/` directory. The filename will automatically become the URL slug.
 
-```typescript
-{
-  title: "Your Blog Post Title",
-  description: "A brief description of your post",
-  date: "2025-01-01", // YYYY-MM-DD format
-  readTime: "5 min read",
-  category: "Your Category",
-  slug: "your-blog-post-slug", // URL-friendly version of title
-  tags: ["tag1", "tag2", "tag3"],
-  content: `# Your Blog Post Title
+Example: `src/content/blog/my-new-post.mdx` -> `https://your-site.com/blogs/my-new-post`
 
-Your markdown content goes here...
+### Frontmatter
 
-## Subheading
+Every blog post must begin with a YAML frontmatter block that defines its metadata:
 
-More content...
-`
-}
+```mdx
+---
+title: "Your Blog Post Title"
+description: "A brief description of your post"
+date: "2026-03-04"
+---
+
+Your MDX content goes here...
 ```
 
 ## Guidelines
 
-- **Slug**: Must be URL-friendly (lowercase, hyphens instead of spaces)
-- **Date**: Use YYYY-MM-DD format for consistent sorting
-- **Content**: Use markdown with escaped backticks (\`\`\`) for code blocks
-- **Tags**: Keep relevant and consistent with existing tags
-- **Categories**: Try to use existing categories for consistency
+- **File Naming**: Must be URL-friendly (lowercase, use hyphens instead of spaces). e.g., `how-to-code.mdx`
+- **Date**: Use `YYYY-MM-DD` format to ensure proper sorting on the blog index page.
+- **Content**: You can use standard Markdown as well as React/Astro components directly in the text (MDX).
+- **Code Blocks**: Use standard markdown fenced code blocks. Use lowercase language tags for proper syntax highlighting (e.g. \`\`\`js, \`\`\`python).
 
-The blog system will automatically:
-- Display posts on the blogs index page
-- Create individual post pages at `/blogs/{slug}`
-- Format dates and metadata
-- Render markdown content with syntax highlighting
+## System Architecture
+
+The blog is powered by Astro's [Content Collections](https://docs.astro.build/en/guides/content-collections/) feature:
+- Posts are automatically read and validated against the schema defined in `src/content/config.ts`.
+- The blog index page (`src/pages/blogs/index.astro`) automatically fetches and sorts all posts.
+- Individual post routes (`src/pages/blogs/[slug].astro`) use `getStaticPaths()` to build static pages for every MDX file.
+- Astro MDX handles rendering and Shiki handles syntax highlighting.

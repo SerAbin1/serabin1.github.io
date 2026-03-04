@@ -27,10 +27,7 @@
   }
 }
 
-/* Set Shiki CSS variable colors for github-dark theme */
-.markdown-content pre.astro-code span {
-  color: var(--shiki-dark) !important;
-}
+
 
 .markdown-content h1 {
   font-size: clamp(1.5rem, 4vw, 1.875rem) !important;
@@ -89,7 +86,7 @@
   font-size: clamp(1rem, 2vw, 1.0625rem);
 }
 
-.markdown-content :not(pre) > code {
+.markdown-content :not(pre)>code {
   background-color: hsl(var(--muted));
   padding: 0.125rem 0.375rem;
   border-radius: 0.25rem;
@@ -207,7 +204,7 @@
     --terminal-green: 120 100% 50%;
     --terminal-green-dim: 120 60% 40%;
     --terminal-green-bright: 120 100% 70%;
-    
+
     /* Code syntax highlighting */
     --code-keyword: 197 71% 73%;
     --code-string: 86 85% 67%;
@@ -217,11 +214,11 @@
     /* Gradients */
     --gradient-terminal: linear-gradient(135deg, hsl(var(--background)), hsl(0 0% 5%));
     --gradient-accent: linear-gradient(135deg, hsl(var(--terminal-green)) 0%, hsl(var(--terminal-green-dim)) 100%);
-    
+
     /* Shadows */
     --shadow-glow: 0 0 20px hsl(var(--terminal-green) / 0.3);
     --shadow-card: 0 4px 20px hsl(0 0% 0% / 0.8);
-    
+
     /* Animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-fast: all 0.15s ease-out;
@@ -267,8 +264,16 @@
 
   /* Terminal cursor animation */
   @keyframes blink {
-    0%, 50% { opacity: 1; }
-    51%, 100% { opacity: 0; }
+
+    0%,
+    50% {
+      opacity: 1;
+    }
+
+    51%,
+    100% {
+      opacity: 0;
+    }
   }
 
   .terminal-cursor {
@@ -300,17 +305,22 @@
 
   /* Floating animation */
   @keyframes float {
-    0%, 100% { 
-      transform: translateY(0px) rotate(0deg); 
+
+    0%,
+    100% {
+      transform: translateY(0px) rotate(0deg);
     }
-    25% { 
-      transform: translateY(-10px) rotate(90deg); 
+
+    25% {
+      transform: translateY(-10px) rotate(90deg);
     }
-    50% { 
-      transform: translateY(-5px) rotate(180deg); 
+
+    50% {
+      transform: translateY(-5px) rotate(180deg);
     }
-    75% { 
-      transform: translateY(-15px) rotate(270deg); 
+
+    75% {
+      transform: translateY(-15px) rotate(270deg);
     }
   }
 

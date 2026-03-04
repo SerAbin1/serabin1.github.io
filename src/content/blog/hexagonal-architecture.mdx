@@ -3,6 +3,8 @@ title: "Writing Testable Code"
 description: "An introduction to the Hexagonal Architecture (Ports and Adapters)"
 date: "2025-12-31"
 ---
+
+
 There was a bug in our backend (or so I thought). A certain bus's morning trip was not ending, the system showed it active even at 5PM (it's trip ends at 10:50AM). The actual bug was not even a bug, it was a corrupted data. A single stop in the trip route had a wrong scheduled arrival time, causing the delay calculation logic to calculate a delay of 624 minutes. Then why am I talking about this bug?
 
 Because of what it led me to: The Hexagonal Architecture. Also known as the Ports and Adapters pattern.
