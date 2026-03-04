@@ -95,7 +95,18 @@ const GitHubActivity = () => {
       }
     }, sectionRef);
 
-    return () => ctx.revert();
+    const timeout = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 500);
+
+    const handleLoad = () => ScrollTrigger.refresh();
+    window.addEventListener('load', handleLoad);
+
+    return () => {
+      clearTimeout(timeout);
+      window.removeEventListener('load', handleLoad);
+      ctx.revert();
+    };
   }, []);
 
   return (

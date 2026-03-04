@@ -129,8 +129,12 @@ const Projects = () => {
       resizeObserver.observe(document.body);
     }
 
+    const handleLoad = () => ScrollTrigger.refresh();
+    window.addEventListener('load', handleLoad);
+
     return () => {
       clearTimeout(timeout);
+      window.removeEventListener('load', handleLoad);
       resizeObserver.disconnect();
       ctx.revert();
     };

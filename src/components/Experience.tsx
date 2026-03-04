@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef, useEffect } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
@@ -99,7 +99,18 @@ const Experience = () => {
       );
     }, sectionRef);
 
-    return () => ctx.revert();
+    const timeout = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 500);
+
+    const handleLoad = () => ScrollTrigger.refresh();
+    window.addEventListener('load', handleLoad);
+
+    return () => {
+      clearTimeout(timeout);
+      window.removeEventListener('load', handleLoad);
+      ctx.revert();
+    };
   }, []);
 
   return (

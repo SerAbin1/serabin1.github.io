@@ -102,7 +102,7 @@ const Blog = ({ posts }: BlogProps) => {
       ScrollTrigger.refresh();
     }, 500);
 
-    // Refresh on any dynamic resize of the document body
+    // Refresh on any dynamic resize of the document body or window load
     const resizeObserver = new ResizeObserver(() => {
       ScrollTrigger.refresh();
     });
@@ -110,8 +110,12 @@ const Blog = ({ posts }: BlogProps) => {
       resizeObserver.observe(document.body);
     }
 
+    const handleLoad = () => ScrollTrigger.refresh();
+    window.addEventListener('load', handleLoad);
+
     return () => {
       clearTimeout(timeout);
+      window.removeEventListener('load', handleLoad);
       resizeObserver.disconnect();
       ctx.revert();
     };
@@ -133,7 +137,7 @@ const Blog = ({ posts }: BlogProps) => {
           </h2>
         </header>
 
-        <div ref={postsRef} className="space-y-1 mb-8">
+        <div ref={postsRef} className="space-y-1 mb-8 min-h-[300px]">
           {posts.map((post) => (
             <a
               key={post.slug}
