@@ -1,0 +1,352 @@
+---
+title: "How Keyd Works"
+description: "Examining the Keyd source code"
+date: "2026-03-07"
+---
+
+### What is Keyd
+Keyd is a Linux daemon that lets you remap keys. A daemon is any process that is not attached to a UI or terminal. Basically a background process.
+### How Linux handles input
+Before we understand how Keyd does what it does, we need to understand how input works in the Linux Kernel.
+
+When you press a key, a hardware interrupt is sent to the CPU by the keyboard. It is translated to something that the kernel understands by the device driver. The driver then passes the event to the Linux input subsystem, which provides a unified interface for all input devices. `evdev` is the generic input event interface. It passes the events generated in the kernel straight to the program, with timestamps. The event codes are the same on all architectures and are hardware independent[^2].
+
+>You can cat /dev/input/mouse2 and move your mouse to see characters appearing. That is how input events are exposed to the user space.
+
+This abstraction allows Linux to treat keyboards, mice, touchpads, and gamepads using the same interface.
+
+So after the hardware and before the user space, where evdev sits, is where keyd wants to be for it to intercept, transform and re-emit the event. So the terminal (or any application) will think you pressed A when you actually pressed B.
+### main()
+We will look at the Keyd [source code](https://github.com/rvaiya/keyd/blob/master/src/), written in C, to see how exactly it remaps keys and how it can achieve \<1ms performance.
+
+The main function, in keyd.c,  doesn't do much: it calls run_daemon if called without arguments and if called with arguments, it acts as a client to communicate with the daemon to run commands like reload.
+
+So run_daemon, which is in daemon.c, is what we care about. 
+### run_daemon()
+run_daemon createa an ipc server if not already running, creates and initializes the virtual keyboard (more on that later), but most interestingly it does this:
+```c
+struct sched_param sp;
+
+if (sched_getparam(0, &sp)) {
+    perror("sched_getparam");
+    exit(-1);
+}
+
+sp.sched_priority = 49;
+if (sched_setscheduler(0, SCHED_FIFO, &sp)) {
+    perror("sched_setscheduler");
+    exit(-1);
+}
+```
+Which bumps the priority of the process to 49 so that normal processes can't preempt Keyd. 
+
+I didn't know we could do that but it makes sense. Think of a game preempting Keyd and you pressing Caps Lock which you had remapped to jump. Yeah that won't be good.
+
+```c
+if (mlockall(MCL_CURRENT | MCL_FUTURE)) {
+    perror("mlockall");
+    exit(-1);
+}
+```
+And that locks all memory pages, current and future, into RAM, thus eliminating page faults and guaranteeing low latency.
+
+Finally, the evloop() is called with the event_handler(). The evloop is the main loop, the while(1) that runs forever and drives everything.
+### evloop()
+So what should the loop do?
+- Monitor all devices for events (Duh)
+- Know when a new device has been added (and it can be added at any time!)
+
+Let's look at the second point first. How can Keyd know when a new keyboard has been plugged in? Well, we already saw that the Linux input subsystem is basically a directory (`/dev/input`) and each connected device is just a file in that directory.
+
+So if we could be alerted when a new file is created in that directory, we'll be good. And that's exactly what `inotify`[^3] does.
+So the first thing we do is create a `monfd` which is just a file descriptor that lets us know when a new file has been created.
+```c
+monfd = devmon_create();
+// inside devmon_create:
+int fd = inotify_init1(IN_NONBLOCK | IN_CLOEXEC);
+
+int wd = inotify_add_watch(fd, "/dev/input/", IN_CREATE);
+```
+
+Now we loop over all existing devices (again, all we need to do is read the /dev/input directory):
+```c
+while((ent = readdir(dh))) {
+    // the first five letters will be event for devices
+    // like /dev/input/event0
+    // note that mouse2 etc which we saw earlier is legacy
+    if (ent->d_type != DT_DIR && !strncmp(ent->d_name, "event", 5)) {
+        assert(n < MAX_DEVICES);
+	struct device_worker *w = &workers[n++];
+
+	snprintf(w->path, sizeof(w->path), "/dev/input/%s", ent->d_name);
+	// we create a thread for each file/device to do the probe in parallel
+	// esle itll be too slow
+	pthread_create(&w->tid, NULL, device_scan_worker, w);
+    }
+}
+
+ndevs = 0;
+for(i = 0; i < n; i++) {
+    struct device *d;
+    pthread_join(workers[i].tid, (void**)&d);
+
+    if (d)
+	devices[ndevs++] = workers[i].dev;
+}
+```
+
+So the evloop (or rather the daemon) needs to watch a lot of devices (keyboards, mice, monitors etc) but it is single-threaded so how can it do so without blocking on any device?
+
+It uses [`poll`](https://man7.org/linux/man-pages/man2/poll.2.html). Basically, when something happens, it will let the daemon know. The daemon wastes no CPU while waiting.
+
+So we need to register all the fds that we care about with poll. So we add monfd (so that we know when a new keyboard has been plugged), all the devices (so that we know when an event like a keypress has occured), as well as the ipcfd to respond to user commands like reload.
+
+Here is the entire function:
+```c
+int evloop(int (*event_handler)(struct event *ev))
+{
+    size_t i;
+    int timeout = 0;
+    int monfd;
+
+    struct pollfd pfds[MAX_DEVICES + MAX_AUX_FDS + 1];
+    struct event ev;
+
+    monfd = devmon_create();
+    device_table_sz = device_scan(device_table);
+
+    // grab the wanted devices (we'll see when we talk about the event_handler)
+    for (i = 0; i < device_table_sz; i++) {
+        ev.type = EV_DEV_ADD;
+        ev.dev = &device_table[i];
+
+        event_handler(&ev);
+    }
+
+    while (1) {
+        int removed = 0;
+
+        int start_time;
+        int elapsed;
+
+        // add the fds that we care about
+        pfds[0].fd = monfd;
+        pfds[0].events = POLLIN;
+
+        for (i = 0; i < device_table_sz; i++) {
+            pfds[i + 1].fd = device_table[i].fd;
+            pfds[i + 1].events = POLLIN | POLLERR;
+        }
+
+        // aux_fds is just the ipc created by the daemon so that users
+        // can send commands like reload
+        for (i = 0; i < nr_aux_fds; i++) {
+            pfds[i + device_table_sz + 1].fd = aux_fds[i];
+            pfds[i + device_table_sz + 1].events = POLLIN | POLLERR;
+        }
+
+        start_time = get_time_ms();
+        poll(pfds, device_table_sz + nr_aux_fds + 1, timeout > 0 ? timeout : -1);
+
+        ev.timestamp = get_time_ms();
+        elapsed = ev.timestamp - start_time;
+
+        if (timeout > 0 && elapsed >= timeout) {
+            ev.type = EV_TIMEOUT;
+            ev.dev = NULL;
+            ev.devev = NULL;
+            timeout = event_handler(&ev);
+        } else {
+            timeout -= elapsed;
+        }
+
+        for (i = 0; i < device_table_sz; i++) {
+            // did THIS device wake poll() up?
+            // if yes, read events from it
+            if (pfds[i + 1].revents) {
+                struct device_event *devev;
+                struct device *dev = &device_table[i];
+
+                while ((devev = device_read_event(dev))) {
+                    if (devev->type == DEV_REMOVED) {
+                        ev.type = EV_DEV_REMOVE;
+                        ev.dev = dev;
+
+                        timeout = event_handler(&ev);
+
+                        dev->fd = -1;
+                        removed = 1;
+                        break;
+                    } else {
+                        // Handle device event
+                        if (!dev->is_virtual && devev->type == DEV_KEY)
+                            // if you MESS up the config, you can press a special
+                            // key combination to exit keyd
+                            // that's why this runs before the event handler
+                            panic_check(devev->code, devev->pressed);
+
+                        ev.type = EV_DEV_EVENT;
+                        ev.devev = devev;
+                        ev.dev = dev;
+
+                        timeout = event_handler(&ev);
+                    }
+                }
+            }
+        }
+
+        for (i = 0; i < nr_aux_fds; i++) {
+            short events = pfds[i + device_table_sz + 1].revents;
+
+            if (events) {
+                ev.type = events & POLLERR ? EV_FD_ERR : EV_FD_ACTIVITY;
+                ev.fd = aux_fds[i];
+
+                timeout = event_handler(&ev);
+            }
+        }
+
+        if (pfds[0].revents) {
+            struct device dev;
+
+            while (devmon_read_device(monfd, &dev) == 0) {
+                assert(device_table_sz < MAX_DEVICES);
+                device_table[device_table_sz++] = dev;
+
+                ev.type = EV_DEV_ADD;
+                ev.dev = &device_table[device_table_sz - 1];
+
+                timeout = event_handler(&ev);
+            }
+        }
+
+        if (removed) {
+            size_t n = 0;
+
+            for (i = 0; i < device_table_sz; i++) {
+                if (device_table[i].fd != -1)
+                    device_table[n++] = device_table[i];
+            }
+
+            device_table_sz = n;
+        }
+    }
+
+    return 0;
+}
+```
+### event_handler()
+When `poll()` wakes up because a key was pressed, the `evloop` calls `event_handler()` with the raw event. The event handler's job is to figure out what to do with it.
+
+The first thing it checks is `ev->dev->data`. This is a pointer that was set when the device was first seen. If it's NULL, this device has no matching config and gets ignored. If it's set, it points to the keyboard state machine for that device.
+
+But how does `data` get set? That happens in `manage_device()`, which is called for every `EV_DEV_ADD` event:
+
+```c
+static void manage_device(struct device *dev)
+{
+    // figure out what kind of device this is
+    if (dev->capabilities & CAP_KEYBOARD)
+        flags |= ID_KEYBOARD;
+    if (dev->capabilities & CAP_MOUSE)
+        flags |= ID_MOUSE;
+    // ...
+
+    if ((ent = lookup_config_ent(dev->id, flags))) {
+        // this device matches a config - grab it
+        device_grab(dev);
+        dev->data = ent->kbd;  // link device to its keyboard state machine
+    } else {
+        dev->data = NULL;      // no match - ignore this device
+    }
+}
+```
+
+`lookup_config_ent` walks the loaded configs and checks if any of them match this device's ID or the wildcard `*`. If a match is found, keyd calls `device_grab()`.
+
+Grabbing is the key step. Internally it calls:
+
+```c
+ioctl(fd, EVIOCGRAB, 1)
+```
+
+[`ioctl`](https://man7.org/linux/man-pages/man2/ioctl.2.html) (input/output control) is a syscall that lets userspace send control commands to device drivers — things that don't fit neatly into `read()` or `write()`. `EVIOCGRAB` is one such command, specific to the evdev driver. Passing `1` tells the kernel: give this process exclusive access to the device.
+
+After this call, the physical keyboard goes completely dark to everything else on the system. X11 can't see it. Your terminal can't see it. Only keyd receives its events. The keyboard still physically works — the kernel still processes the hardware interrupts — but the events are delivered only to keyd's file descriptor.
+
+This is the problem that leads us naturally to the virtual keyboard.
+
+### vkbd
+
+Keyd has grabbed the physical keyboard. Nothing else can see it. So when keyd decides what a keypress should actually mean, it needs a way to inject that back into the system as if it came from a real keyboard. That's what the virtual keyboard is.
+
+Linux has a kernel module called **uinput** that lets userspace create a fake input device. You open `/dev/uinput`, describe what kind of device you want, and the kernel registers a new `/dev/input/eventX` that looks like real hardware to everything else on the system. X11 sees it as a keyboard. Your terminal sees it as a keyboard. Nobody knows it's synthetic.
+
+`vkbd_init()` creates this device:
+
+```c
+vkbd* vkbd_init(const char *name)
+{
+    int fd = open("/dev/uinput", O_WRONLY | O_NONBLOCK | O_CLOEXEC);
+
+    // tell the kernel this device can emit key events
+    ioctl(fd, UI_SET_EVBIT, EV_KEY);
+    ioctl(fd, UI_SET_EVBIT, EV_REP);
+
+    // register every possible keycode so we can forward anything
+    for (int i = 0; i < KEY_MAX; i++)
+        ioctl(fd, UI_SET_KEYBIT, i);
+
+    // name and describe the virtual device
+    struct uinput_user_dev udev = {0};
+    strncpy(udev.name, name, UINPUT_MAX_NAME_SIZE);
+    udev.id.bustype = BUS_USB;
+
+    write(fd, &udev, sizeof(udev));
+
+    // tell the kernel to actually create it
+    ioctl(fd, UI_DEV_CREATE);
+}
+```
+
+After `UI_DEV_CREATE`, a new `/dev/input/eventX` appears. The evloop's `monfd` will notice it and add it to the device table — which is why you see `dev->is_virtual` checks throughout the code, to avoid treating keyd's own output as input.
+
+When the keyboard state machine decides what a keypress should produce, it calls `send_key()` in `daemon.c`, which calls `vkbd_send_key()`:
+
+```c
+void vkbd_send_key(struct vkbd *vkbd, uint8_t code, uint8_t state)
+{
+    struct input_event ev = {
+        .type  = EV_KEY,
+        .code  = code,
+        .value = state,   // 1 = down, 0 = up
+    };
+    write(vkbd->fd, &ev, sizeof(ev));
+
+    // SYN_REPORT tells the kernel this event batch is complete
+    struct input_event syn = { .type = EV_SYN, .code = SYN_REPORT };
+    write(vkbd->fd, &syn, sizeof(syn));
+}
+```
+
+Two writes. That's it. The kernel picks it up, publishes it on the virtual device's fd, and every application sees a normal keypress.
+
+So the complete path of a single keypress through keyd is:
+
+```
+Physical key pressed
+    → evloop wakes from poll()
+    → event_handler() receives raw event
+    → kbd_process_events() resolves what it should mean
+    → send_key() → vkbd_send_key() → write() to uinput
+    → kernel publishes on virtual /dev/input/eventX
+    → X11/Wayland/TTY sees a normal keypress
+```
+
+That's it for now. Thanks for reading.
+
+[^2]: https://docs.kernel.org/input/input.html#evdev
+
+[^3]: https://man7.org/linux/man-pages/man7/inotify.7.html
+
+
