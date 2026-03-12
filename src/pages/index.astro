@@ -32,12 +32,12 @@ const recentPosts = sortedPosts.slice(0, 3).map(post => ({
       "element type is invalid" errors from CSS modules / browser-only APIs.
       The static <BaseLayout> shell (title, meta, OG tags) is fully server-rendered.
     -->
-    <Intro client:only="react" />
-    <Experience client:only="react" />
-    <Projects client:only="react" />
-    <TechStack client:only="react" />
-    <GitHubActivity client:only="react" />
-    <Blog posts={recentPosts} client:only="react" />
-    <Footer client:only="react" />
+    <Intro />
+    <Experience />
+    <Projects />
+    <TechStack />
+    <GitHubActivity client:only= "react"/>
+    <Blog posts={recentPosts} />
+    <Footer />
   </div>
 </BaseLayout>

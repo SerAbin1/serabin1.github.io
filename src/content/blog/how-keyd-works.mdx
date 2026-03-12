@@ -9,7 +9,7 @@ Keyd is a Linux daemon that lets you remap keys. A daemon is any process that is
 ### How Linux handles input
 Before we understand how Keyd does what it does, we need to understand how input works in the Linux Kernel.
 
-When you press a key, a hardware interrupt is sent to the CPU by the keyboard. It is translated to something that the kernel understands by the device driver. The driver then passes the event to the Linux input subsystem, which provides a unified interface for all input devices. `evdev` is the generic input event interface. It passes the events generated in the kernel straight to the program, with timestamps. The event codes are the same on all architectures and are hardware independent[^2].
+When you press a key, a hardware interrupt is sent to the CPU by the keyboard. It is translated to something that the kernel understands by the device driver. The driver then passes the event to the Linux input subsystem, which provides a unified interface for all input devices. [evdev](https://docs.kernel.org/input/input.html#evdev) is the generic input event interface. It passes the events generated in the kernel straight to the program, with timestamps. The event codes are the same on all architectures and are hardware independent[^2].
 
 >You can cat /dev/input/mouse2 and move your mouse to see characters appearing. That is how input events are exposed to the user space.
 
@@ -58,7 +58,7 @@ So what should the loop do?
 
 Let's look at the second point first. How can Keyd know when a new keyboard has been plugged in? Well, we already saw that the Linux input subsystem is basically a directory (`/dev/input`) and each connected device is just a file in that directory.
 
-So if we could be alerted when a new file is created in that directory, we'll be good. And that's exactly what `inotify`[^3] does.
+So if we could be alerted when a new file is created in that directory, we'll be good. And that's exactly what [inotify](https://man7.org/linux/man-pages/man7/inotify.7.html) does.
 So the first thing we do is create a `monfd` which is just a file descriptor that lets us know when a new file has been created.
 ```c
 monfd = devmon_create();
@@ -344,9 +344,3 @@ Physical key pressed
 ```
 
 That's it for now. Thanks for reading.
-
-[^2]: https://docs.kernel.org/input/input.html#evdev
-
-[^3]: https://man7.org/linux/man-pages/man7/inotify.7.html
-
-
