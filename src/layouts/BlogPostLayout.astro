@@ -7,7 +7,7 @@ interface Props {
 }
 
 const { post } = Astro.props;
-const { title, description, date } = post.data;
+const { title, description, date, lastUpdated } = post.data;
 
 // Format date for display
 const formattedDate = new Date(date).toLocaleDateString('en-US', {
@@ -15,6 +15,12 @@ const formattedDate = new Date(date).toLocaleDateString('en-US', {
   month: 'long',
   day: 'numeric'
 });
+
+const formattedLastUpdated = lastUpdated ? new Date(lastUpdated).toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric'
+}) : null;
 
 // JSON-LD schema
 const schema = {
@@ -58,5 +64,11 @@ const schema = {
     <article class="markdown-content w-full mt-10">
       <slot />
     </article>
+
+    {formattedLastUpdated && (
+      <p class="mt-8 text-sm text-muted-foreground font-mono">
+        Last Updated: {formattedLastUpdated}
+      </p>
+    )}
   </div>
 </BaseLayout>
