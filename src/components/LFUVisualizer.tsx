@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { ArrowRight, RefreshCw, Layers, ArrowUp } from "lucide-react";
+import { ArrowRight, RefreshCw, Layers } from "lucide-react";
 
 type Node = {
     key: number;

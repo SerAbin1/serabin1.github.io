@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
-import { ArrowBigRight, ArrowLeft, ArrowRight, RefreshCw } from "lucide-react";
+import { ArrowRight, RefreshCw } from "lucide-react";
 
 type Mode = "array" | "linked-list" | "lru" | "full" | "put" | "get";
 
