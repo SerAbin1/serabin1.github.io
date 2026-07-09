@@ -1,0 +1,395 @@
+---
+title: "Learn Rust by Building a GT06 Parser"
+description: "In this blog, we are going to build a gt06 parser and learn Rust concepts including error handling, types like Struct, Enum, Option, Result, etc"
+date: "2026-07-09"
+lastUpdated: "2026-07-09"
+---
+
+## What is GT06? 
+Gt06 is a protocol used by GPS devices to transmit data to a remote server over a TCP connection (typically). The protocol defines multiple message types but our parser will handle only a subset of the message types. Primarily, we are concerned with handling the login, location, and status packets.
+
+## GT06 Message Format 
+To implement our parser, we need to understand the protocol. It's a very simple protocol. Here's all that we need to know:
+- All packets start with START_MARKER: hex digits `0x7878` (2 bytes)
+- All packets end with the END_MARKER: hex digits `0x0D0A` (2 bytes)
+- The byte after the START_MARKER is the PACKET_LENGTH (1 byte)
+
+We only need to know that for now. Easy, isn't it?
+
+## Stream Parser
+Before we start to look for the START_MARKER and END_MARKER we need to understand one thing: TCP is a stream-based protocol. Which means that the data our application recieved may include the whole packet, half a packet, quarter of a packet, more than one packet or one and a half packet. Put simply, we can't be sure.
+
+So how can our implementation handle this?
+
+Let's think about what we do know one by one:
+
+- Packets will start with the START_MARKER
+
+Okay, so we look for the START_MARKER in our current buffer and let's assume we found one. Now what?
+
+- The next byte is the PACKET_LENGTH
+
+Alright. If we read that byte (Note that it may not have reached yet. uh TCP!) then we know the packet length. Then its just a matter of waiting for the current buffer to become greater than or equal to it and we can start on parsing.
+
+## Decoder
+```rust
+const START_MARKER: [u8; 2] = [0x78, 0x78];
+
+/// Buffers raw bytes from a GT06 connection and reassembles them into
+/// parsed messages, tracking the IMEI seen on a prior login so it can be
+/// backfilled onto later location/status/alarm messages on the same
+/// connection.
+#[derive(Debug, Default)]
+pub struct Decoder {
+    buf: Vec<u8>,
+    imei: Option<String>,
+}
+
+impl Decoder {
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    /// The IMEI of the most recent login seen on this connection, if any.
+    pub fn imei(&self) -> Option<&str> {
+        self.imei.as_deref()
+    }
+
+    /// Feeds newly-received bytes into the decoder and returns any complete
+    /// packets found, in order. An incomplete trailing packet is buffered
+    /// and completed on a later call rather than discarded.
+    pub fn push(&mut self, data: &[u8]) -> Vec<Result<Message, Error>> {
+        self.buf.extend_from_slice(data);
+
+        let mut results = Vec::new();
+        let mut pos = 0;
+
+        loop {
+            let Some(offset) = find_start_marker(&self.buf[pos..]) else {
+                // No start marker in the remaining bytes. Keep a dangling
+                // trailing 0x78 around in case it's the first half of a
+                // marker split across this push and the next one.
+                pos = if self.buf.last() == Some(&0x78) {
+                    self.buf.len() - 1
+                } else {
+                    self.buf.len()
+                };
+                break;
+            };
+            let start = pos + offset;
+
+            if start + 3 > self.buf.len() {
+                // Have the start marker but not the length byte yet.
+                pos = start;
+                break;
+            }
+
+            let length = self.buf[start + 2] as usize;
+            let total_len = length + 5;
+
+            if start + total_len > self.buf.len() {
+                // Framed but incomplete; wait for the rest to arrive
+                pos = start;
+                break;
+            }
+
+            let packet = &self.buf[start..start + total_len];
+
+            match parse::parse_packet(packet) {
+                Ok(mut message) => {
+                    self.apply_session_state(&mut message);
+                    results.push(Ok(message));
+                }
+                Err(err) => results.push(Err(err)),
+            }
+            pos = start + total_len;
+        }
+
+        self.buf.drain(..pos);
+        results
+    }
+```
+
+Our Decoder is just a struct with two fields:
+- buf: the current buffer which is the bytes from the gt06 connection
+- imei: only login packets include the imei, so we need to track it somewhere to associate it with location and other packets
+
+The code is obvious (hopefully) but here are the important parts in the main loop:
+- We try to find the offset to the START_MARKER in our buf. If its there good, we found the start of our packet. Else, we need to handle an edge case:
+	- What if only one byte of the two byte START_MARKER has arrived? We will miss it if we skip by our buffer len. So we skip by buf.len - 1 if the last byte is the start of the START_MARKER else just skip the current buf.
+
+Next we see if we have the length byte:
+```rust
+if start + 3 > self.buf.len() {
+	// don't have it, break (😔)
+	pos = start;
+        break;
+}
+```
+
+If we do, get the total packet length which is 5 + the reported len because it doesn't include the START_MARKER and stuff.
+```rust
+let length = self.buf[start + 2] as usize;
+let total_len = length + 5;
+```
+
+Now we check if our buf can hold the packet. If not, we break and wait. If yes, we call parse_packet which will parse each packet according to its type.
+```rust
+if start + total_len > self.buf.len() {
+        // Framed but incomplete; wait for the rest to arrive
+        pos = start;
+        break;
+}
+
+let packet = &self.buf[start..start + total_len];
+
+parse::parse_packet(packet)
+```
+
+Oh and that `apply_session_state` function just backfills the imei (remember the imei in our `Decoder`?) onto the `message` (parsed packet) from the `parse_packet` function.
+It looks like this:
+```rust
+fn apply_session_state(&mut self, message: &mut Message) {
+        match message {
+            Message::Login(login) => self.imei = Some(login.imei.clone()),
+            Message::Location(location) => location.imei = self.imei.clone(),
+            Message::Status(status) => status.imei = self.imei.clone(),
+        }
+}
+```
+
+## Parser
+Before we start on the parser, let us lay some foundation.
+### Message
+Our parser needs to handle different types of packets. We will define this as an enum.
+
+Our `Message` type:
+```rust
+// public so other files can import it
+pub enum Message {
+    Login(Login),
+    Location(Location),
+    Status(Status),
+}
+```
+
+Use enums when you want to represent something that can be one of a finite number of a values.
+Like direction:
+```rust
+enum Direction {
+    North,
+    South,
+    West,
+    East,
+}
+```
+
+> Trailing comma on last item is Rust convention.
+
+Rust enums have 3 variants. The above `Direction` enum is the unit variant. It holds no data. We just need to know the direction.
+
+Our `Message` enum is the tuple variant. It holds data. We don't just need to know what kind of packet it is. We need the actual packet as well.
+
+Think of it like this: All `Direction::North` is the same. But not all `Message::Location` is the same.
+
+The third variant called struct variant is like the tuple variant except that the field values are named:
+```rust
+enum Token {
+    Error {
+        line: usize,
+        column: usize,
+        message: String,
+    },
+}
+```
+
+### Error
+Our `Parser` will encounter different kind of errors while parsing gt06 packets. Maybe the CRC checksum fail, or the END_MARKER is missing, or the protocol is unknown etc.
+
+Rather than returning strings, we will define an `Error` type and return the correct type for each error.
+
+This has certain advantages:
+- You can programmatically inspect what went wrong.
+- You can match on different kinds of errors. 
+- You can add structured data (like line numbers, column numbers, etc).
+
+With our good friend enum:
+```rust
+pub enum Error {
+    // Checksum didn't match
+    CrcMismatch,
+    MissingEndMarker,
+    UnknownProtocol(u8),
+    InvalidLogin,
+    InvalidStatus,
+    // Etc...
+}
+```
+
+> Oh, you didn't know we could use different variants in the same enum? Well, now you do.
+
+## Parser, again
+Finally, with that out of the way, we can write some actual logic, ya know?
+
+So what does our need `parse_packet` need to do? Parse some packets, of course. But there are many different kinds of packets and they all have different fields so we'll just pattern match on the `PROTOCOL_NUMBER` which is the 4th byte (or 3 if you count from 0 like a _real_ programmer) and call the corresponding function.
+
+But there is one thing common to all packets which is the 4th and 3rd byte from the end: The CRC checksum.
+
+The checksum is calculated by doing some crazy math on the fields from PACKET_LENGTH to the SERIAL_NUMBER (which is just before the CRC).
+
+So all we need do is calculate the checksum ourselves and compare it against the recieved checksum. If they match, good else return error.
+
+Here's it in full:
+```rust
+pub fn parse_packet(data: &[u8]) -> Result<Message, Error> {
+    if data.len() < MIN_PACKET_LEN {
+        return Err(Error::TooShort);
+    }
+    if data[0..2] != START_MARKER {
+        return Err(Error::MissingStartMarker);
+    }
+    if data[data.len() - 2..] != END_MARKER {
+        return Err(Error::MissingEndMarker);
+    }
+
+    let received_crc = u16::from_be_bytes([data[data.len() - 4], data[data.len() - 3]]);
+    let computed_crc = crc::checksum(&data[2..data.len() - 4]);
+    if received_crc != computed_crc {
+        return Err(Error::CrcMismatch);
+    }
+
+    match data[3] {
+        0x01 => parse_login(data).map(Message::Login),
+        0x12 => parse_standard_location(data).map(Message::Location),
+        0x22 => parse_extended_location(data).map(Message::Location),
+        0x13 => parse_status(data).map(Message::Status),
+        other => Err(Error::UnknownProtocol(other)),
+    }
+}
+```
+
+> The `be` in `from_be_bytes` stands for big endian but just don't worry about it, okay? Or do worry about it. Google is free, after all.
+
+### Result & Option
+I know, I should have gone over this already but here we are. The return type of our `parse_packet` function, if you noticed (did ya?), is `Result<something>` so what's up with that?
+
+Let me just say that I fucking love Rust's type system.
+
+Now, we'll start with`Option` which you already saw (really!) back in our `Decoder`:
+```rust
+pub struct Decoder {
+    buf: Vec<u8>,
+    imei: Option<String>,
+}
+```
+
+See? `imei` is of type `Option<String>` 
+And all it means is that imei is optional. An Option is defined in the language as an enum with two possible values:
+```rust
+enum Option<T> {
+    None,
+    Some(T),
+}
+```
+
+There is either a value or not. So use `Option` type when you have to represent something which may exist or not.
+
+Now `Result` is very similar to `Option` except where Option is used to represent something that can be absent, Result is used to represent something that can succeed or fail:
+```rust
+enum Result<T, E> {
+    Ok(T),
+    Err(E),
+}
+```
+Result will contain Ok with the success value or Err with the error value.
+
+Now we can look more closely at the function signature of `parse_packet`:
+```rust
+pub fn parse_packet(data: &[u8]) -> Result<Message, Error>
+```
+It returns `Result<Message, Error>`
+If the parse succeeded, we get `Ok(Message)` and if it failed, `Err(Error::something)`. Note that Message and Error are both types defined by us.
+
+If you go back to our `Decoder` and look at where we call the `parse_packet` you can see how we are handling return value:
+```rust
+match parse::parse_packet(packet) {
+    Ok(mut message) => {
+	    self.apply_session_state(&mut message);
+        results.push(Ok(message));
+    }
+    Err(err) => results.push(Err(err)),
+}
+```
+We pattern match on the return value, and proceed accordingly.
+
+## Parsing Status Packets
+You should be able to understand it now. 
+```rust
+fn parse_status(data: &[u8]) -> Result<Status, Error> {
+    if data.len() < 15 {
+        return Err(Error::InvalidStatus);
+    }
+    let terminal_info = data[4];
+    let voltage = data[5];
+    let gsm = data[6];
+
+    Ok(Status {
+        imei: None,
+        flags: StatusFlags {
+            defended: terminal_info & 0x01 != 0,
+            ignition: terminal_info & 0x02 != 0,
+            charging: terminal_info & 0x04 != 0,
+            alarm: TerminalAlarm::from((terminal_info & 0x38) >> 3),
+            gps_tracking: terminal_info & 0x40 != 0,
+            relay_state: terminal_info & 0x80 != 0,
+        },
+        voltage_level: VoltageLevel::from(voltage),
+        gsm_signal: GsmSignal::from(gsm),
+        serial_number: tail_serial(data),
+    })
+}
+```
+## Parsing Login Packets
+```rust
+fn parse_login(data: &[u8]) -> Result<Login, Error> {
+    let packet_length = data[2];
+    let serial_offset = match packet_length {
+        0x0d => 12,
+        0x11 => 16,
+        _ => return Err(Error::InvalidLogin),
+    };
+    if data.len() < serial_offset + 2 {
+        return Err(Error::InvalidLogin);
+    }
+
+    // IMEI is 8 bytes of BCD digits, decoded as a 16-digit string and then
+    // normalized to 15 digits (devices pad with a leading zero nibble).
+    let mut digits = String::with_capacity(16);
+    for &byte in &data[4..12] {
+        digits.push(char::from_digit((byte >> 4) as u32, 16).unwrap());
+        digits.push(char::from_digit((byte & 0x0f) as u32, 16).unwrap());
+    }
+    let imei = if let Some(stripped) = digits.strip_prefix('0') {
+        stripped.to_string()
+    } else {
+        digits[..15].to_string()
+    };
+
+    let serial_number = u16::from_be_bytes([data[serial_offset], data[serial_offset + 1]]);
+
+    Ok(Login {
+        imei,
+        serial_number,
+    })
+}
+
+```
+
+## Conclusion
+I also went and published this as a library to [crates.io](https://crates.io/crates/gt06). The code is available here on [github](https://github.com/SerAbin1/gt06) and the documentation on [docs.rs](https://docs.rs/crate/gt06/latest).
+
+> Note that the library is a work-in-progress
+
+Also, I skipped explaining CRC checksum calculation completely because I just copied it straight from the documentation C code and also because its a bunch of bit-wise operations. Hate those. But you can view it here: [checksum](https://github.com/SerAbin1/gt06/blob/main/src/crc.rs#L40)
+
+That's all.

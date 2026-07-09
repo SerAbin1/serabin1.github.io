@@ -9,7 +9,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "deploy": "pnpm lint && pnpm build && git push"
   },
   "dependencies": {
     "@astrojs/mdx": "^6.0.1",
