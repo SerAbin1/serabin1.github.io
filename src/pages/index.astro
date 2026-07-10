@@ -4,7 +4,6 @@ import Intro from '../components/Intro';
 import Experience from '../components/Experience';
 import Projects from '../components/Projects';
 import TechStack from '../components/TechStack';
-import GitHubActivity from '../components/GitHubActivity';
 import Blog from '../components/Blog';
 import Footer from '../components/Footer';
 import { getCollection } from 'astro:content';
@@ -36,7 +35,6 @@ const recentPosts = sortedPosts.slice(0, 3).map(post => ({
     <Experience client:only="react" />
     <Projects client:only="react" />
     <TechStack client:only="react" />
-    <GitHubActivity client:only="react" />
     <Blog posts={recentPosts} client:only="react" />
     <Footer client:only="react" />
   </div>
