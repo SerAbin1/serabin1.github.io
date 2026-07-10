@@ -25,7 +25,32 @@ const Projects = () => {
     technologies: string[];
     github: string;
     demo: string;
-  }[] = [];
+  }[] = [
+    {
+      title: "gt06",
+      description: [
+        "Parser and stream decoder for the GT06 GPS tracker protocol",
+        "Handles login, location, status, and alarm messages over raw TCP",
+        "Includes a Decoder that reassembles messages from a byte stream, buffering partial reads",
+        "Published on crates.io — 882 lines of Rust, MIT licensed",
+      ],
+      technologies: ["Rust", "TCP", "Protocol Parser", "GPS", "crates.io"],
+      github: "https://github.com/SerAbin1/gt06",
+      demo: "https://crates.io/crates/gt06",
+    },
+    {
+      title: "Pumato",
+      description: [
+        "Full-stack food delivery, laundry, and grocery platform serving 5,000+ campus students",
+        "Built with Next.js and Firebase — handles orders, delivery tracking, and partner management",
+        "Includes a student marketplace for buying, selling, and trading",
+        "Runs entirely on free-tier infrastructure while serving 7k+ reads per day",
+      ],
+      technologies: ["Next.js", "Firebase", "Firestore", "JavaScript", "Playwright"],
+      github: "https://github.com/SerAbin1/pumato",
+      demo: "https://pumato.online",
+    },
+  ];
 
   // GSAP animations
   useLayoutEffect(() => {
@@ -129,7 +154,7 @@ const Projects = () => {
             Featured Projects
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Building innovative solutions with modern technologies
+            Learning by Building
           </p>
         </div>
 
