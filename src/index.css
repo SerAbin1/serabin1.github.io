@@ -40,6 +40,57 @@
   }
 }
 
+/* Copy button for code blocks */
+.code-block-wrapper {
+  position: relative;
+}
+
+.code-copy-btn {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 10;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.375rem;
+  border: 1px solid hsl(var(--border));
+  background-color: hsl(var(--background) / 0.7);
+  color: hsl(var(--foreground));
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s ease, background-color 0.15s ease;
+}
+
+.code-block-wrapper:hover .code-copy-btn {
+  opacity: 1;
+}
+
+.code-copy-btn:hover {
+  background-color: hsl(var(--muted));
+}
+
+.code-copy-btn.copied {
+  opacity: 1;
+  border-color: hsl(var(--terminal-green));
+  color: hsl(var(--terminal-green));
+}
+
+.code-copy-btn svg {
+  display: block;
+  width: 1rem;
+  height: 1rem;
+}
+
+@media (max-width: 639px) {
+  .code-copy-btn {
+    opacity: 0;
+    pointer-events: auto;
+  }
+}
+
 
 
 .markdown-content h1 {
