@@ -14,6 +14,7 @@ const Footer = () => {
     { label: "GitHub", href: "https://github.com/serabin1" },
     { label: "LinkedIn", href: "https://linkedin.com/in/abin-biju7" },
     { label: "Mail", href: "mailto:sonuabin7@gmail.com" },
+    { label: "I🖤RSS", href: "https://iheartrss.com/" },
   ];
 
   // GSAP animation
@@ -38,7 +39,7 @@ const Footer = () => {
             start: "top 95%",
             toggleActions: "play none none none",
           },
-        }
+        },
       );
     }, footerRef);
 
@@ -47,11 +48,11 @@ const Footer = () => {
     }, 500);
 
     const handleLoad = () => ScrollTrigger.refresh();
-    window.addEventListener('load', handleLoad);
+    window.addEventListener("load", handleLoad);
 
     return () => {
       clearTimeout(timeout);
-      window.removeEventListener('load', handleLoad);
+      window.removeEventListener("load", handleLoad);
       ctx.revert();
     };
   }, []);
