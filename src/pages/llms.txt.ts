@@ -24,7 +24,7 @@ export const GET: APIRoute = async ({ site }) => {
         '',
         '## Sections',
         '',
-        '- Homepage: Introduction, Experience, Projects, Tech Stack, GitHub Activity',
+        '- Homepage: Blog, Projects, Experience',
         '- Blog: Technical writing on backend engineering and cybersecurity',
         '',
         '## Contact',

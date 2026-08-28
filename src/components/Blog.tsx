@@ -1,9 +1,11 @@
-import { useLayoutEffect, useRef, useEffect } from "react";
+import { useLayoutEffect, useRef, useEffect, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ArrowRight } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
+
+const INITIAL_COUNT = 5;
 
 interface BlogPostData {
   title: string;
@@ -17,10 +19,13 @@ interface BlogProps {
 }
 
 const Blog = ({ posts }: BlogProps) => {
+  const [showAll, setShowAll] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLElement>(null);
   const postsRef = useRef<HTMLDivElement>(null);
-  const linkRef = useRef<HTMLAnchorElement>(null);
+  const linkRef = useRef<HTMLButtonElement>(null);
+
+  const visiblePosts = showAll ? posts : posts.slice(0, INITIAL_COUNT);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -138,7 +143,7 @@ const Blog = ({ posts }: BlogProps) => {
         </header>
 
         <div ref={postsRef} className="space-y-1 mb-8 min-h-[300px]">
-          {posts.map((post) => (
+          {visiblePosts.map((post) => (
             <a
               key={post.id}
               href={`/blogs/${post.id}`}
@@ -162,14 +167,17 @@ const Blog = ({ posts }: BlogProps) => {
           ))}
         </div>
 
-        <a
-          ref={linkRef}
-          href="/blogs"
-          className="inline-flex items-center text-sm font-medium text-primary hover:underline underline-offset-2"
-        >
-          View all posts
-          <ArrowRight className="ml-1 h-4 w-4" />
-        </a>
+        {!showAll && posts.length > INITIAL_COUNT && (
+          <button
+            ref={linkRef}
+            type="button"
+            onClick={() => setShowAll(true)}
+            className="inline-flex items-center text-sm font-medium text-primary hover:underline underline-offset-2"
+          >
+            Read more
+            <ChevronDown className="ml-1 h-4 w-4" />
+          </button>
+        )}
       </div>
     </section>
   );
