@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { experiences } from '../data/experience';
+---
+
+<BaseLayout title="Work | Abin Biju" description="Where I've worked.">
+  <h1 class="sr-only">Work</h1>
+  <div class="divide-y divide-border">
+    {experiences.map((e) => (
+      <article class="py-6 first:pt-0">
+        <div class="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1">
+          <h2 class="text-lg font-medium text-foreground">
+            {e.title} <span class="text-muted-foreground">· {e.company}</span>
+          </h2>
+          <time class="text-sm text-muted-foreground font-mono shrink-0 tabular-nums">{e.period}</time>
+        </div>
+        <p class="text-xs text-muted-foreground mb-2">{e.location}</p>
+        <ul class="space-y-1.5">
+          {e.description.map((d) => <li class="text-sm text-muted-foreground leading-relaxed">{d}</li>)}
+        </ul>
+        <p class="mt-3 text-xs font-mono text-muted-foreground/80">{e.technologies.join(' · ')}</p>
+      </article>
+    ))}
+  </div>
+</BaseLayout>

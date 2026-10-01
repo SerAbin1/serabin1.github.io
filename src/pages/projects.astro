@@ -1,0 +1,27 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { projects } from '../data/projects';
+---
+
+<BaseLayout title="Projects | Abin Biju" description="Things I've built.">
+  <h1 class="sr-only">Projects</h1>
+  <div class="divide-y divide-border">
+    {projects.map((p) => (
+      <article class="py-6 first:pt-0">
+        <h2 class="text-lg font-medium text-foreground">{p.title}</h2>
+        <ul class="mt-2 space-y-1.5">
+          {p.description.map((d) => <li class="text-sm text-muted-foreground leading-relaxed">{d}</li>)}
+        </ul>
+        <p class="mt-3 text-xs font-mono text-muted-foreground/80">{p.technologies.join(' · ')}</p>
+        <div class="mt-3 flex items-center gap-4 text-sm">
+          <a href={p.github} target="_blank" rel="noopener noreferrer" class="text-primary hover:underline underline-offset-2">Code</a>
+          <a href={p.demo} target="_blank" rel="noopener noreferrer" class="text-primary hover:underline underline-offset-2">Demo</a>
+        </div>
+      </article>
+    ))}
+  </div>
+  <p class="mt-8 text-sm text-muted-foreground">
+    More projects on
+    <a href="https://github.com/serabin1" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline underline-offset-2">GitHub</a>
+  </p>
+</BaseLayout>

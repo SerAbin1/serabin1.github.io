@@ -3,7 +3,7 @@ import animate from "tailwindcss-animate";
 
 export default {
   darkMode: ["class"],
-  content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{ts,tsx}"],
+  content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{astro,ts,tsx,mdx}"],
   prefix: "",
   theme: {
     container: {
@@ -107,8 +107,8 @@ export default {
         "card": "var(--shadow-card)",
       },
       fontFamily: {
-        sans: ["'Inter'", "system-ui", "-apple-system", "BlinkMacSystemFont", "'Segoe UI'", "sans-serif"],
-        mono: ["'Fira Code'", "'JetBrains Mono'", "'Consolas'", "monospace"],
+        sans: ["var(--font-inter)", "system-ui", "sans-serif"],
+        mono: ["var(--font-fira-code)", "Consolas", "monospace"],
       },
     },
   },
