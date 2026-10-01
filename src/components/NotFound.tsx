@@ -10,7 +10,6 @@ const INITIAL_SPEED = 150;
 const NotFound = () => {
     const [snake, setSnake] = useState<Position[]>([{ x: 7, y: 7 }]);
     const [food, setFood] = useState<Position>({ x: 10, y: 10 });
-    const [direction, setDirection] = useState<Direction>("RIGHT");
     const [gameOver, setGameOver] = useState(false);
     const [gameStarted, setGameStarted] = useState(false);
     const [score, setScore] = useState(0);
@@ -38,7 +37,6 @@ const NotFound = () => {
         const initialSnake = [{ x: 7, y: 7 }];
         setSnake(initialSnake);
         setFood(generateFood(initialSnake));
-        setDirection("RIGHT");
         directionRef.current = "RIGHT";
         setScore(0);
         setGameOver(false);
@@ -95,10 +93,7 @@ const NotFound = () => {
             const newDir = keyMap[e.code];
             if (!newDir) return;
             const opposites: Record<Direction, Direction> = { UP: "DOWN", DOWN: "UP", LEFT: "RIGHT", RIGHT: "LEFT" };
-            if (opposites[newDir] !== directionRef.current) {
-                directionRef.current = newDir;
-                setDirection(newDir);
-            }
+            if (opposites[newDir] !== directionRef.current) directionRef.current = newDir;
         };
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
@@ -108,10 +103,7 @@ const NotFound = () => {
         if (!gameStarted && !gameOver) { resetGame(); return; }
         if (!gameStarted) return;
         const opposites: Record<Direction, Direction> = { UP: "DOWN", DOWN: "UP", LEFT: "RIGHT", RIGHT: "LEFT" };
-        if (opposites[dir] !== directionRef.current) {
-            directionRef.current = dir;
-            setDirection(dir);
-        }
+        if (opposites[dir] !== directionRef.current) directionRef.current = dir;
     };
 
     return (

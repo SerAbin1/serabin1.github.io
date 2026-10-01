@@ -1,5 +1,5 @@
 import rss from "@astrojs/rss";
-import { getCollection, render } from "astro:content";
+import { getCollection } from "astro:content";
 import type { APIContext } from "astro";
 
 export async function GET(context: APIContext) {

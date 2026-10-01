@@ -1,7 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { ArrowRight, RefreshCw } from "lucide-react";
-
-type Mode = "array" | "linked-list" | "lru" | "full" | "put" | "get";
 
 export function LRUVisualizer({ mode = "lru" }: { mode?: string }) {
     // Legacy support mapping

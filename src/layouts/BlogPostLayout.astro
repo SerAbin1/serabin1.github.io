@@ -39,7 +39,7 @@ const schema = {
 
 <BaseLayout title={`${title} | Abin Biju`} description={description} ogType="article">
   <!-- Structured Data -->
-  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
 
   <div>
     <!-- Article Header -->

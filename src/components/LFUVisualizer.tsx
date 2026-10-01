@@ -77,7 +77,6 @@ export default function LFUVisualizer() {
     const put = (key: number) => {
         if (cache[key]) {
             setMessage(`PUT ${key}: Exists. Updating value & Promoting.`);
-            const node = cache[key];
             setHighlight({ key, type: 'write' });
 
             setTimeout(() => {
