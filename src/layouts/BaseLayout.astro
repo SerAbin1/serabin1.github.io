@@ -41,7 +41,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <meta name="google-site-verification" content="a8Ymiuu2AKpjO0WKyWpQ7XhdgBdmyphV6SUhs29rblY" />
 
     <!-- Fonts (self-hosted at build) -->
-    <Font cssVariable="--font-inter" preload />
+    <Font cssVariable="--font-inter" preload={[{ weight: 400, style: "normal", subset: "latin" }]} />
     <Font cssVariable="--font-fira-code" />
 
     <ClientRouter />
@@ -64,5 +64,6 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
       <slot />
     </main>
     <Footer />
+    <script src="../scripts/prefetch.ts"></script>
   </body>
 </html>

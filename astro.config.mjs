@@ -8,7 +8,8 @@ import mdx from '@astrojs/mdx';
 export default defineConfig({
   site: 'https://serabin1.github.io',
   output: 'static',
-  prefetch: { prefetchAll: true, defaultStrategy: 'viewport' },
+  // Replaced by src/scripts/prefetch.ts (in-memory, fetch-based).
+  prefetch: false,
   redirects: { '/blogs': '/' },
   fonts: [
     {

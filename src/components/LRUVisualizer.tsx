@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
 import { ArrowRight, RefreshCw } from "lucide-react";
 
 type Mode = "array" | "linked-list" | "lru" | "full" | "put" | "get";
 
-export function LRUVisualizer({ mode = "lru" }: { mode?: string }) { // eslint-disable-line @typescript-eslint/no-explicit-any
+export function LRUVisualizer({ mode = "lru" }: { mode?: string }) {
     // Legacy support mapping
     const effectiveMode = (mode === "full" || mode === "put" || mode === "get") ? "lru" : mode;
 
@@ -39,7 +38,7 @@ const ArrayMode = () => {
         setMessage(`Bubbling ${val} to the end (MRU position)...`);
 
         // Bubble the value to the end
-        let currentArray = [...items];
+        const currentArray = [...items];
         for (let i = startIdx; i < currentArray.length - 1; i++) {
             const leftVal = currentArray[i];
             const rightVal = currentArray[i + 1];

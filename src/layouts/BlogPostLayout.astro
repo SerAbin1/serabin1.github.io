@@ -81,7 +81,7 @@ const schema = {
         const parent = pre.parentNode;
         const wrapper = document.createElement('div');
         wrapper.className = 'code-block-wrapper';
-        parent.replaceChild(wrapper, pre);
+        parent?.replaceChild(wrapper, pre);
         wrapper.appendChild(pre);
 
         const btn = document.createElement('button');
