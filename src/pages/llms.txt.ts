@@ -15,6 +15,7 @@ export const GET: APIRoute = async ({ site }) => {
         '> Backend enthusiast. Cybersec admirer. I break things. I build things.',
         '',
         `Site: ${baseUrl}`,
+        `Full content (JSON, posts with bodies + projects + experience): ${baseUrl}/content.json`,
         '',
         '## Blog Posts',
         '',
