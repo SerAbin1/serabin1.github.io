@@ -28,6 +28,9 @@ jobs:
           node-version: "24"
           cache: true
 
+      - name: Generate Astro types
+        run: vp exec astro sync
+
       - name: Check
         run: vp check
 
