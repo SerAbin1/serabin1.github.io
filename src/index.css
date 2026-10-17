@@ -61,7 +61,9 @@
   color: hsl(var(--foreground));
   cursor: pointer;
   opacity: 0;
-  transition: opacity 0.15s ease, background-color 0.15s ease;
+  transition:
+    opacity 0.15s ease,
+    background-color 0.15s ease;
 }
 
 .code-block-wrapper:hover .code-copy-btn {
@@ -90,8 +92,6 @@
     pointer-events: auto;
   }
 }
-
-
 
 .markdown-content h1 {
   font-size: clamp(1.8rem, 4.8vw, 2.25rem) !important;
@@ -150,12 +150,12 @@
   font-size: clamp(1.2rem, 2.4vw, 1.275rem);
 }
 
-.markdown-content :not(pre)>code {
+.markdown-content :not(pre) > code {
   background-color: hsl(var(--muted));
   padding: 0.125rem 0.375rem;
   border-radius: 0.25rem;
   font-size: 1.05rem;
-  font-family: var(--font-fira-code), 'Consolas', monospace;
+  font-family: var(--font-fira-code), "Consolas", monospace;
   color: hsl(var(--foreground));
 }
 
@@ -225,7 +225,6 @@
   color: hsl(var(--foreground));
 }
 
-
 /* Terminal-inspired developer portfolio design system */
 
 @layer base {
@@ -277,7 +276,11 @@
 
     /* Gradients */
     --gradient-terminal: linear-gradient(135deg, hsl(var(--background)), hsl(0 0% 5%));
-    --gradient-accent: linear-gradient(135deg, hsl(var(--terminal-green)) 0%, hsl(var(--terminal-green-dim)) 100%);
+    --gradient-accent: linear-gradient(
+      135deg,
+      hsl(var(--terminal-green)) 0%,
+      hsl(var(--terminal-green-dim)) 100%
+    );
 
     /* Shadows */
     --shadow-glow: 0 0 20px hsl(var(--terminal-green) / 0.3);
@@ -326,7 +329,6 @@
 
   /* Terminal cursor animation */
   @keyframes blink {
-
     0%,
     50% {
       opacity: 1;
@@ -367,7 +369,6 @@
 
   /* Floating animation */
   @keyframes float {
-
     0%,
     100% {
       transform: translateY(0px) rotate(0deg);

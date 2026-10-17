@@ -10,8 +10,7 @@ export async function GET(context: APIContext) {
 
   return rss({
     title: "Abin Biju's Blog",
-    description:
-      "Notes on backend development, cybersecurity, and things I learn along the way.",
+    description: "Notes on backend development, cybersecurity, and things I learn along the way.",
     site: context.site!,
     items: await Promise.all(
       sortedPosts.map(async (post) => {

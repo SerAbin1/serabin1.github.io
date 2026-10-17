@@ -4,6 +4,7 @@ description: "Visual explanation of LRU and LFU Cache implementation"
 date: "2026-01-04"
 lastUpdated: "2026-01-04"
 ---
+
 import LRUVisualizer from "@/components/LRUVisualizer.tsx";
 import LFUVisualizer from "@/components/LFUVisualizer.tsx";
 
@@ -93,12 +94,12 @@ def GET(key):
     # Check if key exists
     if key not in hashmap:
         return -1
-    
+
     # Key exists: move to MRU position
     node = hashmap[key]
     remove(node)           # Detach from current position
     insert(node)           # Re-attach at MRU (tail)
-    
+
     return node.value
 ```
 
@@ -112,7 +113,7 @@ def PUT(key, value):
         node.value = value
         remove(node)           # Detach from current position
         insert(node)           # Re-attach at MRU (tail)
-    
+
     # Case 2: New key
     else:
         # Evict LRU if at capacity
@@ -120,7 +121,7 @@ def PUT(key, value):
             lru = left.next    # Left sentinel's next is LRU
             remove(lru)
             del hashmap[lru.key]
-        
+
         # Insert new node
         node = Node(key, value)
         insert(node)
@@ -141,13 +142,9 @@ We define two helper functions:
 To make this reliable, we use **two sentinel nodes**:
 
 - `left`: before the LRU
-    
 - `right`: after the MRU
-    
 - `left.next` → LRU
-    
 - `right.prev` → MRU
-    
 
 This eliminates edge cases and allows constant-time operations.
 
@@ -176,7 +173,7 @@ class LRUCache:
     def __init__(self, capacity: int):
         self.capacity = capacity
         self.cache = {} # Maps key -> Node
-        
+
         # Initialize dummy head and dummy tail to simplify edge cases
         # Usage Order: Head (MRU) <-> ... <-> Tail (LRU)
         # (Note: You can flip this direction, as long as you are consistent)
@@ -222,7 +219,7 @@ class LRUCache:
                 lru_node = self.tail.prev
                 self._remove(lru_node)
                 del self.cache[lru_node.key]
-            
+
             # Add new node
             new_node = Node(key, value)
             self._add(new_node)
@@ -264,5 +261,6 @@ The structure is more complex, but the philosophy is the same: use pointer manip
 Solving problems require understanding **constraints**, choosing the right **data structures**, and composing simple ideas until the complexity disappears.
 
 But the most important part is struggle; to truly understand something, we must struggle with it a while. So here ya go:
+
 - [LeetCode 460: LFU Cache](https://leetcode.com/problems/lfu-cache/description/)
 - [LeetCode 432: All O(1) Data Structure](https://leetcode.com/problems/all-oone-data-structure/description/)

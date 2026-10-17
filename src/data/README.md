@@ -30,6 +30,7 @@ Your MDX content goes here...
 ## System Architecture
 
 The blog is powered by Astro's [Content Collections](https://docs.astro.build/en/guides/content-collections/) feature:
+
 - Posts are automatically read and validated against the schema defined in `src/content/config.ts`.
 - The blog index page (`src/pages/blogs/index.astro`) automatically fetches and sorts all posts.
 - Individual post routes (`src/pages/blogs/[slug].astro`) use `getStaticPaths()` to build static pages for every MDX file.

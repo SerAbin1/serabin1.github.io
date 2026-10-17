@@ -1,34 +1,34 @@
-import { defineConfig, fontProviders } from 'astro/config';
-import react from '@astrojs/react';
-import tailwind from '@astrojs/tailwind';
-import sitemap from '@astrojs/sitemap';
-import mdx from '@astrojs/mdx';
+import { defineConfig, fontProviders } from "astro/config";
+import react from "@astrojs/react";
+import tailwind from "@astrojs/tailwind";
+import sitemap from "@astrojs/sitemap";
+import mdx from "@astrojs/mdx";
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://serabin1.github.io',
-  output: 'static',
+  site: "https://serabin1.github.io",
+  output: "static",
   // Replaced by src/scripts/prefetch.ts (in-memory, fetch-based).
   prefetch: false,
-  redirects: { '/blogs': '/' },
+  redirects: { "/blogs": "/" },
   fonts: [
     {
       provider: fontProviders.fontsource(),
-      name: 'Inter',
-      cssVariable: '--font-inter',
+      name: "Inter",
+      cssVariable: "--font-inter",
       weights: [400, 500, 600, 700],
-      styles: ['normal'],
-      subsets: ['latin'],
-      fallbacks: ['system-ui', 'sans-serif'],
+      styles: ["normal"],
+      subsets: ["latin"],
+      fallbacks: ["system-ui", "sans-serif"],
     },
     {
       provider: fontProviders.fontsource(),
-      name: 'Fira Code',
-      cssVariable: '--font-fira-code',
+      name: "Fira Code",
+      cssVariable: "--font-fira-code",
       weights: [400, 500, 600],
-      styles: ['normal'],
-      subsets: ['latin'],
-      fallbacks: ['Consolas', 'monospace'],
+      styles: ["normal"],
+      subsets: ["latin"],
+      fallbacks: ["Consolas", "monospace"],
     },
   ],
   integrations: [
@@ -38,9 +38,9 @@ export default defineConfig({
     }),
     sitemap(),
     mdx({
-      syntaxHighlight: 'shiki',
+      syntaxHighlight: "shiki",
       shikiConfig: {
-        theme: 'github-dark',
+        theme: "github-dark",
       },
     }),
   ],

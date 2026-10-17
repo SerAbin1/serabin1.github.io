@@ -6,25 +6,33 @@ lastUpdated: "2026-03-07"
 ---
 
 ### What is Keyd
+
 Keyd is a Linux daemon that lets you remap keys. A daemon is any process that is not attached to a UI or terminal. Basically a background process.
+
 ### How Linux handles input
+
 Before we understand how Keyd does what it does, we need to understand how input works in the Linux Kernel.
 
 When you press a key, a hardware interrupt is sent to the CPU by the keyboard. It is translated to something that the kernel understands by the device driver. The driver then passes the event to the Linux input subsystem, which provides a unified interface for all input devices. [evdev](https://docs.kernel.org/input/input.html#evdev) is the generic input event interface. It passes the events generated in the kernel straight to the program, with timestamps. The event codes are the same on all architectures and are hardware independent[^2].
 
->You can cat /dev/input/mouse2 and move your mouse to see characters appearing. That is how input events are exposed to the user space.
+> You can cat /dev/input/mouse2 and move your mouse to see characters appearing. That is how input events are exposed to the user space.
 
 This abstraction allows Linux to treat keyboards, mice, touchpads, and gamepads using the same interface.
 
 So after the hardware and before the user space, where evdev sits, is where keyd wants to be for it to intercept, transform and re-emit the event. So the terminal (or any application) will think you pressed A when you actually pressed B.
+
 ### main()
+
 We will look at the Keyd [source code](https://github.com/rvaiya/keyd/blob/master/src/), written in C, to see how exactly it remaps keys and how it can achieve \<1ms performance.
 
-The main function, in keyd.c,  doesn't do much: it calls run_daemon if called without arguments and if called with arguments, it acts as a client to communicate with the daemon to run commands like reload.
+The main function, in keyd.c, doesn't do much: it calls run_daemon if called without arguments and if called with arguments, it acts as a client to communicate with the daemon to run commands like reload.
 
-So run_daemon, which is in daemon.c, is what we care about. 
+So run_daemon, which is in daemon.c, is what we care about.
+
 ### run_daemon()
+
 run_daemon createa an ipc server if not already running, creates and initializes the virtual keyboard (more on that later), but most interestingly it does this:
+
 ```c
 struct sched_param sp;
 
@@ -39,7 +47,8 @@ if (sched_setscheduler(0, SCHED_FIFO, &sp)) {
     exit(-1);
 }
 ```
-Which bumps the priority of the process to 49 so that normal processes can't preempt Keyd. 
+
+Which bumps the priority of the process to 49 so that normal processes can't preempt Keyd.
 
 I didn't know we could do that but it makes sense. Think of a game preempting Keyd and you pressing Caps Lock which you had remapped to jump. Yeah that won't be good.
 
@@ -49,11 +58,15 @@ if (mlockall(MCL_CURRENT | MCL_FUTURE)) {
     exit(-1);
 }
 ```
+
 And that locks all memory pages, current and future, into RAM, thus eliminating page faults and guaranteeing low latency.
 
 Finally, the evloop() is called with the event_handler(). The evloop is the main loop, the while(1) that runs forever and drives everything.
+
 ### evloop()
+
 So what should the loop do?
+
 - Monitor all devices for events (Duh)
 - Know when a new device has been added (and it can be added at any time!)
 
@@ -61,6 +74,7 @@ Let's look at the second point first. How can Keyd know when a new keyboard has 
 
 So if we could be alerted when a new file is created in that directory, we'll be good. And that's exactly what [inotify](https://man7.org/linux/man-pages/man7/inotify.7.html) does.
 So the first thing we do is create a `monfd` which is just a file descriptor that lets us know when a new file has been created.
+
 ```c
 monfd = devmon_create();
 // inside devmon_create:
@@ -70,6 +84,7 @@ int wd = inotify_add_watch(fd, "/dev/input/", IN_CREATE);
 ```
 
 Now we loop over all existing devices (again, all we need to do is read the /dev/input directory):
+
 ```c
 while((ent = readdir(dh))) {
     // the first five letters will be event for devices
@@ -103,6 +118,7 @@ It uses [`poll`](https://man7.org/linux/man-pages/man2/poll.2.html). Basically, 
 So we need to register all the fds that we care about with poll. So we add monfd (so that we know when a new keyboard has been plugged), all the devices (so that we know when an event like a keypress has occured), as well as the ipcfd to respond to user commands like reload.
 
 Here is the entire function:
+
 ```c
 int evloop(int (*event_handler)(struct event *ev))
 {
@@ -236,7 +252,9 @@ int evloop(int (*event_handler)(struct event *ev))
     return 0;
 }
 ```
+
 ### event_handler()
+
 When `poll()` wakes up because a key was pressed, the `evloop` calls `event_handler()` with the raw event. The event handler's job is to figure out what to do with it.
 
 The first thing it checks is `ev->dev->data`. This is a pointer that was set when the device was first seen. If it's NULL, this device has no matching config and gets ignored. If it's set, it points to the keyboard state machine for that device.

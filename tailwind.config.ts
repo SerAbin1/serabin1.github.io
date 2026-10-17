@@ -3,7 +3,12 @@ import animate from "tailwindcss-animate";
 
 export default {
   darkMode: ["class"],
-  content: ["./pages/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./app/**/*.{ts,tsx}", "./src/**/*.{astro,ts,tsx,mdx}"],
+  content: [
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{astro,ts,tsx,mdx}",
+  ],
   prefix: "",
   theme: {
     container: {
@@ -94,7 +99,7 @@ export default {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "blink": "blink 1s infinite",
+        blink: "blink 1s infinite",
         "fade-in": "fade-in 0.6s ease-out",
         "slide-up": "slide-up 0.6s ease-out",
       },
@@ -103,8 +108,8 @@ export default {
         "gradient-accent": "var(--gradient-accent)",
       },
       boxShadow: {
-        "glow": "var(--shadow-glow)",
-        "card": "var(--shadow-card)",
+        glow: "var(--shadow-glow)",
+        card: "var(--shadow-card)",
       },
       fontFamily: {
         sans: ["var(--font-inter)", "system-ui", "sans-serif"],
