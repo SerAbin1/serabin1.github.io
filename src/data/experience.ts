@@ -1,14 +1,37 @@
 export const experiences = [
   {
     title: "Backend Developer Intern",
-    company: "Evide.AI",
-    period: "Present",
+    company: "Heydu",
+    period: "May 2026 - Present",
     location: "Remote",
     description: [
-      "Building backend infrastructure for a bus tracking application",
-      "Developing scalable APIs for real-time bus location and route data",
+      "Bug fixes, features and other work for the Heydu platform, a CMS for colleges and universities",
+      "Gained experience on AWS services: DynamoDB, Lambda, SQS, Cloudformation, the whole shebang",
     ],
-    technologies: ["Node.js", "Express.js", "PostgreSQL", "Docker", "Real-time APIs"],
+    technologies: ["DynamoDB", "Lambda", "SQS", "Node.js", "Cloudformation"],
+  },
+  {
+    title: "Software Developer Intern",
+    company: "SeraphGuard Labs",
+    period: "Jan 2026 - Present",
+    location: "Remote",
+    description: [
+      "Developed [GuardienAI](https://play.google.com/store/apps/details?id=com.seraphguardlabs.guardienai), an AI-powered parental control app with nudity, grooming detection to keep children safe",
+      "Gained experience with Real-time notifications, EdgeAI systems and integrating AI in mobiles",
+    ],
+    technologies: ["Kotlin", "Edge AI", "Node.js"],
+  },
+  {
+    title: "Backend Developer Intern",
+    company: "Evide.AI",
+    period: "Sep 2025 - Mar 2026",
+    location: "Remote",
+    description: [
+      "Developed the backend for a Real-time bus tracking application",
+      "Mainly the TCP server for ingesting gt06 packets, scheduler to manage the trip lifecycle with BullMQ",
+      "Gained experience on AWS, WebSockets, CI/CD, and fixing thorny race-conditions",
+    ],
+    technologies: ["Node.js", "Express.js", "PostgreSQL", "Docker", "BullMQ"],
   },
   {
     title: "Full Stack Developer",
@@ -16,10 +39,9 @@ export const experiences = [
     period: "Jul 2025 - Present",
     location: "Remote",
     description: [
-      "Designed and developed full-stack applications for clients across various domains",
-      "Delivered projects deployed via Firebase, Supabase, and Render",
+      "[Pumato](https://pumato.online), [SayrTravels](https://sayrtravels.in), [CrownxAutomotives](https://crownxautomotives.shop), [BorderlyVisa](https://borderlyvisa.in)",
     ],
-    technologies: ["React", "Next.js", "Node.js", "Firebase", "Supabase", "Render"],
+    technologies: ["Next.js", "Node.js", "Firebase", "Supabase", "GCP", "Render"],
   },
   {
     title: "Backend Developer Intern",
@@ -27,8 +49,8 @@ export const experiences = [
     period: "March - July 2025",
     location: "Madurai",
     description: [
-      "Engineered a full-stack business management platform for invoicing and analytics",
-      "Implemented secure Role Based Access Control (RBAC) and authentication systems",
+      "Developed a website to automate invoicing, project and employee management. With a dashboard to visualise growth (revenue, profit, etc)",
+      "I gained experience with RBAC, Auth, PDF generation, and email sending",
     ],
     technologies: ["Node.js", "Express.js", "React.js", "PostgreSQL", "RBAC", "JWT"],
   },
