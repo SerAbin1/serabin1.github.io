@@ -1,0 +1,103 @@
+---
+title: "Validating AWS Bugs With Floci"
+description: ""
+date: "2026-11-22"
+lastUpdated: "2026-11-22"
+---
+
+Ever since I joined my latest company, the biggest issue has been testing new features and validating bug fixes. You see, at all my previous jobs, I could just `npm run dev` or `docker compose up` it. But here it is a hodgepodge of AWS services: AWS WAF, AWS API Gateway, Lambda, DynamoDB, AWS SQS, AWS SES, etc.
+
+There was no easy way to test it locally, especially if it included anything more than just Lambda (say, SQS). So we used the dev server for all testing. It's reliable, but every test takes a deploy, which makes the feedback loop much slower, and in our age of agents, a fast feedback loop is critical.
+
+And that's when I discovered [Floci](https://floci.io/). Coincidentally, AWS also released an emulator of their own the very next day: [AWS Emulator](https://aws.amazon.com/about-aws/whats-new/2026/11/aws-emulator-now-available/). Talk about timing, eh
+
+## Floci
+
+Floci is a local cloud for AI agents (and humans!) with emulators for, well, all major cloud providers: AWS, Azure, GCP and OCI.
+
+That is to say, you run `floci start` (AWS by default) and you've got yourself all those hodgepodge services running locally.
+
+Since you can get your agent to set up Floci, I'm not going to waste any time on setup instructions other than to say: use AWS Profiles. They makes it much easier to switch between Floci and your real credentials.
+
+## DynamoDB Toolbox Bug
+
+When you do the following:
+
+```js
+return EntityForProfile.build(UpdateItemCommand)
+  .item({
+    id,
+    profileTypeID: Number(profileTypeID),
+    roleIDs,
+    roleAssignedAt,
+    roleAssignedBy,
+  })
+  .send();
+```
+
+dynamodb-toolbox creates a query like so:
+
+```
+SET #s_1[0] = :s_1
+```
+
+This causes a ValidationException when the list attribute is absent.
+
+What you need to do is wrap it in a `$set` so it is replaced wholesale:
+
+```js
+return EntityForProfile.build(UpdateItemCommand)
+  .item({
+    id,
+    profileTypeID: Number(profileTypeID),
+    roleIDs: $set(roleIDs),
+    roleAssignedAt,
+    roleAssignedBy,
+  })
+  .send();
+```
+
+Now it generates:
+
+```
+SET #s_1 = :s_1
+```
+
+I was able to validate that this was indeed the root cause and fix the bug much quicker thanks to Floci:
+
+```bash
+company main on ☁️ floci ❯ aws dynamodb put-item \
+  --table-name company-user-local \
+  --item '{
+    "PK": {"S": "USER#019fce3e-03ca-70ae-a8f6-b39a12cf00cd"},
+    "SK": {"S": "PROFILETYPE#STAFF#019fce3e-03ca-70ae-a8f6-b39a12cf00cd"},
+    "id": {"S": "019fce3e-03ca-70ae-a8f6-b39a12cf00cd"},
+    "profileTypeID": {"N": "2"},
+    "name": {"S": "Floci Demo Staff"},
+    "email": {"S": "staff@company.biz"}
+  }'
+
+company main on ☁️ floci ❯ aws dynamodb update-item \
+  --table-name company-user-local \
+  --key '{
+    "PK": {"S": "USER#019fce3e-03ca-70ae-a8f6-b39a12cf00cd"},
+    "SK": {"S": "PROFILETYPE#STAFF#019fce3e-03ca-70ae-a8f6-b39a12cf00cd"}
+  }' \
+  --update-expression "SET #s_1[0] = :s_1" \
+  --expression-attribute-names '#s_1'='roleIDs' \
+  --expression-attribute-values '{":s_1": {"S": "019f6b000000000000000001"}}'
+
+aws: [ERROR]: An error occurred (ValidationException) when calling the UpdateItem operation: The document path provided in the update expression is invalid for update
+
+company main on ☁️ floci ✗ aws dynamodb update-item \
+  --table-name company-user-local \
+  --key '{
+    "PK": {"S": "USER#019fce3e-03ca-70ae-a8f6-b39a12cf00cd"},
+    "SK": {"S": "PROFILETYPE#STAFF#019fce3e-03ca-70ae-a8f6-b39a12cf00cd"}
+  }' \
+  --update-expression "SET #s_1 = :s_1" \
+  --expression-attribute-names '#s_1'='roleIDs' \
+  --expression-attribute-values '{":s_1": {"L": [{"S": "019f6b000000000000000001"}]}}'
+```
+
+Did I mention Floci also has a UI like the AWS Console? Well, it does. And you can use it to look at your DynamoDB table just like in the console.
