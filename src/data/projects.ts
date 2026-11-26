@@ -17,13 +17,13 @@ export const projects = [
     demo: "https://pumato.online",
   },
   {
-    title: "rss-reader",
+    title: "Tydl",
     description: [
-      "RSS feed reader with mobile and web, sync via D1",
-      "Core logic in Rust, reused across web and mobile via JNI and Wasm",
+      "Reason-and-timer guard for phone usage that helps accomplish tasks and record the day in your own words",
+      "Connects to an Obsidian vault to keep track of tasks and automatically mark them completed",
     ],
-    technologies: ["Rust", "TypeScript", "Kotlin"],
-    github: "https://github.com/SerAbin1/rss-reader",
-    demo: "https://my-rss-reader.serabin1.workers.dev/",
+    technologies: ["Kotlin", "Android", "Obsidian"],
+    github: "https://github.com/SerAbin1/tydl",
+    demo: "https://github.com/SerAbin1/tydl/releases",
   },
 ];
